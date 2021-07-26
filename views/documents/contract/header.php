@@ -1,0 +1,3 @@
+<P ALIGN=LEFT STYLE="margin-bottom: 0.46in; background: #ffffff; border: none; padding: 0in; font-variant: normal; font-style: normal; font-weight: normal; line-height: 100%; page-break-inside: auto; widows: 2; orphans: 2; text-decoration: none; page-break-after: auto">
+	<IMG SRC="<?php echo RA_ELITE_USA_INSURANCE ?>/assets/images/elite-usa-logo.png" ALIGN=LEFT HSPACE=12 WIDTH=175 HEIGHT=131 BORDER=0><BR>
+	</P>

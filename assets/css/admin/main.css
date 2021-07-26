@@ -1,0 +1,15 @@
+input[type=checkbox], input[type=color], input[type=date], input[type=datetime-local], input[type=datetime], input[type=email], input[type=month], input[type=number], input[type=password], input[type=radio], input[type=search], input[type=tel], input[type=text], input[type=time], input[type=url], input[type=week], select, textarea {
+    border: none !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+    color: #32373c;
+    outline: 0;
+    transition: 50ms border-color ease-in-out;
+}
+.admin-container{
+	margin-right: 20px;
+  margin-top: 40px;
+}
+.v-application--wrap{
+  min-height: auto !important;
+}

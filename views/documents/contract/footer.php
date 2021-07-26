@@ -1,0 +1,11 @@
+<P ALIGN=CENTER STYLE="margin-top: 0.46in; margin-bottom: 0in; background: #ffffff; border: none; padding: 0in; line-height: 100%; page-break-inside: auto; widows: 2; orphans: 2; page-break-after: auto">
+	<A HREF="http://www.eliteusainsurance.com"><SPAN STYLE="font-variant: normal"><FONT COLOR="#0563c1"><SPAN STYLE="text-decoration: none"><FONT FACE="Calibri, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-style: normal"><U><SPAN STYLE="font-weight: normal"><SPAN STYLE="background: #ffffff">www.eliteusainsurance.com</SPAN></SPAN></U></SPAN></FONT></FONT></SPAN></FONT></SPAN></A></P>
+	<P ALIGN=CENTER STYLE="margin-bottom: 0in; background: #ffffff; border: none; padding: 0in; line-height: 100%; page-break-inside: auto; widows: 2; orphans: 2; page-break-after: auto">
+	<SPAN STYLE="font-variant: normal"><FONT COLOR="#000000"><SPAN STYLE="text-decoration: none"><FONT FACE="Calibri, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal"><SPAN STYLE="background: #ffffff">Elite
+	USA Insurance</SPAN></SPAN></SPAN></FONT></FONT></SPAN></FONT></SPAN></P>
+	<P ALIGN=CENTER STYLE="margin-bottom: 0in; background: #ffffff; border: none; padding: 0in; line-height: 100%; page-break-inside: auto; widows: 2; orphans: 2; page-break-after: auto">
+	<SPAN STYLE="font-variant: normal"><FONT COLOR="#000000"><SPAN STYLE="text-decoration: none"><FONT FACE="Calibri, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal"><SPAN STYLE="background: #ffffff">(832)
+	582-7475</SPAN></SPAN></SPAN></FONT></FONT></SPAN></FONT></SPAN></P>
+	<P ALIGN=CENTER STYLE="margin-bottom: 0in; background: #ffffff; border: none; padding: 0in; line-height: 100%; page-break-inside: auto; widows: 2; orphans: 2; page-break-after: auto">
+	<SPAN STYLE="font-variant: normal"><FONT COLOR="#000000"><SPAN STYLE="text-decoration: none"><FONT FACE="Calibri, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal"><SPAN STYLE="background: #ffffff">10832
+	Westheimer Road Houston, TX 77042</SPAN></SPAN></SPAN></FONT></FONT></SPAN></FONT></SPAN></P>
