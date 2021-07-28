@@ -14,7 +14,7 @@
   <template v-if="selectedItem == 0 || selectedItem == 4">
     <v-list-item-group color="primary" class="custom-scroll" style="max-height: 300px;overflow-y: scroll">
       <v-list-item v-for="(n, i) in notifications">
-        <v-list-item-content @click="filterQuotes(n.quote_id)">
+        <v-list-item-content @click="filterQuotes(n.quote_id);markNotificationAsRead(n.ID, i);">
           <v-list-item-title class="black--text">Quote ID: <b>{{ n.quote_id }}</b></v-list-item-title>
 
           <v-list-item-subtitle class="no-white-space">
