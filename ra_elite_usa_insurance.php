@@ -1,9 +1,8 @@
 <?php
 /**
  * Plugin Name:       EliteUSAInsurance
- * Plugin URI:        https://2ffactor.com/
  * Description:       Insurance quote applications
- * Version:           1.0
+ * Version:           1.0.2
  * Requires at least: 5.1
  * Requires PHP:      7.2
  * Author:            Roiner Adrianza
@@ -23,8 +22,4 @@ require_once( RA_ELITE_USA_INSURANCE . '/shortcodes/shortcodes.php' );
 register_activation_hook(__FILE__, 'ra_elite_usa_insurance_plug_init');
 
 function ra_elite_usa_insurance_plug_init() {
-}
-
-if (is_admin()) {
-  # code...
 }

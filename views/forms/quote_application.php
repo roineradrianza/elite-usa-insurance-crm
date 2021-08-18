@@ -77,7 +77,7 @@
                     </v-btn>                    
                   </template>
 
-                  <v-btn @click="stepper = 1;scrollToTopStepper()" text>
+                  <v-btn @click="stepper = 1;scrollToTopStepper();updateFormDate();" text>
                     GO BACK
                   </v-btn>
                 </v-stepper-content>
@@ -110,7 +110,7 @@
                 <v-stepper-content :step="form.content.affordable_care_act.coverage_type == 'FAMILY' ? 5 : 3">
                   <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/payment_information'); ?>
 
-                  <v-btn color="primary" @click="preview = true;scrollToPreview();" ref="application_preview" :disabled="!payment_information_valid">
+                  <v-btn color="primary" @click="preview = true;updateFormDate();" ref="application_preview" :disabled="!payment_information_valid">
                     PREVIEW
                   </v-btn>
                   <template v-if="form.content.affordable_care_act.coverage_type == 'FAMILY'">
