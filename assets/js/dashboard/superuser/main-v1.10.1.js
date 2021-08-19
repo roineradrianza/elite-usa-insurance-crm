@@ -1135,13 +1135,16 @@ let vm = new Vue({
 
       data.append('ID', attachment.ID)
       data.append('post_title', attachment.post_title)
-      data.append('attachment', attachment.doc)
       data.append('post_author', attachment.post_author)
       data.append('agent', app.quotes.editedItem.affordable_care_act.agent_name)
 
       if (attachment.attachment_id != '' ) {
         data.append('attachment_id', attachment.attachment_id)
       }
+
+      attachment.doc.forEach((doc, i) => {
+        data.append('attachment['+i+']', doc)
+      });
 
       app.attachment_loading = true
       app.$http.post(url, data, {

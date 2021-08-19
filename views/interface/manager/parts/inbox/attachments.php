@@ -83,7 +83,10 @@
                   <v-row>
                     <v-col cols="12">
                       <label>{{ attachments.editedItem.post_title }}</label>
-                      <v-file-input v-model="attachments.editedItem.doc" accept="image/*,.pdf,.doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, xlsx, .xls, .txt" label="Upload Document" show-size filled prepend-icon="mdi-file-document"></v-file-input>
+                      <v-file-input v-model="attachments.editedItem.doc" 
+                      accept="image/*,.pdf,.doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, xlsx, .xls, .txt" 
+                      label="Upload Document" multiple counter show-size filled prepend-icon="mdi-file-document">
+                      </v-file-input>
                     </v-col>
                     <template v-if="percent_loading_active">
                       <v-col class="p-0 mb-n6" cols="12">
@@ -124,7 +127,9 @@
                   <v-row>
                     <v-col cols="12">
                         <label>{{ attachments.editedItem.post_title }}</label>
-                        <v-file-input v-model="attachments.editedItem.doc" accept="image/*,.pdf,.doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, xlsx, .xls, .txt" label="Upload Document" show-size filled prepend-icon="mdi-file-document"></v-file-input>
+                        <v-file-input v-model="attachments.editedItem.doc" accept="image/*,.pdf,.doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, xlsx, .xls, .txt" 
+                        label="Upload Document" multiple counter show-size filled prepend-icon="mdi-file-document">
+                        </v-file-input>
                     </v-col>
                     <template v-if="percent_loading_active">
                       <v-col class="p-0 mb-n6" cols="12">

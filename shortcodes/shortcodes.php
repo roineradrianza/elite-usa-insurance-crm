@@ -24,13 +24,13 @@ class RA_ELITE_USA_INSURANCE_SHORTCODES
         add_action('wp_head', $this->ra_elite_usa_insurance_wp_head());
         add_action('wp_enqueue_scripts', $this->ra_elite_usa_insurance_enqueue_ss());
         if (!is_user_logged_in()) {
-            echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['setup-v1.0.1.min', 'login'], 'login');
+            echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['setup-v1.0.2.min', 'login'], 'login');
         } else {
             $current_user = RA_ELITE_USA_INSURANCE_USER::get_current_user();
             if ($current_user['roles'][0] == 'elite_usa_insurance_agent' && empty($current_user['agreement_form'])) {
-                echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['countries.min', 'setup-v1.0.1.min', 'agreement-v1.0.0'], 'interface/parts/agreement');
+                echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['countries.min', 'setup-v1.0.2.min', 'agreement-v1.0.0'], 'interface/parts/agreement');
             } else {
-                echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['countries.min', 'setup-v1.0.1.min', 'applications/main-v1.10.3'], 'forms/quote_application');
+                echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['countries.min', 'setup-v1.0.2.min', 'applications/main-v1.10.3'], 'forms/quote_application');
             }
         }
     }
@@ -40,18 +40,18 @@ class RA_ELITE_USA_INSURANCE_SHORTCODES
         add_action('wp_head', $this->ra_elite_usa_insurance_wp_head());
         add_action('wp_enqueue_scripts', $this->ra_elite_usa_insurance_enqueue_ss());
         if (!is_user_logged_in()) {
-            echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['setup-v1.0.1.min', 'login'], 'login');
+            echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['setup-v1.0.2.min', 'login'], 'login');
         } else {
             $current_user = RA_ELITE_USA_INSURANCE_USER::get_current_user();
             if ($current_user['roles'][0] == 'elite_usa_insurance_agent' && empty($current_user['agreement_form'])) {
-                echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['countries.min', 'setup-v1.0.1.min', 'agreement-v1.0.0'], 'interface/parts/agreement');
+                echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['countries.min', 'setup-v1.0.2.min', 'agreement-v1.0.0'], 'interface/parts/agreement');
             } else {
                 if ($current_user['roles'][0] == 'administrator' || $current_user['roles'][0] == 'elite_usa_quote_manager') {
-                    echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['countries.min', 'setup-v1.0.1.min', 'vue-complements/vue-json-excel.umd', 'dashboard/manager/main-v1.10.5'], 'interface/manager/dashboard');
+                    echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['countries.min', 'setup-v1.0.2.min', 'vue-complements/vue-json-excel.umd', 'dashboard/manager/main-v1.10.5'], 'interface/manager/dashboard');
                 } else if ($current_user['roles'][0] == 'elite_usa_insurance_agent') {
-                    echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['setup-v1.0.1.min', 'vue-complements/vue-json-excel.umd', 'dashboard/agent/main-v1.10.1'], 'interface/agent/dashboard');
+                    echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['setup-v1.0.2.min', 'vue-complements/vue-json-excel.umd', 'dashboard/agent/main-v1.10.2'], 'interface/agent/dashboard');
                 } else if ($current_user['roles'][0] == 'elite_usa_superuser') {
-                    echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['countries.min', 'setup-v1.0.1.min', 'vue-complements/vue-json-excel.umd', 'dashboard/superuser/main-v1.10.0'], 'interface/superuser/dashboard');
+                    echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['countries.min', 'setup-v1.0.2.min', 'vue-complements/vue-json-excel.umd', 'dashboard/superuser/main-v1.10.1'], 'interface/superuser/dashboard');
                 }
             }
         }
@@ -63,13 +63,13 @@ class RA_ELITE_USA_INSURANCE_SHORTCODES
         add_action('wp_head', $this->ra_elite_usa_insurance_wp_head());
         add_action('wp_enqueue_scripts', $this->ra_elite_usa_insurance_enqueue_ss());
         if (!is_user_logged_in()) {
-            echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['setup-v1.0.1.min', 'login'], 'login');
+            echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['setup-v1.0.2.min', 'login'], 'login');
         } else {
             $current_user = RA_ELITE_USA_INSURANCE_USER::get_current_user();
             if ($current_user['roles'][0] == 'elite_usa_insurance_agent' && empty($current_user['agreement_form'])) {
-                echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['countries.min', 'setup-v1.0.1.min', 'agreement-v1.0.0'], 'interface/parts/agreement');
+                echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['countries.min', 'setup-v1.0.2.min', 'agreement-v1.0.0'], 'interface/parts/agreement');
             } else {
-                echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['setup-v1.0.1.min', 'dashboard/settings/main-v1.0.2'], 'interface/settings/main');
+                echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['setup-v1.0.2.min', 'dashboard/settings/main-v1.0.2'], 'interface/settings/main');
             }
         }
 
@@ -81,12 +81,12 @@ class RA_ELITE_USA_INSURANCE_SHORTCODES
         add_action('admin_head', $this->ra_elite_usa_insurance_wp_head());
         add_action('wp_enqueue_scripts', $this->ra_elite_usa_insurance_enqueue_ss());
         if (!is_user_logged_in()) {
-            echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['setup-v1.0.1.min', 'login'], 'login');
+            echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['setup-v1.0.2.min', 'login'], 'login');
         } else {
             $current_user = RA_ELITE_USA_INSURANCE_USER::get_current_user();
             if ($current_user['roles'][0] == 'administrator' || $current_user['roles'][0] == 'elite_usa_superuser') {
                 $folder = $current_user['roles'][0] == 'administrator' ? 'admin' : 'superuser';
-                echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['setup-v1.0.1.min', "dashboard/{$folder}/manage-users-v1.0.3"], 'interface/superuser/users');
+                echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['setup-v1.0.2.min', "dashboard/{$folder}/manage-users-v1.0.3"], 'interface/superuser/users');
             }
         }
 
@@ -97,17 +97,17 @@ class RA_ELITE_USA_INSURANCE_SHORTCODES
         add_action('wp_head', $this->ra_elite_usa_insurance_wp_head());
         add_action('wp_enqueue_scripts', $this->ra_elite_usa_insurance_enqueue_ss());
         if (!is_user_logged_in()) {
-            echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['setup-v1.0.1.min', 'login'], 'login');
+            echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['setup-v1.0.2.min', 'login'], 'login');
         } else {
             $current_user = RA_ELITE_USA_INSURANCE_USER::get_current_user();
             if ($current_user['roles'][0] == 'administrator' || $current_user['roles'][0] == 'elite_usa_superuser' || $current_user['roles'][0] == 'elite_usa_quote_manager') {
                 $folder = $current_user['roles'][0] == 'administrator' || $current_user['roles'][0] == 'elite_usa_quote_manager' ? 'manager' : 'superuser';
-                echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['countries.min', 'setup-v1.0.1.min', "dashboard/{$folder}/inbox-v1.0.7"], 'interface/manager/inbox');
+                echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['countries.min', 'setup-v1.0.2.min', "dashboard/{$folder}/inbox-v1.0.8"], 'interface/manager/inbox');
             } else if ($current_user['roles'][0] == 'elite_usa_insurance_agent') {
                 if ($current_user['roles'][0] == 'elite_usa_insurance_agent' && empty($current_user['agreement_form'])) {
-                    echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['countries.min', 'setup-v1.0.1.min', 'agreement-v1.0.0'], 'interface/parts/agreement');
+                    echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['countries.min', 'setup-v1.0.2.min', 'agreement-v1.0.0'], 'interface/parts/agreement');
                 } else {
-                    echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['countries.min', 'setup-v1.0.1.min', "dashboard/agent/inbox-v1.0.3"], 'interface/agent/inbox');
+                    echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['countries.min', 'setup-v1.0.2.min', "dashboard/agent/inbox-v1.0.4"], 'interface/agent/inbox');
                 }
             } else {
 

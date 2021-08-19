@@ -83,7 +83,9 @@
                   <v-row>
                     <v-col cols="12">
                         <label>{{ attachments.editedItem.post_title }}</label>
-                        <v-file-input v-model="attachments.editedItem.doc" accept="image/*,.pdf,.doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, xlsx, .xls, .txt" label="Upload Document" show-size filled prepend-icon="mdi-file-document"></v-file-input>
+                        <v-file-input v-model="attachments.editedItem.doc" 
+                        accept="image/*,.pdf,.doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, xlsx, .xls, .txt" 
+                        label="Upload Document" multiple counter show-size filled prepend-icon="mdi-file-document"></v-file-input>
                     </v-col>
                     <template v-if="percent_loading_active">
                       <v-col class="p-0 mb-n6" cols="12">
@@ -124,7 +126,9 @@
                   <v-row>
                     <v-col cols="12">
                       <label>{{ attachments.editedItem.post_title }}</label>
-                      <v-file-input v-model="attachments.editedItem.doc" accept="image/*,.pdf,.doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, xlsx, .xls, .txt" label="Upload Document" show-size filled prepend-icon="mdi-file-document"></v-file-input>
+                      <v-file-input v-model="attachments.editedItem.doc" accept="image/*,.pdf,.doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, xlsx, .xls, .txt" 
+                      label="Upload Document" multiple counter show-size filled prepend-icon="mdi-file-document">
+                      </v-file-input>
                     </v-col>
                     <template v-if="percent_loading_active">
                       <v-col class="p-0 mb-n6" cols="12">
@@ -197,15 +201,28 @@
           </v-tooltip>
         </template>
 
-        <v-btn  :href="props.item.attachment_url" v-if="props.item.attachment_url != ''" download icon text><v-icon color="primary">mdi-file-download</v-icon></v-btn>
-
+        <template v-if="props.item.attachment_url != ''">
+          <template v-if="typeof props.item.attachment_url === 'string'">
+            <v-btn :href="props.item.attachment_url" download icon text><v-icon color="primary">mdi-file-download</v-icon></v-btn>
+          </template>
+          <template v-else>
+            <v-btn onclick="download(props.item.attachment_url)" icon text><v-icon color="primary">mdi-file-download</v-icon></v-btn>
+          </template>
+        </template>
+        
         <?php if ($current_user['roles'][0] == 'elite_usa_superuser'): ?>
         <v-btn class="ml-n2 mr-n1"  @click="editUploadAttachmentItem(props.item)" icon text><v-icon color="primary">mdi-upload</v-icon></v-btn>
         <?php endif ?>
 
         <v-icon  color="error" @click="deleteDocumentItem(props.item)">mdi-trash-can</v-icon>
-        <?php else: ?>
-        <v-btn  :href="props.item.attachment_url" v-if="props.item.attachment_url != ''" download icon text><v-icon color="success">mdi-file-download</v-icon></v-btn>
+        <?php else: ?><template v-if="props.item.attachment_url != ''">
+        <template v-if="typeof props.item.attachment_url === 'string'">
+            <v-btn :href="props.item.attachment_url" download icon text><v-icon color="success">mdi-file-download</v-icon></v-btn>
+          </template>
+          <template v-else>
+            <v-btn @click="download(props.item.attachment_url)" icon text><v-icon color="success">mdi-file-download</v-icon></v-btn>
+          </template>
+        </template>
         <v-btn  @click="editAttachmentItem(props.item)" icon text><v-icon color="primary">mdi-upload</v-icon></v-btn>
       <?php endif ?>
       </v-row>

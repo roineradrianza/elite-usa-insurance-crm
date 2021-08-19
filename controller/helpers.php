@@ -2,6 +2,13 @@
 
 if (!defined('ABSPATH')) exit; //Exit if accessed directly
 
+if (!function_exists('str_contains')) {
+    function str_contains(string $haystack, string $needle): bool
+    {
+        return '' === $needle || false !== strpos($haystack, $needle);
+    }
+}
+
 function ra_elite_usa_insurance_register_style($style, $deps = array(), $inline_css = '')
 {
     $default_path = RA_ELITE_USA_INSURANCE_URL . 'assets/css/';
