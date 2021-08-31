@@ -26,7 +26,11 @@
       </v-col>
       <v-col cols="12" md="6">
         <v-text-field
-          v-model="form.content.affordable_care_act.company_plan" label="COMPANY / PLAN" :rules="form.rules.required"></v-text-field>
+          v-model="form.content.affordable_care_act.company_plan" label="COMPANY" :rules="form.rules.required"></v-text-field>
+      </v-col>
+      <v-col cols="12" md="6">
+        <v-text-field
+          v-model="form.content.affordable_care_act.plan" label="PLAN" :rules="form.rules.required"></v-text-field>
       </v-col>
       <v-col cols="12" md="6">
         <v-text-field type="text" v-model="form.content.affordable_care_act.premium" label="PREMIUM" prefix="$" @change="form.content.affordable_care_act.premium = currencyFormat(form.content.affordable_care_act.premium, false)" :rules="form.rules.required" ></v-text-field>

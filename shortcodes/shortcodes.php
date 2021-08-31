@@ -30,7 +30,7 @@ class RA_ELITE_USA_INSURANCE_SHORTCODES
             if ($current_user['roles'][0] == 'elite_usa_insurance_agent' && empty($current_user['agreement_form'])) {
                 echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['countries.min', 'setup-v1.0.2.min', 'agreement-v1.0.0'], 'interface/parts/agreement');
             } else {
-                echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['countries.min', 'setup-v1.0.2.min', 'applications/main-v1.10.4'], 'forms/quote_application');
+                echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['main'], ['countries.min', 'setup-v1.0.2.min', 'applications/main-v1.10.5'], 'forms/quote_application');
             }
         }
     }

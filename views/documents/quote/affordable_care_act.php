@@ -12,8 +12,10 @@ CARE ACT</B></FONT></FONT></FONT></H3>
 <FONT FACE="Roboto, serif"><FONT SIZE=2 STYLE="font-size: 10pt"><B>MONTLY
 SUBSIDY / MONTHLY FISCAL CREDIT:</B> <?php echo $affordable_care_act['mfc'] ?></FONT></FONT></P>
 <P STYLE="margin-bottom: 0.17in; background: #ffffff; border: none; padding: 0in; line-height: 100%">
-<FONT FACE="Roboto, serif"><FONT SIZE=2 STYLE="font-size: 10pt"><B>COMPANY
-/ PLAN:</B> <?php echo $affordable_care_act['company_plan'] ?></FONT></FONT></P>
+<FONT FACE="Roboto, serif"><FONT SIZE=2 STYLE="font-size: 10pt"><B>COMPANY:</B> <?php echo $affordable_care_act['company_plan'] ?></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.17in; background: #ffffff; border: none; padding: 0in; line-height: 100%">
+<FONT FACE="Roboto, serif"><FONT SIZE=2 STYLE="font-size: 10pt"><B></B>PLAN:</B> <?php echo !empty($affordable_care_act['plan']) ? $affordable_care_act['plan'] : '' ?>
+</FONT></FONT></P>
 <P STYLE="margin-bottom: 0.17in; background: #ffffff; border: none; padding: 0in; line-height: 100%">
 <FONT FACE="Roboto, serif"><FONT SIZE=2 STYLE="font-size: 10pt"><B>PREMIUM:</B>
 <?php echo $affordable_care_act['premium'] ?></FONT></FONT></P>

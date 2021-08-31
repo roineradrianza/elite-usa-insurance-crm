@@ -12,6 +12,9 @@
     <p class="font-weight-bold">COMPANY / PLAN: <span class="font-weight-light">{{ form.content.affordable_care_act.company_plan }}</span></p>
   </v-col>
   <v-col cols="12" md="6" lg="4">
+    <p class="font-weight-bold">PLAN: <span class="font-weight-light">{{ form.content.affordable_care_act.plan }}</span></p>
+  </v-col>
+  <v-col cols="12" md="6" lg="4">
     <p class="font-weight-bold">PREMIUM: <span class="font-weight-light">${{ form.content.affordable_care_act.premium }}</span></p>
   </v-col>
   <v-col cols="12" md="6" lg="4">

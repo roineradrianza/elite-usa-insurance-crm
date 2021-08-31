@@ -12,7 +12,10 @@
     <p class="font-weight-bold">MONTLY SUBSIDY / MONTHLY FISCAL CREDIT: <span class="font-weight-light">{{ currencyFormat(quotes.editedItem.affordable_care_act.mfc, true) }}</span></p>
   </v-col>
   <v-col cols="12" md="6" lg="4">
-    <p class="font-weight-bold">COMPANY / PLAN: <span class="font-weight-light">{{ quotes.editedItem.affordable_care_act.company_plan }}</span></p>
+    <p class="font-weight-bold">COMPANY: <span class="font-weight-light">{{ quotes.editedItem.affordable_care_act.company_plan }}</span></p>
+  </v-col>
+  <v-col cols="12" md="6" lg="4">
+    <p class="font-weight-bold">PLAN: <span class="font-weight-light">{{ quotes.editedItem.affordable_care_act.plan }}</span></p>
   </v-col>
   <v-col cols="12" md="6" lg="4">
     <p class="font-weight-bold">PREMIUM: <span class="font-weight-light">{{ currencyFormat(quotes.editedItem.affordable_care_act.premium, true) }}</span></p>

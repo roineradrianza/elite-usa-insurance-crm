@@ -29,11 +29,12 @@
         <v-text-field type="text" v-model="inbox.editedItem.affordable_care_act.mfc" label="MONTLY SUBSIDY / MONTHLY FISCAL CREDIT" prefix="$" @change="inbox.editedItem.affordable_care_act.mfc = currencyFormat(inbox.editedItem.affordable_care_act.mfc, false)"></v-text-field>
       </v-col>
       <v-col cols="12" md="6">
-        <v-text-field type="text" v-model="inbox.editedItem.affordable_care_act.mfc" label="MONTLY SUBSIDY / MONTHLY FISCAL CREDIT" prefix="$" @change="inbox.editedItem.affordable_care_act.mfc = currencyFormat(inbox.editedItem.affordable_care_act.mfc, false)"></v-text-field>
+        <v-text-field
+          v-model="inbox.editedItem.affordable_care_act.company_plan" label="COMPANY" :rules="rules.required"></v-text-field>
       </v-col>
       <v-col cols="12" md="6">
         <v-text-field
-          v-model="inbox.editedItem.affordable_care_act.company_plan" label="COMPANY / PLAN" :rules="rules.required"></v-text-field>
+          v-model="inbox.editedItem.affordable_care_act.plan" label="PLAN" :rules="rules.required"></v-text-field>
       </v-col>
       <v-col cols="12" md="6">
         <v-text-field type="text" v-model="inbox.editedItem.affordable_care_act.premium" label="PREMIUM" prefix="$" @change="inbox.editedItem.affordable_care_act.premium = currencyFormat(inbox.editedItem.affordable_care_act.premium, false)" :rules="rules.required"></v-text-field>
