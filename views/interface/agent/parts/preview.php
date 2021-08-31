@@ -32,6 +32,7 @@
             <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/agent/parts/request-edit') ?>
             <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/agent/parts/modification-form') ?>
             <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/manager/parts/attachments') ?>
+            <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/agent/parts/preview/files') ?>
             <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/agent/parts/preview/affordable_care_act') ?>
             <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/agent/parts/preview/personal_information') ?>
             <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/agent/parts/preview/espouse_information') ?>

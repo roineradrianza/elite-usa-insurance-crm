@@ -39,7 +39,15 @@ class RA_ELITE_USA_INSURANCE_QUOTES
 
     public static function store_quote()
     {
-        $data = json_decode(file_get_contents("php://input"), true);
+        $post_data = [];
+        if (!empty($_POST)) {
+            foreach ($_POST as $key => $value) {
+                $val = stripslashes($value);
+                $post_data[$key] = json_decode($val, true);
+            }
+        }
+        $data = empty($_POST) ? json_decode(file_get_contents("php://input"), true) : $post_data;
+        $documents = [];
         $post_arguments = [
             'post_title' => 'Quote Form - ' . $data['personal_information']['first_name'] . ' ' . $data['personal_information']['last_name'],
             'post_type' => 'quote_form',
@@ -53,6 +61,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
                 'espouse_employment_information' => json_encode($data['espouse_employment_information'], JSON_UNESCAPED_UNICODE),
                 'dependents' => json_encode($data['dependents'], JSON_UNESCAPED_UNICODE),
                 'payment_information' => json_encode($data['payment_information'], JSON_UNESCAPED_UNICODE),
+                'documents' => empty($_POST) ? json_encode($data['documents'], JSON_UNESCAPED_UNICODE) : json_encode($documents, JSON_UNESCAPED_UNICODE),
             ],
         ];
         if (!empty($data['ID'])) {
@@ -64,6 +73,45 @@ class RA_ELITE_USA_INSURANCE_QUOTES
         $message = ['message' => 'Quote form saved', 'status' => 'success'];
         if (!$result) {
             $message = ['message' => 'There was an error, try again.', 'status' => 'error'];
+        }
+        if (isset($_FILES['documents']) && $result != 0) {
+            $files = $_FILES['documents'];
+            for ($i=0; $i < count($_FILES['documents']['name']); $i++) { 
+                $upload_dir = wp_upload_dir();
+                $filename = explode(".", $files['name'][$i])[0];
+                $filetype = wp_check_filetype(basename($files['name'][$i]), null);
+                $filename_ext = sanitize_title($filename) . ".{$filetype['ext']}";
+                $moveFile = move_uploaded_file($files["tmp_name"][$i], $upload_dir['path'] . "/$filename_ext");
+                if ($moveFile) {
+                    $attachment = array(
+                        'post_parent' => $result,
+                        'guid' => $upload_dir['url'] . '/' . $filename_ext,
+                        'post_mime_type' => $filetype['type'],
+                        'post_title' => $post_data['docs_info'][$i]['file']['post_title'],
+                        'post_content' => $post_data['docs_info'][$i]['file']['post_content'],
+                        'post_status' => 'inherit',
+                    );
+                    $attach_result = wp_insert_attachment($attachment, $filename_ext);
+                    if (!$attach_result) {
+                        $message = ['message' => 'There was an error creating the file record, try again.', 'status' => 'error'];
+                        wp_send_json($message);
+                    }
+                    $documents[] = [
+                        'ID' => $attach_result,
+                        'post_title' => $attachment['post_title'],
+                        'post_content' => $attachment['post_content'],
+                        'url' => $attachment['guid']
+                    ];
+                } else {
+                    wp_send_json(['message' => "There was an error with the uploaded file: {$files['name'][$i]}, try again.", 'status' => 'error']);
+                }
+            }
+            wp_update_post([
+                'ID' => $result,
+                'meta_input' => [
+                    'documents' => json_encode($documents, JSON_UNESCAPED_UNICODE)
+                ]]
+            );
         }
         wp_send_json($message);
     }
@@ -162,6 +210,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
             'espouse_employment_information',
             'dependents',
             'payment_information',
+            'documents'
         ];
         $query = get_posts($args);
         $posts = [];
@@ -196,6 +245,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
             'espouse_employment_information',
             'dependents',
             'payment_information',
+            'documents'
         ];
         $query = get_posts($args);
         $posts = [];
@@ -232,6 +282,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
             'espouse_employment_information',
             'dependents',
             'payment_information',
+            'documents'
         ];
         $query = get_posts($args);
         $posts = [];

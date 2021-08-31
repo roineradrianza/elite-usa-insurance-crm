@@ -46,11 +46,23 @@
                   </v-stepper-step>
 
                   <v-divider></v-divider>
-                </template>
-
-                <v-stepper-step ref="stepper_5" :step="form.content.affordable_care_act.coverage_type == 'FAMILY' ? 5 : 3">
+                  <v-stepper-step ref="stepper_5" :complete="stepper > 5" step="5">
                   PAYMENT
-                </v-stepper-step>
+                  </v-stepper-step>
+                    <v-divider></v-divider>
+                  <v-stepper-step ref="stepper_6" :step="form.content.affordable_care_act.coverage_type == 'FAMILY' ? 6 : 4">
+                    FILES
+                  </v-stepper-step>
+                </template>
+                <template v-else>
+                  <v-stepper-step ref="stepper_5" :complete="stepper > 3" step="3">
+                    PAYMENT
+                  </v-stepper-step>
+                    <v-divider></v-divider>
+                  <v-stepper-step ref="stepper_6" step="4">
+                    FILES
+                  </v-stepper-step>
+                </template>
               </v-stepper-header>
 
               <v-stepper-items>
@@ -109,10 +121,16 @@
 
                 <v-stepper-content :step="form.content.affordable_care_act.coverage_type == 'FAMILY' ? 5 : 3">
                   <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/payment_information'); ?>
-
-                  <v-btn color="primary" @click="preview = true;updateFormDate();" ref="application_preview" :disabled="!payment_information_valid">
-                    PREVIEW
-                  </v-btn>
+                  <template v-if="form.content.affordable_care_act.coverage_type == 'FAMILY'">
+                    <v-btn color="primary" @click="stepper = 6;scrollToTopStepper()" :disabled="!payment_information_valid">
+                    CONTINUE
+                    </v-btn>
+                  </template>
+                  <template v-else>
+                    <v-btn color="primary" @click="stepper = 4;scrollToTopStepper()" :disabled="!payment_information_valid">
+                    CONTINUE
+                    </v-btn>                    
+                  </template>
                   <template v-if="form.content.affordable_care_act.coverage_type == 'FAMILY'">
                    <v-btn @click="stepper = 4;scrollToTopStepper()" text>
                       GO BACK
@@ -120,6 +138,23 @@
                   </template>
                   <template v-else>
                     <v-btn @click="stepper = 2;scrollToTopStepper()" text>
+                      GO BACK
+                    </v-btn>
+                  </template>
+                </v-stepper-content>
+                <v-stepper-content :step="form.content.affordable_care_act.coverage_type == 'FAMILY' ? 6 : 4">
+                  <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/files'); ?>
+
+                  <v-btn color="primary" @click="preview = true;updateFormDate();" ref="application_preview" :disabled="!payment_information_valid">
+                    PREVIEW
+                  </v-btn>
+                  <template v-if="form.content.affordable_care_act.coverage_type == 'FAMILY'">
+                   <v-btn @click="stepper = 5;scrollToTopStepper()" text>
+                      GO BACK
+                    </v-btn>
+                  </template>
+                  <template v-else>
+                    <v-btn @click="stepper = 3;scrollToTopStepper()" text>
                       GO BACK
                     </v-btn>
                   </template>

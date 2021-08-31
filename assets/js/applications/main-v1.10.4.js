@@ -161,6 +161,7 @@ let vm = new Vue({
           payment_by: ''
         },
         dependents: [],
+        documents: [],
         payment_information: {
           type: '',
           bank: {
@@ -263,6 +264,7 @@ let vm = new Vue({
           payment_by: ''
         },
         dependents: [],
+        documents: [],
         payment_information: {
           type: '',
           bank: {
@@ -404,10 +406,24 @@ let vm = new Vue({
       var app = this
       app.updateFormDate()
       var quote_form = app.form.content
+      var data = new FormData()
       var url = api_url + 'ra_elite_usa_insurance_save_quote_form'
 
+      data.append('affordable_care_act', JSON.stringify(quote_form.affordable_care_act))
+      data.append('personal_information', JSON.stringify(quote_form.personal_information))
+      data.append('employment_information', JSON.stringify(quote_form.employment_information))
+      data.append('espouse_information', JSON.stringify(quote_form.espouse_information))
+      data.append('espouse_employment_information', JSON.stringify(quote_form.espouse_employment_information))
+      data.append('dependents', JSON.stringify(quote_form.dependents))
+      data.append('payment_information', JSON.stringify(quote_form.payment_information))
+      data.append('docs_info', JSON.stringify(quote_form.documents))
+
+      quote_form.documents.forEach((doc, i) => {
+        data.append('documents['+i+']', doc.file) 
+      });
+
       app.quote_loading = true
-      app.$http.post(url,quote_form).then( res => {
+      app.$http.post(url, data).then( res => {
         app.quote_loading = false
         app.alert = true
         if (res.body.hasOwnProperty('message')) {
@@ -454,8 +470,7 @@ let vm = new Vue({
       app.preview = false
       app.already_sent = false
       app.stepper = 1
-      app.form.content = {}
-      Object.assign(app.form.content, default_form)
+      app.form.content = Object.assign({}, default_form)
       app.scrollToTopStepper()
     },
 

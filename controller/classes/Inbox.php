@@ -34,7 +34,8 @@ class RA_ELITE_USA_INSURANCE_INBOX
             'employment_information', 
             'espouse_information', 
             'espouse_employment_information', 
-            'dependents', 
+            'dependents',
+            'documents',
             'payment_information',
             'seen'
         ];
@@ -86,7 +87,8 @@ class RA_ELITE_USA_INSURANCE_INBOX
             'employment_information', 
             'espouse_information', 
             'espouse_employment_information', 
-            'dependents', 
+            'dependents',
+            'documents',
             'payment_information',
             'attachment_url',
             'seen'
@@ -131,7 +133,8 @@ class RA_ELITE_USA_INSURANCE_INBOX
             'employment_information', 
             'espouse_information', 
             'espouse_employment_information', 
-            'dependents', 
+            'dependents',
+            'documents',
             "date_user_{$current_user['id']}_n_seen",
             'payment_information',
             'seen'
@@ -184,7 +187,8 @@ class RA_ELITE_USA_INSURANCE_INBOX
             'employment_information', 
             'espouse_information', 
             'espouse_employment_information', 
-            'dependents', 
+            'dependents',
+            'documents',
             'payment_information',
             'attachment_url',
             "date_user_{$author['id']}_n_seen",

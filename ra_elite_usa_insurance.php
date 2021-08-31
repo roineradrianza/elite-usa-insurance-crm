@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       EliteUSAInsurance
  * Description:       Insurance quote applications
- * Version:           1.0.3
+ * Version:           1.0.4
  * Requires at least: 5.1
  * Requires PHP:      7.2
  * Author:            Roiner Adrianza
