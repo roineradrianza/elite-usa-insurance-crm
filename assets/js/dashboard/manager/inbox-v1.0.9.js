@@ -33,6 +33,7 @@ let vm = new Vue({
     view_dialog: false,
     edit_dialog: false,
     delete_dialog: false,
+    routes: routes,
     countries: countries,
     affordable_care_act_valid: true,
     personal_information_valid: true,
@@ -66,7 +67,6 @@ let vm = new Vue({
       cards_type: ['DEBIT', 'CREDIT'],
       cards_entity_type: ['MASTER CARD', 'VISA', 'AMERICAN EXPRESS', 'DISCOVER'],
     },
-    countries: countries,
     rules: {
       required: [
         v => !!v || 'This field is required',
@@ -140,14 +140,13 @@ let vm = new Vue({
       },
       editedIndex: -1,
     },
-    routes: routes,
     inbox: {
       view_dialog: false,
       loading_details: false,
       search: '',
       header: [
         { text: 'ID', align: 'left', value: 'quote_id' },
-        { text: 'Date', align: 'left', value: 'published_at' },
+        { text: 'Date', align: 'center', value: 'published_at' },
         { text: 'Description', align: 'center', value: 'post_title' },
         { text: 'type', align: 'center', value: 'post_type' },
         { text: 'Status', align: 'center', value: 'status' },
@@ -174,6 +173,19 @@ let vm = new Vue({
       },
       editedIndex: -1,
     },
+    action_history: {
+      dialog: false,
+      details_dialog: false,
+      loading: false,
+      headers: [
+        { text: 'Date', align: 'center', value: 'created_at' },
+        { text: 'Description', align: 'center', value: 'action_message' },
+        { text: 'Action', align: 'center', value: 'actions' },
+      ],
+      items: [],
+      editedItem: {},
+      detail_items: [],
+    }
   },
 
   computed: {
@@ -184,10 +196,11 @@ let vm = new Vue({
     formManagerAttachmentTitle () {
       return this.manager_attachments.editedIndex === -1 ? 'New Document Attachment' : 'Edit Document Attachment'
     },
-
+ 
     formRequestInformationTitle () {
       return this.information_requests.editedIndex === -1 ? 'New Information Request' : 'Edit Information Request'
     },
+
   },
 
   watch: {},
@@ -268,7 +281,6 @@ let vm = new Vue({
 
       })
     },
-
 
     getModificationRequests () {
       var app = this
@@ -352,6 +364,59 @@ let vm = new Vue({
       })
     },
 
+    getActionsHistory (quote) {
+      var app = this
+      app.action_history.items = []
+      var url = api_url + 'ra_elite_usa_insurance_get_quote_action_history'
+      var data = {
+        ID: quote.ID,
+      }
+      app.action_history.loading = true
+      app.$http.post(url, data).then( res => {
+        app.action_history.loading = false
+        var items = []
+        if (res.body.length > 0) {
+          res.body.forEach( (e, i) => {
+            e.extra_info = JSON.parse(e.extra_info)
+            e.created_at = usesGMT ? moment.utc(moment(e.created_at).format('YYYY-MM-DD, h:mm:ss')).local() : e.created_at
+            if (e.extra_info.post_type == 'quote_doc_r') {
+              if (e.extra_info.meta_input.attachment_url.includes('[')) {
+                e.extra_info.meta_input.attachment_url = JSON.parse(e.extra_info.meta_input.attachment_url)
+              }
+            }
+          })
+        }
+        items = res.body
+        app.action_history.items = items
+      }, err => {
+      })
+    },
+
+    showActionDetails (item) {
+      var app = this
+      var action_history = app.action_history
+      action_history.editedItem = Object.assign({}, item)
+      action_history.detail_items = []
+      var items = action_history.items.filter( e => {
+        return e.post_parent == action_history.editedItem.post_parent
+      })
+      action_history.detail_items = items
+      action_history.details_dialog = true
+    },
+
+    showDetailsItem (item) {
+      this.inbox.editedItem = Object.assign({}, item)
+      this.inbox.view_dialog = true
+    },
+
+    closeDetailsView () {
+      this.inbox.view_dialog = false
+      this.$nextTick(() => {
+        this.inbox.editedItem = Object.assign({}, {})
+        this.inbox.editedIndex = -1
+      })
+    },
+
     showItem (item) {
       this.inbox.editedIndex = this.inbox.items.indexOf(item)
       this.inbox.editedItem = Object.assign({}, item)
@@ -369,6 +434,7 @@ let vm = new Vue({
       this.manager_attachments.editedItem = Object.assign({}, item)
       this.manager_attachments.dialog = true
     },
+
 
     editAttachmentItem (item) {
       this.attachments.editedIndex = this.attachments.items.indexOf(item)
@@ -400,12 +466,6 @@ let vm = new Vue({
       this.manager_attachments.delete_dialog = true
     },
 
-    deleteInformationRequestItem (item) {
-      this.information_requests.editedIndex = this.information_requests.items.indexOf(item)
-      this.information_requests.editedItem = Object.assign({}, item)
-      this.information_requests.delete_dialog = true
-    },
-
     closeView () {
       this.view_dialog = false
       this.$nextTick(() => {
@@ -430,14 +490,6 @@ let vm = new Vue({
       })
     },
    
-    closeUploadInformationRequest () {
-      this.information_requests.dialog = false
-      this.$nextTick(() => {
-        this.information_requests.editedItem = Object.assign({}, {})
-        this.information_requests.editedIndex = -1
-      })
-    },
-   
     closeManagerAttachment () {
       this.manager_attachments.dialog = false
       this.$nextTick(() => {
@@ -448,6 +500,14 @@ let vm = new Vue({
 
     closeInformationRequest () {
       this.information_requests.dialog = false
+      this.$nextTick(() => {
+        this.information_requests.editedItem = Object.assign({}, {})
+        this.information_requests.editedIndex = -1
+      })
+    },
+
+    closeInformationRequestDelete () {
+      this.information_requests.delete_dialog = false
       this.$nextTick(() => {
         this.information_requests.editedItem = Object.assign({}, {})
         this.information_requests.editedIndex = -1
@@ -477,14 +537,6 @@ let vm = new Vue({
       this.$nextTick(() => {
         this.inbox.editedItem = Object.assign({}, {})
         this.inbox.editedIndex = -1
-      })
-    },
-
-    closeInformationRequestDelete () {
-      this.information_requests.delete_dialog = false
-      this.$nextTick(() => {
-        this.information_requests.editedItem = Object.assign({}, {})
-        this.information_requests.editedIndex = -1
       })
     },
 
@@ -557,7 +609,6 @@ let vm = new Vue({
         return false
       }
     },
-
 
     removeDependent(index) {
       var app = this
@@ -855,7 +906,7 @@ let vm = new Vue({
         app.barMessage = "There was an error, it can't be possible process the information sent"
       })
     },
-  
+    
     markAsProcessingDocumentRequested (item) {
       var app = this
       var url = api_url + 'ra_elite_usa_insurance_process_form_document_requested'
@@ -956,6 +1007,12 @@ let vm = new Vue({
       })
     },
 
+    deleteInformationRequestItem (item) {
+      this.information_requests.editedIndex = this.information_requests.items.indexOf(item)
+      this.information_requests.editedItem = Object.assign({}, item)
+      this.information_requests.delete_dialog = true
+    },
+
     uploadAttachment () {
       var app = this
       var attachment = app.attachments.editedItem
@@ -966,16 +1023,13 @@ let vm = new Vue({
 
       data.append('ID', attachment.ID)
       data.append('post_title', attachment.post_title)
+      data.append('attachment', attachment.doc)
       data.append('post_author', attachment.post_author)
       data.append('agent', app.inbox.editedItem.affordable_care_act.agent_name)
 
       if (attachment.attachment_id != '' ) {
         data.append('attachment_id', attachment.attachment_id)
       }
-
-      attachment.doc.forEach((doc, i) => {
-        data.append('attachment['+i+']', doc)
-      });
 
       app.attachment_loading = true
       app.$http.post(url, data, {
@@ -1013,36 +1067,6 @@ let vm = new Vue({
       })
     },
 
-    uploadInformationRequest () {
-      var app = this
-      var information = app.information_requests.editedItem
-      information.agent = app.inbox.editedItem.affordable_care_act.agent_name
-      var url = api_url + 'ra_elite_usa_insurance_upload_quote_information_requested'
-      var index = app.information_requests.editedIndex
-
-      app.information_requests_loading = true
-      app.$http.post(url, information).then( res => {
-        app.information_requests_loading = false
-        app.barAlert = true
-        if (res.body.hasOwnProperty('message')) {
-          app.barMessage = res.body.message
-          if (res.body.status == 'success') {
-            information.status = 2
-            Object.assign(app.information_requests.items[index], information)
-            app.information_requests.dialog = false
-          }
-        }
-        else {
-          app.alert_type = 'error'
-          app.barMessage = 'There was an error'
-        }
-      }, err => {
-        app.attachment_loading = false
-        app.barAlert = true
-        app.barMessage = "There was an error, it can't be possible process the information sent"
-      })
-    },
-
     deleteInformationRequest () {
       var app = this
       var attachment = app.information_requests.editedItem
@@ -1066,46 +1090,6 @@ let vm = new Vue({
         app.manager_attachments.delete_dialog = false
         app.barAlert = true
         app.barMessage = "There was an error, it can't be possible process the information sent"
-      })
-    },
-
-    currencyFormat (amount, show_prefix) {
-      if (typeof amount !== String) {
-        var formatter = new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency: 'USD',
-        });
-        var money = formatter.format(amount);
-        if (!show_prefix) {
-          money = money.split("$")[1]
-        }
-        if (money == '$NaN' || money === NaN) {
-          if (show_prefix) {
-            return '$'+ amount
-          }
-          return amount
-        }
-        return money
-      }
-      else {
-        return amount
-      }
-    },
-
-    numberFormat (amount) {
-      return Number(amount.replace(/[^0-9.-]+/g,""))
-    },
-
-    showDetailsItem (item) {
-      this.inbox.editedItem = Object.assign({}, item)
-      this.inbox.view_dialog = true
-    },
-
-    closeDetailsView () {
-      this.inbox.view_dialog = false
-      this.$nextTick(() => {
-        this.inbox.editedItem = Object.assign({}, {})
-        this.inbox.editedIndex = -1
       })
     },
 
@@ -1210,6 +1194,33 @@ let vm = new Vue({
             break;
         }
       }
+    },
+
+    currencyFormat (amount, show_prefix) {
+      if (typeof amount !== String) {
+        var formatter = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+        });
+        var money = formatter.format(amount);
+        if (!show_prefix) {
+          money = money.split("$")[1]
+        }
+        if (money == '$NaN' || money === NaN) {
+          if (show_prefix) {
+            return '$'+ amount
+          }
+          return amount
+        }
+        return money
+      }
+      else {
+        return amount
+      }
+    },
+
+    numberFormat (amount) {
+      return Number(amount.replace(/[^0-9.-]+/g,""))
     },
 
     getFormatDate(d) {

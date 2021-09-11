@@ -74,9 +74,22 @@ class RA_ELITE_USA_INSURANCE_QUOTES
         if (!$result) {
             $message = ['message' => 'There was an error, try again.', 'status' => 'error'];
         }
+        if (empty($data['ID'])) {
+            $action_data = [
+                'post_id' => $result,
+                'action_message' => "Quote's creation",
+                'post_type' => $post_arguments['post_type'],
+                'action_type' => 'create',
+                'created_at' => $data['affordable_care_act']['date'],
+                'extra_info' => json_encode($post_arguments, JSON_UNESCAPED_UNICODE),
+            ];
+            $action_data['post_id'] = $result;
+            $action_history = new RA_EUI_ACTIONS_HISTORY_MODEL();
+            $action_result = $action_history->create($action_data);
+        }
         if (isset($_FILES['documents']) && $result != 0) {
             $files = $_FILES['documents'];
-            for ($i=0; $i < count($_FILES['documents']['name']); $i++) { 
+            for ($i = 0; $i < count($_FILES['documents']['name']); $i++) {
                 $upload_dir = wp_upload_dir();
                 $filename = explode(".", $files['name'][$i])[0];
                 $filetype = wp_check_filetype(basename($files['name'][$i]), null);
@@ -100,7 +113,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
                         'ID' => $attach_result,
                         'post_title' => $attachment['post_title'],
                         'post_content' => $attachment['post_content'],
-                        'url' => $attachment['guid']
+                        'url' => $attachment['guid'],
                     ];
                 } else {
                     wp_send_json(['message' => "There was an error with the uploaded file: {$files['name'][$i]}, try again.", 'status' => 'error']);
@@ -109,7 +122,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
             wp_update_post([
                 'ID' => $result,
                 'meta_input' => [
-                    'documents' => json_encode($documents, JSON_UNESCAPED_UNICODE)
+                    'documents' => json_encode($documents, JSON_UNESCAPED_UNICODE),
                 ]]
             );
         }
@@ -167,6 +180,14 @@ class RA_ELITE_USA_INSURANCE_QUOTES
         if (!$results) {
             $message = ['message' => 'There was an error, try again.', 'status' => 'error'];
         }
+        $action_data = [
+            'action_message' => "Document requested deleted",
+            'post_type' => $data['post_type'],
+            'action_type' => 'delete',
+            'post_id' => $data['post_parent'],
+        ];
+        $action_history = new RA_EUI_ACTIONS_HISTORY_MODEL();
+        $action_result = $action_history->create($action_data);
         wp_send_json($message);
     }
 
@@ -210,7 +231,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
             'espouse_employment_information',
             'dependents',
             'payment_information',
-            'documents'
+            'documents',
         ];
         $query = get_posts($args);
         $posts = [];
@@ -245,7 +266,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
             'espouse_employment_information',
             'dependents',
             'payment_information',
-            'documents'
+            'documents',
         ];
         $query = get_posts($args);
         $posts = [];
@@ -282,7 +303,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
             'espouse_employment_information',
             'dependents',
             'payment_information',
-            'documents'
+            'documents',
         ];
         $query = get_posts($args);
         $posts = [];
@@ -324,6 +345,17 @@ class RA_ELITE_USA_INSURANCE_QUOTES
         if (!$result) {
             $message = ['message' => 'There was an error, try again.', 'status' => 'error'];
         }
+        $action_data = [
+            'action_message' => "Quote modification requested",
+            'post_type' => $post_arguments['post_type'],
+            'action_type' => 'request',
+            'post_parent' => $result,
+            'post_id' => $post_arguments['post_parent'],
+            'extra_info' => json_encode($post_arguments, JSON_UNESCAPED_UNICODE),
+        ];
+        $action_history = new RA_EUI_ACTIONS_HISTORY_MODEL();
+        $action_result = $action_history->create($action_data);
+
         wp_send_json($message);
     }
 
@@ -345,6 +377,17 @@ class RA_ELITE_USA_INSURANCE_QUOTES
         if (!$result) {
             $message = ['message' => 'There was an error, try again.', 'status' => 'error'];
         }
+        $data['meta_input'] = $post_arguments['meta_input'];
+        $action_data = [
+            'post_id' => $data['post_parent'],
+            'post_parent' => $data['ID'],
+            'action_message' => "Quote modification requested marked as approved",
+            'post_type' => 'quote_data_r',
+            'action_type' => 'status update',
+            'extra_info' => json_encode($data, JSON_UNESCAPED_UNICODE),
+        ];
+        $action_history = new RA_EUI_ACTIONS_HISTORY_MODEL();
+        $action_result = $action_history->create($action_data);
         wp_send_json($message);
     }
 
@@ -366,6 +409,17 @@ class RA_ELITE_USA_INSURANCE_QUOTES
         if (!$result) {
             $message = ['message' => 'There was an error, try again.', 'status' => 'error'];
         }
+        $data['meta_input'] = $post_arguments['meta_input'];
+        $action_data = [
+            'post_id' => $data['post_parent'],
+            'post_parent' => $data['ID'],
+            'action_message' => "Information requested marked as approved",
+            'post_type' => 'quote_data_r',
+            'action_type' => 'status update',
+            'extra_info' => json_encode($data, JSON_UNESCAPED_UNICODE),
+        ];
+        $action_history = new RA_EUI_ACTIONS_HISTORY_MODEL();
+        $action_result = $action_history->create($action_data);
         wp_send_json($message);
     }
 
@@ -387,6 +441,18 @@ class RA_ELITE_USA_INSURANCE_QUOTES
         if (!$result) {
             $message = ['message' => 'There was an error, try again.', 'status' => 'error'];
         }
+        $data['meta_input'] = $post_arguments['meta_input'];
+        $data['meta_input']['attachment_url'] = $data['attachment_url'];
+        $action_data = [
+            'post_id' => $data['post_parent'],
+            'post_parent' => $data['ID'],
+            'action_message' => "Document requested marked as processing",
+            'post_type' => 'quote_doc_r',
+            'action_type' => 'status update',
+            'extra_info' => json_encode($data, JSON_UNESCAPED_UNICODE),
+        ];
+        $action_history = new RA_EUI_ACTIONS_HISTORY_MODEL();
+        $action_result = $action_history->create($action_data);
         wp_send_json($message);
     }
 
@@ -408,6 +474,18 @@ class RA_ELITE_USA_INSURANCE_QUOTES
         if (!$result) {
             $message = ['message' => 'There was an error, try again.', 'status' => 'error'];
         }
+        $data['meta_input'] = $post_arguments['meta_input'];
+        $data['meta_input']['attachment_url'] = $data['attachment_url'];
+        $action_data = [
+            'post_id' => $data['post_parent'],
+            'post_parent' => $data['ID'],
+            'action_message' => "Document requested marked as approved",
+            'post_type' => 'quote_doc_r',
+            'action_type' => 'status update',
+            'extra_info' => json_encode($data, JSON_UNESCAPED_UNICODE),
+        ];
+        $action_history = new RA_EUI_ACTIONS_HISTORY_MODEL();
+        $action_result = $action_history->create($action_data);
         wp_send_json($message);
     }
 
@@ -457,8 +535,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
                 if ($meta == 'attachment_url' || $meta == 'attachment_id') {
                     $meta_val = get_post_meta($post['ID'], $meta, true);
                     $post[$meta] = str_contains($meta_val, '[') ? json_decode($meta_val) : $meta_val;
-                }
-                else {
+                } else {
                     $post[$meta] = get_post_meta($post['ID'], $meta, true);
                 }
             }
@@ -537,6 +614,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
                 'attachment_url' => '',
             ],
         ];
+
         if (!empty($data['ID'])) {
             $post_arguments['meta_input']['status'] = $data['status'];
             $post_arguments['ID'] = $data['ID'];
@@ -545,6 +623,18 @@ class RA_ELITE_USA_INSURANCE_QUOTES
         $message = ['message' => empty($data['ID']) ? 'Document requested' : 'Document name edited', 'status' => 'success', 'data' => $result];
         if (!$result) {
             $message = ['message' => 'There was an error, try again.', 'status' => 'error'];
+        }
+        if (empty($data['ID'])) {
+            $action_data = [
+                'post_id' => $post_arguments['post_parent'],
+                'post_parent' => $result,
+                'action_message' => "Document requested",
+                'post_type' => $post_arguments['post_type'],
+                'action_type' => 'request',
+                'extra_info' => json_encode($post_arguments, JSON_UNESCAPED_UNICODE),
+            ];
+            $action_history = new RA_EUI_ACTIONS_HISTORY_MODEL();
+            $action_result = $action_history->create($action_data);
         }
         wp_send_json($message);
     }
@@ -576,6 +666,19 @@ class RA_ELITE_USA_INSURANCE_QUOTES
         if (!$result) {
             $message = ['message' => 'There was an error, try again.', 'status' => 'error'];
         }
+        if (empty($data['ID'])) {
+            $action_data = [
+                'post_id' => $post_arguments['post_parent'],
+                'post_parent' => $result,
+                'action_message' => "Information requested",
+                'post_type' => $post_arguments['post_type'],
+                'action_type' => 'request',
+                'extra_info' => json_encode($post_arguments, JSON_UNESCAPED_UNICODE),
+            ];
+            $action_history = new RA_EUI_ACTIONS_HISTORY_MODEL();
+            $action_result = $action_history->create($action_data);
+        }
+
         wp_send_json($message);
     }
 
@@ -604,8 +707,19 @@ class RA_ELITE_USA_INSURANCE_QUOTES
         ];
         if (!empty($data['ID'])) {
             $post_arguments['ID'] = $data['ID'];
+            $action_data['action_message'] = 'Attachment added has been updated';
+            $action_data['action_type'] = 'update';
         }
         $post_result = wp_insert_post($post_arguments);
+        $action_data = [
+            'post_id' => $post_arguments['post_parent'],
+            'post_parent' => $post_result,
+            'action_message' => "Attachment added",
+            'post_type' => $post_arguments['post_type'],
+            'action_type' => 'upload',
+            'raw_data_extra_info' => $post_arguments,
+            'extra_info' => json_encode($post_arguments, JSON_UNESCAPED_UNICODE),
+        ];
         if (!$post_result) {
             $message = ['message' => 'There was an error, try again.', 'status' => 'error'];
             wp_send_json($message);
@@ -655,12 +769,19 @@ class RA_ELITE_USA_INSURANCE_QUOTES
                 if (!$result) {
                     $message = ['message' => 'There was an error uploading the attachment, try again.', 'status' => 'error', 'error' => $result];
                 }
+                $action_data['raw_data_extra_info']['meta_input'] = $post_arguments['meta_input'];
+                $action_data['extra_info'] = json_encode($action_data['raw_data_extra_info'], JSON_UNESCAPED_UNICODE);
+                if (!empty($data['ID'])) {
+                    $action_data['action_message'] = 'Attachment updated';
+                }
+                unset($action_data['raw_data_extra_info']);
+                $action_history = new RA_EUI_ACTIONS_HISTORY_MODEL();
+                $action_result = $action_history->create($action_data);
                 wp_send_json($message);
             } else {
-                wp_send_json(['message' => "There was an error with the uplaoded file, try again.", 'status' => 'error']);
+                wp_send_json(['message' => "There was an error with the uploaded file, try again.", 'status' => 'error']);
             }
         }
-
         wp_send_json($message);
     }
 
@@ -706,10 +827,24 @@ class RA_ELITE_USA_INSURANCE_QUOTES
             'meta_input' => [
                 'status' => 2,
                 'attachment_url' => json_encode($attachs_url, JSON_UNESCAPED_UNICODE),
-                'attachment_id' => $attachs_id
+                'attachment_id' => $attachs_id,
             ],
         ];
         $result = wp_update_post($post_arguments);
+
+        $post_parent = get_post($data['ID'], ARRAY_A);
+        $data['meta_input'] = $post_arguments['meta_input'];
+        $data['post_type'] = 'quote_doc_r';
+        $action_data = [
+            'post_id' => $post_parent['post_parent'],
+            'post_parent' => $data['ID'],
+            'action_message' => "Attachment/s requested added",
+            'action_type' => 'upload',
+            'post_type' => 'quote_doc_r',
+            'extra_info' => json_encode($data, JSON_UNESCAPED_UNICODE),
+        ];
+        $action_history = new RA_EUI_ACTIONS_HISTORY_MODEL();
+        $action_result = $action_history->create($action_data);
         $message_data = ['attachment_id' => $attachs_id, 'attachment_url' => $attachs_url];
         $message['data'] = $message_data;
         wp_send_json($message);
@@ -729,11 +864,22 @@ class RA_ELITE_USA_INSURANCE_QUOTES
                 'status' => 2,
             ],
         ];
+        $data['meta_input'] = $post_arguments['meta_input'];
+        $action_data = [
+            'post_id' => $data['post_parent'],
+            'post_parent' => $data['ID'],
+            'action_message' => "Information requested uploaded",
+            'post_type' => 'quote_data_r',
+            'action_type' => 'upload',
+            'extra_info' => json_encode($data, JSON_UNESCAPED_UNICODE),
+        ];
         $result = wp_update_post($post_arguments);
         $message = ['message' => 'Information sent successfully', 'status' => 'success'];
         if (!$result) {
             $message = ['message' => 'There was an error, try again.', 'status' => 'error'];
         }
+        $action_history = new RA_EUI_ACTIONS_HISTORY_MODEL();
+        $action_result = $action_history->create($action_data);
 
         wp_send_json($message);
     }

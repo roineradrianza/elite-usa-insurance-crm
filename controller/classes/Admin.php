@@ -30,7 +30,7 @@ class RA_ELITE_USA_INSURANCE_ADMIN
         add_action('wp_enqueue_scripts', $this->ra_elite_usa_insurance_enqueue_ss());
         $nonce = wp_create_nonce( 'ra_elite_usa_insurance_settings_nonce');
         wp_localize_script('vue-js', 'nonce', $nonce);
-        echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['admin/main'],['setup-v1.0.0.min', 'lib/moment.min', 'admin/settings'],'admin/settings');
+        echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['admin/main'],['setup-v1.0.1.min', 'lib/moment.min', 'admin/settings'],'admin/settings');
     }
 
     public function ra_elite_usa_insurance_enqueue_ss() {

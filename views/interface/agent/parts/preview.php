@@ -20,12 +20,14 @@
               <h5 class="text-h5">Quote ID: <b>{{ quotes.editedItem.ID }}</b></h5>
             </v-col>
             <v-col class="d-flex justify-end mt-n10" cols="10">
+              <v-btn class="mr-3 py-4" color="info" @click="action_history.dialog = true;getActionsHistory(quotes.editedItem)" small>View Actions History</v-btn>
               <v-btn class="mr-3 py-4" color="primary" @click="generateQuotePDF" :loading="pdf_loading" small>Download Quote</v-btn>
               <?php if ($current_user['roles'][0] == 'administrator' || $current_user['roles'][0] == 'elite_usa_quote_manager'): ?>
                 <v-btn class="mr-3 py-4" color="success" @click="edit_dialog = true" small>Edit <v-icon small>mdi-pencil</v-icon></v-btn>
               <?php endif ?>
               <v-chip :color="checkStatusColor(quotes.editedItem.status)" dark>{{ quotes.editedItem.status }}</v-chip>
             </v-col>
+            <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/dialogs/quote_action_history') ?>
             <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/manager/parts/manager_attachments') ?>
             <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/manager/parts/information_requests') ?>
             <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/manager/parts/modification_requests') ?>

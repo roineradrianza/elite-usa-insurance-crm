@@ -458,6 +458,46 @@ let vm = new Vue({
       })
     },
 
+    getActionsHistory (quote) {
+      var app = this
+      app.action_history.items = []
+      var url = api_url + 'ra_elite_usa_insurance_get_quote_action_history'
+      var data = {
+        ID: quote.ID,
+      }
+      app.action_history.loading = true
+      app.$http.post(url, data).then( res => {
+        app.action_history.loading = false
+        var items = []
+        if (res.body.length > 0) {
+          res.body.forEach( (e, i) => {
+            e.extra_info = JSON.parse(e.extra_info)
+            e.created_at = usesGMT ? moment.utc(moment(e.created_at).format('YYYY-MM-DD, h:mm:ss')).local() : e.created_at
+            if (e.extra_info.post_type == 'quote_doc_r') {
+              if (e.extra_info.meta_input.attachment_url.includes('[')) {
+                e.extra_info.meta_input.attachment_url = JSON.parse(e.extra_info.meta_input.attachment_url)
+              }
+            }
+          })
+        }
+        items = res.body
+        app.action_history.items = items
+      }, err => {
+      })
+    },
+
+    showActionDetails (item) {
+      var app = this
+      var action_history = app.action_history
+      action_history.editedItem = Object.assign({}, item)
+      action_history.detail_items = []
+      var items = action_history.items.filter( e => {
+        return e.post_parent == action_history.editedItem.post_parent
+      })
+      action_history.detail_items = items
+      action_history.details_dialog = true
+    },
+
     checkStatusColor (status) {
 
       switch (status) {
