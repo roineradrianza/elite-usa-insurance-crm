@@ -4,30 +4,27 @@ register_activation_hook(RA_ELITE_USA_INSURANCE_FILE, 'ra_elite_usa_insurance_qu
 
 function ra_elite_usa_insurance_quotes_action_history()
 {
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+
     global $wpdb;
 
     $charset_collate = $wpdb->get_charset_collate();
 
     $table_name = "{$wpdb->prefix}ra_eui_quotes_action_history";
-
-    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
-        `action_history_id` BIGINT NOT NULL AUTO_INCREMENT,
-        `action_message` TEXT NOT NULL,
-        `post_type` VARCHAR(255) NOT NULL,
-        `action_type` VARCHAR(60) NULL,
-        `extra_info` TEXT DEFAULT '[]',
-        `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-        `post_parent` BIGINT(20) UNSIGNED NOT NULL,
-        `post_id` BIGINT(20) UNSIGNED NOT NULL,
-        PRIMARY KEY (`action_history`),
-        INDEX `fk_ra_eui_quotes_action_history_post_id_idx` (post_id),
-        CONSTRAINT `fk_ra_eui_quotes_action_history_post_id`
-          FOREIGN KEY (`post_id`)
-          REFERENCES `insurance_policy`.`wp_posts` (`ID`)
-          ON DELETE CASCADE
-          ON UPDATE CASCADE) $charset_collate;";
-    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    $sql = "CREATE TABLE `$table_name` (
+        `action_history_id` bigint(20) NOT NULL AUTO_INCREMENT,
+        `action_message` text NOT NULL,
+        `post_type` varchar(255) NOT NULL,
+        `action_type` varchar(60) DEFAULT NULL,
+        `extra_info` text DEFAULT '',
+        `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+        `post_parent` bigint(20) unsigned DEFAULT NULL,
+        `post_id` bigint(20) unsigned NOT NULL,
+        PRIMARY KEY (`action_history_id`),
+        KEY `fk_ra_eui_quotes_action_history_post_id_idx` (`post_id`),
+        CONSTRAINT `fk_ra_eui_quotes_action_history_post_id` FOREIGN KEY (`post_id`) REFERENCES `{$wpdb->prefix}posts` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
+      )";
     
-    dbDelta($sql);
+    return maybe_create_table($table_name, $sql);
 
 }
