@@ -33,23 +33,7 @@ let vm = new Vue({
     view_dialog: false,
     edit_dialog: false,
     delete_dialog: false,
-    countries: countries,
-    affordable_care_act_valid: true,
-    personal_information_valid: true,
-    employment_information_valid: true,
-    espouse_information_valid: true,
-    espouse_employment_information_valid: true,
-    dependents_information_valid: true,
-    payment_information_valid: true,
-    affordable_care_act_effectiveness_date_modal: false,
-    personal_information_birthdate_modal: false,
-    personal_information_document_expiration_modal: false,
-    affordable_care_act_date_modal: false,
-    espouse_information_birthdate_modal: false,
-    espouse_information_document_expiration_modal: false,
-    dependent_birthdate_modal: false,
-    dependent_expires_modal: false,
-    payment_expiration_date_modal: false,
+    request_edit_form_valid: false,
     routes,
     notifications: [],
     options: {
@@ -57,47 +41,18 @@ let vm = new Vue({
       coverage_type: ['INDIVIDUAL', 'FAMILY'],
       status: ['Processing', 'In tray', 'Approved'],
       marital_status: ['MARRIED', 'SINGLE'],
-      inmigration_status: ['WORK PERMIT AUTHORIZATION', 'RESIDENT / GREEN CARD', 'OTHER'],
+      inmigration_status: ['WORK PERMIT AUTHORIZATION', 'RESIDENT / GREEN CARD'],
       work_type: ['W2', '1099'],
       payment_by: ['PER HOUR', 'WEEKLY', 'BIWEEKLY', 'MONTHLY', 'YEARLY'],
       relative: ['Child', 'Mother', 'Father', 'Other'],
-      payment_type: ['', 'BANK ACCOUNT', 'CREDIT OR DEBIT CARD'],
+      payment_type: ['BANK ACCOUNT', 'CREDIT OR DEBIT CARD'],
       account_type: ['CHECKING', 'SAVING'],
       cards_type: ['DEBIT', 'CREDIT'],
       cards_entity_type: ['MASTER CARD', 'VISA', 'AMERICAN EXPRESS', 'DISCOVER'],
     },
-    countries: countries,
     rules: {
       required: [
         v => !!v || 'This field is required',
-      ],
-      name: [
-        v => !!v || 'Name is required',
-        v => (v && v.length <= 10) || 'Name must be more than 10 characters',
-      ],
-      ucis: [
-        v => {
-          if (!v == '' && v.length != 9) {
-            return 'You need to fill the 9 characters'
-          }
-          else {
-            return true
-          }
-        },
-      ],
-      card_number: [
-        v => {
-          if (!v == '' && v.length != 13) {
-            return 'You need to fill the 13 characters'
-          }
-          else {
-            return true
-          }
-        },
-      ],
-      email: [
-        v => !!v || 'E-mail is required',
-        v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
       ],
     },
     modifications: {
@@ -105,7 +60,6 @@ let vm = new Vue({
       header: [
         { text: 'Date', align: 'center', value: 'published_at' },
         { text: 'Status', align: 'center', value: 'status' },
-        { text: 'Action', align: 'center', value: 'actions' },
       ],
       items: [],
       content: '',
@@ -140,14 +94,13 @@ let vm = new Vue({
       },
       editedIndex: -1,
     },
-    routes: routes,
     inbox: {
       view_dialog: false,
       loading_details: false,
       search: '',
       header: [
         { text: 'ID', align: 'left', value: 'quote_id' },
-        { text: 'Date', align: 'left', value: 'published_at' },
+        { text: 'Date', align: 'center', value: 'published_at' },
         { text: 'Description', align: 'center', value: 'post_title' },
         { text: 'type', align: 'center', value: 'post_type' },
         { text: 'Status', align: 'center', value: 'status' },
@@ -190,17 +143,6 @@ let vm = new Vue({
   },
 
   computed: {
-    formAttachmentTitle () {
-      return this.attachments.editedIndex === -1 ? 'New Document Attachment' : 'Edit Document Attachment'
-    },
-
-    formManagerAttachmentTitle () {
-      return this.manager_attachments.editedIndex === -1 ? 'New Document Attachment' : 'Edit Document Attachment'
-    },
-
-    formRequestInformationTitle () {
-      return this.information_requests.editedIndex === -1 ? 'New Information Request' : 'Edit Information Request'
-    },
   },
 
   watch: {},
@@ -230,7 +172,7 @@ let vm = new Vue({
 
     initialize () {
       var app = this
-      var url = api_url + 'ra_elite_usa_insurance_get_inbox'
+      var url = api_url + 'ra_elite_usa_insurance_get_agent_inbox'
       app.inbox.items = []
       app.table_loading = true
       app.$http.get(url).then( res => {
@@ -247,10 +189,10 @@ let vm = new Vue({
               item.personal_information.middle_name + ' ' + 
               item.personal_information.last_name
             }
-            else if (item.post_type == 'quote_doc_r' && parseInt(item.status) == 0) {
+            else if (item.post_type == 'quote_doc_r' && parseInt(item.status) == 2) {
               return;
             }
-            else if (item.post_type == 'quote_data_r' && parseInt(item.status) == 0) {
+            else if (item.post_type == 'quote_data_r' && parseInt(item.status) == 2) {
               return;
             }
             app.inbox.items.push(item)
@@ -378,6 +320,9 @@ let vm = new Vue({
         if (res.body.length > 0) {
           res.body.forEach( (e, i) => {
             e.extra_info = JSON.parse(e.extra_info)
+            if(e.action_message != "Quote's creation") {
+              e.created_at = usesGMT ? moment.utc(moment(e.created_at).format('YYYY-MM-DD, h:mm:ss')).local() : e.created_at
+            }
             e.created_at = usesGMT ? moment.utc(moment(e.created_at).format('YYYY-MM-DD, h:mm:ss')).local() : e.created_at
             if (e.extra_info.post_type == 'quote_doc_r') {
               if (e.extra_info.meta_input.attachment_url.includes('[')) {
@@ -416,12 +361,12 @@ let vm = new Vue({
       this.edit_dialog = true
     },
 
-    editManagerAttachmentItem (item) {
-      this.manager_attachments.editedIndex = this.manager_attachments.items.indexOf(item)
-      this.manager_attachments.editedItem = Object.assign({}, item)
-      this.manager_attachments.dialog = true
+    editInformationRequestItem (item) {
+      this.information_requests.editedIndex = this.information_requests.items.indexOf(item)
+      this.information_requests.editedItem = Object.assign({}, item)
+      this.information_requests.dialog = true
     },
-
+    
     editAttachmentItem (item) {
       this.attachments.editedIndex = this.attachments.items.indexOf(item)
       this.attachments.editedItem = Object.assign({}, item)
@@ -440,22 +385,17 @@ let vm = new Vue({
       this.delete_dialog = true
     },
 
-    deleteDocumentItem (item) {
-      this.attachments.editedIndex = this.attachments.items.indexOf(item)
-      this.attachments.editedItem = Object.assign({}, item)
-      this.attachments.delete_dialog = true
+    showDetailsItem (item) {
+      this.inbox.editedItem = Object.assign({}, item)
+      this.inbox.view_dialog = true
     },
 
-    deleteManagerAttachmentItem (item) {
-      this.manager_attachments.editedIndex = this.manager_attachments.items.indexOf(item)
-      this.manager_attachments.editedItem = Object.assign({}, item)
-      this.manager_attachments.delete_dialog = true
-    },
-
-    deleteInformationRequestItem (item) {
-      this.information_requests.editedIndex = this.information_requests.items.indexOf(item)
-      this.information_requests.editedItem = Object.assign({}, item)
-      this.information_requests.delete_dialog = true
+    closeDetailsView () {
+      this.inbox.view_dialog = false
+      this.$nextTick(() => {
+        this.inbox.editedItem = Object.assign({}, {})
+        this.inbox.editedIndex = -1
+      })
     },
 
     closeView () {
@@ -481,28 +421,41 @@ let vm = new Vue({
         this.information_requests.editedIndex = -1
       })
     },
-   
-    closeUploadInformationRequest () {
-      this.information_requests.dialog = false
-      this.$nextTick(() => {
-        this.information_requests.editedItem = Object.assign({}, {})
-        this.information_requests.editedIndex = -1
-      })
-    },
-   
-    closeManagerAttachment () {
-      this.manager_attachments.dialog = false
-      this.$nextTick(() => {
-        this.manager_attachments.editedItem = Object.assign({}, {})
-        this.manager_attachments.editedIndex = -1
-      })
-    },
-
-    closeInformationRequest () {
-      this.information_requests.dialog = false
-      this.$nextTick(() => {
-        this.information_requests.editedItem = Object.assign({}, {})
-        this.information_requests.editedIndex = -1
+    
+    sendModificationRequest () {
+      var app = this
+      var quote_form = app.inbox.editedItem
+      var url = api_url + 'ra_elite_usa_insurance_save_quote_modification_request'
+      var index = app.inbox.editedIndex
+      var data = {
+        post_parent: quote_form.ID,
+        agent: quote_form.affordable_care_act.agent_name,
+        post_date: moment().format('YYYY-MM-DD'),
+        post_date_name: moment().format('DD/MM/YYYY'),
+        post_content: app.modifications.content
+      }
+      app.quote_loading = true
+      app.$http.post(url, data).then( res => {
+        app.quote_loading = false
+        app.barAlert = true
+        if (res.body.hasOwnProperty('message')) {
+          app.barMessage = res.body.message
+          if (res.body.status == 'success') {
+            data.status = 0;
+            data.ID = res.body.data;
+            app.modifications.items.push(data)
+            app.modifications.content = ''
+            app.closeEdit()
+          }
+        }
+        else {
+          app.alert_type = 'error'
+          app.barMessage = 'There was an error'
+        }
+      }, err => {
+        app.quote_loading = false
+        app.barAlert = true
+        app.barMessage = "There was an error, it can't be possible process the information sent"
       })
     },
 
@@ -529,14 +482,6 @@ let vm = new Vue({
       this.$nextTick(() => {
         this.inbox.editedItem = Object.assign({}, {})
         this.inbox.editedIndex = -1
-      })
-    },
-
-    closeInformationRequestDelete () {
-      this.information_requests.delete_dialog = false
-      this.$nextTick(() => {
-        this.information_requests.editedItem = Object.assign({}, {})
-        this.information_requests.editedIndex = -1
       })
     },
 
@@ -599,197 +544,9 @@ let vm = new Vue({
       }
     },
 
-    inputOtherIS(status, form) {
-      if (status != 'OTHER') {
-        form.inmigration_status_selected = form.inmigration_status
-        return true
-      }
-      else {
-        form.inmigration_status_selected = ''
-        return false
-      }
-    },
-
-
     removeDependent(index) {
       var app = this
       app.inbox.editedItem.dependents.splice(index, 1)
-    },
-
-    updateQuoteForm () {
-      var app = this
-      var quote_form = app.inbox.editedItem
-      var url = api_url + 'ra_elite_usa_insurance_save_quote_form'
-      var index = app.inbox.editedIndex
-
-      app.quote_loading = true
-      app.$http.post(url,quote_form).then( res => {
-        app.quote_loading = false
-        app.barAlert = true
-        if (res.body.hasOwnProperty('message')) {
-          app.barMessage = res.body.message
-          if (res.body.status == 'success') {
-            Object.assign(app.inbox.items[index], quote_form)
-            app.edit_dialog = false
-          }
-        }
-        else {
-          app.alert_type = 'error'
-          app.barMessage = 'There was an error'
-        }
-      }, err => {
-        app.quote_loading = false
-        app.barAlert = true
-        app.barMessage = "There was an error, it can't be possible process the information sent"
-      })
-    },
-
-    saveAttachmentRequest () {
-      var app = this
-      var attachment = app.attachments.editedItem
-      var url = api_url + 'ra_elite_usa_insurance_save_quote_attachment_request'
-      var index = app.attachments.editedIndex
-
-      attachment.post_parent = app.inbox.editedItem.ID
-      attachment.post_author = app.inbox.editedItem.post_author
-
-      app.attachment_loading = true
-      app.$http.post(url, attachment).then( res => {
-        app.attachment_loading = false
-        app.barAlert = true
-        if (res.body.hasOwnProperty('message')) {
-          app.barMessage = res.body.message
-          if (res.body.status == 'success') {
-            if (index == -1) {
-              attachment.ID = res.body.data
-              attachment.attachment_url = ''
-              attachment.attachment_id = ''
-              app.attachments.items.push(attachment)
-            }
-            else {
-              Object.assign(app.attachments.items[index], attachment)
-            }
-            app.attachments.dialog = false
-          }
-        }
-        else {
-          app.alert_type = 'error'
-          app.barMessage = 'There was an error'
-        }
-      }, err => {
-        app.attachment_loading = false
-        app.barAlert = true
-        app.barMessage = "There was an error, it can't be possible process the information sent"
-      })
-    },
-
-    saveInformationRequest () {
-      var app = this
-      var information = app.information_requests.editedItem
-      var url = api_url + 'ra_elite_usa_insurance_save_quote_information_request'
-      var index = app.information_requests.editedIndex
-
-      information.post_parent = app.inbox.editedItem.ID
-      information.post_author = app.inbox.editedItem.post_author
-
-      app.information_requests_loading = true
-      app.$http.post(url, information).then( res => {
-        app.information_requests_loading = false
-        app.barAlert = true
-        if (res.body.hasOwnProperty('message')) {
-          app.barMessage = res.body.message
-          if (res.body.status == 'success') {
-            if (index == -1) {
-              information.ID = res.body.data
-              information.status = 0
-              app.information_requests.items.push(information)
-            }
-            else {
-              Object.assign(app.information_requests.items[index], information)
-            }
-            app.closeInformationRequest()
-          }
-        }
-        else {
-          app.alert_type = 'error'
-          app.barMessage = 'There was an error'
-        }
-      }, err => {
-        app.information_requests_loading = false
-        app.barAlert = true
-        app.barMessage = "There was an error, it can't be possible process the information sent"
-      })
-    },
-
-    saveManagerAttachment () {
-      var app = this
-      var attachment = app.manager_attachments.editedItem
-      var url = api_url + 'ra_elite_usa_insurance_save_quote_manager_attachment'
-      var index = app.manager_attachments.editedIndex
-
-      var data = new FormData();
-      if (attachment.hasOwnProperty('ID') && attachment.ID != undefined) {
-        data.append('ID', attachment.ID)
-      }
-      data.append('post_parent', app.inbox.editedItem.ID)
-      data.append('agent', app.inbox.editedItem.post_author)
-      data.append('post_title', attachment.post_title)
-      if (attachment.doc != undefined || attachment.doc != '') {
-        data.append('attachment', attachment.doc)
-      }
-
-      if (attachment.hasOwnProperty('post_author') && attachment.post_author != '') {
-        data.append('post_author', attachment.post_author)
-      }
-
-      if (attachment.hasOwnProperty('attachment_id') && attachment.attachment_id != '') {
-        data.append('attachment_id', attachment.attachment_id)
-      }
-
-      if (attachment.hasOwnProperty('attachment_url') && attachment.attachment_url != '') {
-        data.append('attachment_url', attachment.attachment_url)
-      }
-
-      app.manager_attachment_loading = true
-      app.$http.post(url, data, {
-          progress(e) {
-            if (e.lengthComputable) {
-              app.percent_loading_active = true
-              app.percent_loading = (e.loaded / e.total ) * 100
-            }
-          }
-        }).then( res => {
-        app.manager_attachment_loading = false
-        app.barAlert = true
-        app.percent_loading_active = false
-        app.percent_loading_active = 0
-        if (res.body.hasOwnProperty('message')) {
-          app.barMessage = res.body.message
-          if (res.body.status == 'success') {
-            if (!attachment.hasOwnProperty('attachment_id') || attachment.attachment_id == '') {
-              attachment.ID = res.body.data.ID
-              attachment.attachment_id = res.body.data.attachment_id
-              attachment.published_at = moment()
-            }
-            attachment.attachment_url = res.body.data.hasOwnProperty('attachment_url') ? res.body.data.attachment_url : attachment.attachment_url
-            if (index === -1) {
-              app.manager_attachments.items.push(attachment)
-            }
-            else {
-              Object.assign(app.manager_attachments.items[index], attachment)
-            }
-            app.manager_attachments.dialog = false
-          }
-        }
-        else {
-          app.alert_type = 'error'
-          app.barMessage = 'There was an error'
-        }
-      }, err => {
-        app.manager_attachment_loading = false
-        app.barAlert = true
-        app.barMessage = "There was an error, it can't be possible process the information sent"
-      })
     },
 
     closeAttachment () {
@@ -798,214 +555,6 @@ let vm = new Vue({
         this.attachments.editedItem = Object.assign({}, {file: ''})
         this.attachments.editedIndex = -1
       })      
-    },
-
-    closeInformationRequest () {
-      this.information_requests.dialog = false
-      this.$nextTick(() => {
-        this.information_requests.editedItem = Object.assign({}, {})
-        this.information_requests.editedIndex = -1
-      })
-    },
-    
-    updateAttachmentName (item) {
-      var app = this
-      var attachment = item
-      var url = api_url + 'ra_elite_usa_insurance_save_quote_attachment_request'
-      var index = app.attachments.items.indexOf(item)
-      attachment.post_parent = app.inbox.editedItem.ID
-      attachment.post_author = app.inbox.editedItem.post_author
-
-      app.$http.post(url, attachment).then( res => {
-        app.barAlert = true
-        if (res.body.hasOwnProperty('message')) {
-          app.barMessage = res.body.message
-          if (res.body.status == 'success') {
-            app.$refs.attachment_edit_dialog.save()
-            app.attachments.dialog = false
-          }
-        }
-        else {
-          app.alert_type = 'error'
-          app.barMessage = 'There was an error'
-        }
-      }, err => {
-        app.attachment_loading = false
-        app.barAlert = true
-        app.barMessage = "There was an error, it can't be possible process the information sent"
-      })
-    },
-
-    approveModification (item) {
-      var app = this
-      var url = api_url + 'ra_elite_usa_insurance_approve_form_modification_request'
-
-      app.quote_loading = true
-      app.$http.post(url, item).then( res => {
-        app.quote_loading = false
-        app.barAlert = true
-        if (res.body.hasOwnProperty('message')) {
-          app.barMessage = res.body.message
-          if (res.body.status == 'success') {
-            item.status = 1
-          }
-        }
-        else {
-          app.alert_type = 'error'
-          app.barMessage = 'There was an error'
-        }
-      }, err => {
-        app.quote_loading = false
-        app.barAlert = true
-        app.barMessage = "There was an error, it can't be possible process the information sent"
-      })
-    },
-
-    approveInformation (item) {
-      var app = this
-      var url = api_url + 'ra_elite_usa_insurance_approve_form_information_request'
-
-      app.quote_loading = true
-      app.$http.post(url, item).then( res => {
-        app.quote_loading = false
-        app.barAlert = true
-        if (res.body.hasOwnProperty('message')) {
-          app.barMessage = res.body.message
-          if (res.body.status == 'success') {
-            item.status = 1
-          }
-        }
-        else {
-          app.alert_type = 'error'
-          app.barMessage = 'There was an error'
-        }
-      }, err => {
-        app.quote_loading = false
-        app.barAlert = true
-        app.barMessage = "There was an error, it can't be possible process the information sent"
-      })
-    },
-
-    approveDocumentRequested (item) {
-      var app = this
-      var url = api_url + 'ra_elite_usa_insurance_approve_form_document_requested'
-
-      app.$http.post(url, item).then( res => {
-        app.barAlert = true
-        if (res.body.hasOwnProperty('message')) {
-          app.barMessage = res.body.message
-          if (res.body.status == 'success') {
-            item.status = 1
-          }
-        }
-        else {
-          app.alert_type = 'error'
-          app.barMessage = 'There was an error'
-        }
-      }, err => {
-        app.barAlert = true
-        app.barMessage = "There was an error, it can't be possible process the information sent"
-      })
-    },
-  
-    markAsProcessingDocumentRequested (item) {
-      var app = this
-      var url = api_url + 'ra_elite_usa_insurance_process_form_document_requested'
-
-      app.$http.post(url, item).then( res => {
-        app.barAlert = true
-        if (res.body.hasOwnProperty('message')) {
-          app.barMessage = res.body.message
-          if (res.body.status == 'success') {
-            item.status = 3
-          }
-        }
-        else {
-          app.alert_type = 'error'
-          app.barMessage = 'There was an error'
-        }
-      }, err => {
-        app.barAlert = true
-        app.barMessage = "There was an error, it can't be possible process the information sent"
-      })
-    },
-
-    deleteQuoteForm () {
-      var app = this
-      var quote_form = app.inbox.editedItem
-      var url = api_url + 'ra_elite_usa_insurance_delete_quote'
-      var index = app.inbox.editedIndex
-
-      app.$http.post(url, {ID: quote_form.ID}).then( res => {
-        app.barAlert = true
-        app.delete_dialog = false
-        if (res.body.hasOwnProperty('message')) {
-          app.barMessage = res.body.message
-          if (res.body.status == 'success') {
-            app.inbox.items.splice(index, 1)
-          }
-        }
-        else {
-          app.alert_type = 'error'
-          app.barMessage = 'There was an error'
-        }
-      }, err => {
-        app.delete_dialog = false
-        app.barAlert = true
-        app.barMessage = "There was an error, it can't be possible process the information sent"
-      })
-    },
-
-    deleteDocumentRequested () {
-      var app = this
-      var attachment = app.attachments.editedItem
-      var url = api_url + 'ra_elite_usa_insurance_delete_quote_attachment_requested'
-      var index = app.attachments.editedIndex
-
-      app.$http.post(url, {ID: attachment.ID}).then( res => {
-        app.barAlert = true
-        app.attachments.delete_dialog = false
-        if (res.body.hasOwnProperty('message')) {
-          app.barMessage = res.body.message
-          if (res.body.status == 'success') {
-            app.attachments.items.splice(index, 1)
-          }
-        }
-        else {
-          app.alert_type = 'error'
-          app.barMessage = 'There was an error'
-        }
-      }, err => {
-        app.attachments.delete_dialog = false
-        app.barAlert = true
-        app.barMessage = "There was an error, it can't be possible process the information sent"
-      })
-    },
-
-    deleteManagerAttachment () {
-      var app = this
-      var attachment = app.manager_attachments.editedItem
-      var url = api_url + 'ra_elite_usa_insurance_delete_quote_manager_attachment'
-      var index = app.manager_attachments.editedIndex
-
-      app.$http.post(url, {ID: attachment.ID}).then( res => {
-        app.barAlert = true
-        app.manager_attachments.delete_dialog = false
-        if (res.body.hasOwnProperty('message')) {
-          app.barMessage = res.body.message
-          if (res.body.status == 'success') {
-            app.manager_attachments.items.splice(index, 1)
-          }
-        }
-        else {
-          app.alert_type = 'error'
-          app.barMessage = 'There was an error'
-        }
-      }, err => {
-        app.manager_attachments.delete_dialog = false
-        app.barAlert = true
-        app.barMessage = "There was an error, it can't be possible process the information sent"
-      })
     },
 
     uploadAttachment () {
@@ -1095,72 +644,6 @@ let vm = new Vue({
       })
     },
 
-    deleteInformationRequest () {
-      var app = this
-      var attachment = app.information_requests.editedItem
-      var url = api_url + 'ra_elite_usa_insurance_delete_quote_information_request'
-      var index = app.information_requests.editedIndex
-
-      app.$http.post(url, {ID: attachment.ID}).then( res => {
-        app.barAlert = true
-        app.information_requests.delete_dialog = false
-        if (res.body.hasOwnProperty('message')) {
-          app.barMessage = res.body.message
-          if (res.body.status == 'success') {
-            app.information_requests.items.splice(index, 1)
-          }
-        }
-        else {
-          app.alert_type = 'error'
-          app.barMessage = 'There was an error'
-        }
-      }, err => {
-        app.manager_attachments.delete_dialog = false
-        app.barAlert = true
-        app.barMessage = "There was an error, it can't be possible process the information sent"
-      })
-    },
-
-    currencyFormat (amount, show_prefix) {
-      if (typeof amount !== String) {
-        var formatter = new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency: 'USD',
-        });
-        var money = formatter.format(amount);
-        if (!show_prefix) {
-          money = money.split("$")[1]
-        }
-        if (money == '$NaN' || money === NaN) {
-          if (show_prefix) {
-            return '$'+ amount
-          }
-          return amount
-        }
-        return money
-      }
-      else {
-        return amount
-      }
-    },
-
-    numberFormat (amount) {
-      return Number(amount.replace(/[^0-9.-]+/g,""))
-    },
-
-    showDetailsItem (item) {
-      this.inbox.editedItem = Object.assign({}, item)
-      this.inbox.view_dialog = true
-    },
-
-    closeDetailsView () {
-      this.inbox.view_dialog = false
-      this.$nextTick(() => {
-        this.inbox.editedItem = Object.assign({}, {})
-        this.inbox.editedIndex = -1
-      })
-    },
-
     returnPostType (post_type) {
       switch (post_type) {
 
@@ -1244,6 +727,29 @@ let vm = new Vue({
       if (post_type == 'quote_form') {
          return status
       }
+      else if (post_type == 'quote_doc_r') {
+        status = parseInt(status)
+        switch (status) {
+          case 0:
+
+            return 'Pending'
+            break;
+
+          case 1:
+            return 'Approved'
+            break;
+
+          case 2:
+
+            return 'Sent'
+            break;
+
+          case 3:
+
+            return 'Processing'
+            break;
+        }
+      }
       else {
         status = parseInt(status)
         switch (status) {
@@ -1258,10 +764,37 @@ let vm = new Vue({
 
           case 2:
 
-            return 'Received'
+            return 'Sent'
             break;
         }
       }
+    },
+
+    currencyFormat (amount, show_prefix) {
+      if (typeof amount !== String) {
+        var formatter = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+        });
+        var money = formatter.format(amount);
+        if (!show_prefix) {
+          money = money.split("$")[1]
+        }
+        if (money == '$NaN' || money === NaN) {
+          if (show_prefix) {
+            return '$'+ amount
+          }
+          return amount
+        }
+        return money
+      }
+      else {
+        return amount
+      }
+    },
+
+    numberFormat (amount) {
+      return Number(amount.replace(/[^0-9.-]+/g,""))
     },
 
     getFormatDate(d) {
@@ -1283,6 +816,28 @@ let vm = new Vue({
         return ''
       }
       return moment(d).format('MM/DD/YYYY, h:mm:ss a')
+    },
+
+    markItemAsRead (item, index) {
+      var app = this
+      var url = api_url + 'ra_elite_usa_insurance_mark_read_notification'
+
+      app.$http.post(url, item).then( res => {
+        app.barAlert = true
+        if (res.body.hasOwnProperty('message')) {
+          app.barMessage = res.body.message
+          if (res.body.status == 'success') {
+            app.inbox.items.splice(index, 1)
+          }
+        }
+        else {
+          app.alert_type = 'error'
+          app.barMessage = 'There was an error'
+        }
+      }, err => {
+        app.barAlert = true
+        app.barMessage = "There was an error, it can't be possible process the information sent"
+      })
     },
 
     filterQuotes (id) {
@@ -1331,6 +886,7 @@ let vm = new Vue({
         })
       } 
     },
+
 
   }
 });

@@ -478,7 +478,7 @@ let vm = new Vue({
         if (res.body.length > 0) {
           res.body.forEach( (e, i) => {
             e.extra_info = JSON.parse(e.extra_info)
-            e.created_at = usesGMT ? moment.utc(moment(e.created_at).format('YYYY-MM-DD, h:mm:ss')).local() : e.created_at
+            //e.created_at = usesGMT ? moment.utc(moment(e.created_at).format('YYYY-MM-DD, h:mm:ss')).local() : e.created_at
             if (e.extra_info.post_type == 'quote_doc_r') {
               if (e.extra_info.meta_input.attachment_url.includes('[')) {
                 e.extra_info.meta_input.attachment_url = JSON.parse(e.extra_info.meta_input.attachment_url)

@@ -3,6 +3,14 @@
         <v-col class="d-md-none" cols="12">
             <h3 class="text-center">FILES</h3>
         </v-col>
+        <v-col cols="12">
+            <v-textarea v-model="form.content.affordable_care_act.additional_notes" label="ADDITIONAL NOTES" hint="Additional notes for Processing Department" outlined>
+
+            </v-textarea>
+        </v-col>
+        <v-col cols="12">
+            <v-divider></v-divider>
+        </v-col>
         <v-col class="px-3" cols="12" md="4" v-for="(document, index) in form.content.documents" :key="index">
             <v-row class="px-0 d-flex justify-end">
                 <v-btn @click="form.content.documents.splice(index, 1)" fab text>

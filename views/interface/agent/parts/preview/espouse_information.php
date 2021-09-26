@@ -1,4 +1,4 @@
-  <template v-if="quotes.editedItem.affordable_care_act.coverage_type == 'FAMILY'">
+  <template v-if="quotes.editedItem.affordable_care_act.coverage_type == 'FAMILY' && quotes.editedItem.personal_information.marital_status == 'MARRIED'">
     <v-col cols="12">
       <h3 class="font-weight-bold primary--text">SPOUSE INFORMATION</h3>
     </v-col>

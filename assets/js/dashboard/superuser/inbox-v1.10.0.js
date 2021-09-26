@@ -1,20 +1,23 @@
 /*VUE PLUGINS*/
+//@routes
 /*VUETIFY OPTIONS AND SET UP*/
 
 const vuetify = new Vuetify(vuetify_opts);
 const api_url = ra_elite_usa_insurance_ajaxurl
-Vue.component("downloadExcel", JsonExcel)
+
 /*VUE INSTANCE*/
 let vm = new Vue({
   vuetify,
   el: '#ra-elite-usa-insurance-container',
   data: {
-    selectedItem: 0,
+    selectedItem: 4,
     barAlert: false,
     barTimeout: 6000,
     barMessage: '',
     table_loading: false,
-    logout_loading: false,
+    alert: false,
+    alert_type: '',
+    alert_message: '',
     notifications_loading: false,
     pdf_loading: false,
     percent_loading_active: false,
@@ -30,10 +33,7 @@ let vm = new Vue({
     view_dialog: false,
     edit_dialog: false,
     delete_dialog: false,
-    alert: false,
-    alert_type: '',
-    alert_message: '',
-    quote_id: url_params.get('quotation_id'),
+    countries: countries,
     affordable_care_act_valid: true,
     personal_information_valid: true,
     employment_information_valid: true,
@@ -140,6 +140,23 @@ let vm = new Vue({
       },
       editedIndex: -1,
     },
+    routes: routes,
+    inbox: {
+      view_dialog: false,
+      loading_details: false,
+      search: '',
+      header: [
+        { text: 'ID', align: 'left', value: 'quote_id' },
+        { text: 'Date', align: 'left', value: 'published_at' },
+        { text: 'Description', align: 'center', value: 'post_title' },
+        { text: 'type', align: 'center', value: 'post_type' },
+        { text: 'Status', align: 'center', value: 'status' },
+        { text: 'Action', align: 'center', value: 'actions' },
+      ],
+      items: [],
+      editedItem: {},
+      editedIndex: -1,
+    },
     information_requests: {
       dialog: false,
       delete_dialog: false,
@@ -157,98 +174,22 @@ let vm = new Vue({
       },
       editedIndex: -1,
     },
-    quotes: {
-      search: '',
-      excel: {
-        header: {
-          'Full Name': {
-            field: 'personal_information',
-            callback (v) {
-              return `${v.first_name} ${v.middle_name} ${v.last_name}`
-            }
-          },
-          'Birthdate': {
-            field: 'personal_information',
-            callback (v) {
-              return moment(v.birthdate).format('MM/DD/YYYY')
-            }
-          },
-          'Telephone': {
-            field: 'personal_information.telephone',
-            callback (v) {
-              return `Tel:${v}`
-            }
-          },
-          'Email': {
-            field: 'personal_information.email',
-          },
-          'Company / Plan': {
-            field: 'affordable_care_act.company_plan'
-          },
-          'Income': {
-            field: 'personal_information.total_income',
-            callback (v) {
-              let amount = v
-              if (typeof amount !== String) {
-                var formatter = new Intl.NumberFormat('en-US', {
-                  style: 'currency',
-                  currency: 'USD',
-                });
-                var money = formatter.format(amount);
-                if (money == '$NaN' || money === NaN) {
-                  return amount
-                }
-                return money
-              }
-              else {
-                return amount
-              }
-              return 
-            }
-          },
-          'Total Members': {
-            callback (v) {
-              total = v.affordable_care_act.coverage_type == 'FAMILY' ? 2 : 1
-              total = total + v.dependents.length
-              return total
-            }
-          },
-          'Members': {
-            callback (v) {
-              members = v.affordable_care_act.coverage_type == 'FAMILY' ? `${v.espouse_information.first_name} ${v.espouse_information.middle_name} ${v.espouse_information.last_name}` : ``
-              if (members.length > 0 && parseInt(v.espouse_information.added)) {
-                members += ` (Apply)`
-              }
-              else if (members.length > 0 && !parseInt(v.espouse_information.added)) {
-                members += ` (No Apply)`
-              }
-              if (v.dependents.length > 0) {
-                v.dependents.forEach( (e) => {
-                  member_application = parseInt(e.added) ? '(Apply)' : '(No Apply)'
-                  members += `\n${e.first_name} ${e.last_name} ${member_application}`
-                });
-              }
-              return members
-            }
-          },
-        },
-      },
-      header: [
-        { text: 'ID', align: 'start', value: 'ID' },
-        { text: 'Date', align: 'start', value: 'published_at' },
-        { text: 'Applicant', align: 'start', value: 'applicant' },
-        { text: 'Agent', align: 'start', value: 'agent' },
-        { text: 'Status', value: 'status' },
-        { text: 'Actions', value: 'actions', align:'center', sortable: false },
+    action_history: {
+      dialog: false,
+      details_dialog: false,
+      loading: false,
+      headers: [
+        { text: 'Date', align: 'center', value: 'created_at' },
+        { text: 'Description', align: 'center', value: 'action_message' },
+        { text: 'Action', align: 'center', value: 'actions' },
       ],
       items: [],
       editedItem: {},
-      editedIndex: -1,
-    },
+      detail_items: [],
+    }
   },
 
   computed: {
-
     formAttachmentTitle () {
       return this.attachments.editedIndex === -1 ? 'New Document Attachment' : 'Edit Document Attachment'
     },
@@ -256,22 +197,16 @@ let vm = new Vue({
     formManagerAttachmentTitle () {
       return this.manager_attachments.editedIndex === -1 ? 'New Document Attachment' : 'Edit Document Attachment'
     },
-    
+
     formRequestInformationTitle () {
       return this.information_requests.editedIndex === -1 ? 'New Information Request' : 'Edit Information Request'
     },
-
   },
 
   watch: {},
 
   created () {
-    if (this.quote_id === null) {
-      this.initialize()
-    }
-    else {
-      this.initializeAndPrevisualize()
-    }
+    this.initialize()
     initNotifications(this)
     setInterval(initNotifications, 30000, this)
   },
@@ -295,60 +230,31 @@ let vm = new Vue({
 
     initialize () {
       var app = this
-      var url = api_url + 'ra_elite_usa_insurance_get_quotes'
+      var url = api_url + 'ra_elite_usa_insurance_get_inbox'
+      app.inbox.items = []
       app.table_loading = true
       app.$http.get(url).then( res => {
         app.table_loading = false
         if (res.body.length > 0) {
           var items = []
           var item = {}
-          res.body.forEach( (quote) => {
-            var item = quote
-            item.published_at = moment(item.affordable_care_act.date).format('DD/MM/YYYY, h:mm:ss a')
-            item.applicant = item.personal_information.first_name + ' ' + 
-            item.personal_information.middle_name + ' ' + 
-            item.personal_information.last_name
-
-            items.push(item)
+          res.body.forEach( (inbox) => {
+            var item = inbox
+            item.published_at = moment(item.post_date).format('DD/MM/YYYY, h:mm:ss a')
+            item.quote_id = item.post_type == 'quote_form' ? item.ID : item.post_parent
+            if (item.post_type == 'quote_form') {
+              item.applicant = item.personal_information.first_name + ' ' + 
+              item.personal_information.middle_name + ' ' + 
+              item.personal_information.last_name
+            }
+            else if (item.post_type == 'quote_doc_r' && parseInt(item.status) == 0) {
+              return;
+            }
+            else if (item.post_type == 'quote_data_r' && parseInt(item.status) == 0) {
+              return;
+            }
+            app.inbox.items.push(item)
           })
-          app.quotes.items = items
-        }
-      }, err => {
-        app.table_loading = false
-      })
-    },
-
-    initializeAndPrevisualize () {
-      var app = this
-      var url = api_url + 'ra_elite_usa_insurance_get_quotes'
-      app.table_loading = true
-      app.$http.get(url).then( res => {
-        app.table_loading = false
-        if (res.body.length > 0) {
-          var items = []
-          var item = {}
-          res.body.forEach( (quote) => {
-            var item = quote
-            item.published_at = item.affordable_care_act.date 
-            item.applicant = item.personal_information.first_name + ' ' + 
-            item.personal_information.middle_name + ' ' + 
-            item.personal_information.last_name
-
-            items.push(item)
-          })
-          app.quotes.items = items
-          var item = app.quotes.items.filter(quote => parseInt(quote.ID) == parseInt(app.quote_id))
-          if (item.length > 0) {
-            app.showItem(item[0])
-            app.getModificationRequests()
-            app.getInformationRequests()
-            app.getAttachmentsRequests()
-            app.getManagerAttachments()
-          }
-          else {
-            app.barAlert = true
-            app.barMessage = 'The quote requested is not available'
-          }
         }
       }, err => {
         app.table_loading = false
@@ -357,7 +263,7 @@ let vm = new Vue({
 
     generateQuotePDF() {
       var app = this
-      var quote = app.quotes.editedItem
+      var quote = app.inbox.editedItem
       var url = api_url + 'ra_elite_usa_insurance_generate_quote_pdf'
       app.pdf_loading = true
       app.$http.post(url, quote).then( res => {
@@ -379,9 +285,9 @@ let vm = new Vue({
     getModificationRequests () {
       var app = this
       app.modifications.items = []
-      var quote_form = app.quotes.editedItem
+      var quote_form = app.inbox.editedItem
       var url = api_url + 'ra_elite_usa_insurance_get_quote_modification_requests'
-      var index = app.quotes.editedIndex
+      var index = app.inbox.editedIndex
       var data = {
         post_parent: quote_form.ID,
       }
@@ -400,9 +306,9 @@ let vm = new Vue({
     getAttachmentsRequests () {
       var app = this
       app.attachments.items = []
-      var quote_form = app.quotes.editedItem
+      var quote_form = app.inbox.editedItem
       var url = api_url + 'ra_elite_usa_insurance_get_quote_attachment_requests'
-      var index = app.quotes.editedIndex
+      var index = app.inbox.editedIndex
       var data = {
         post_parent: quote_form.ID,
       }
@@ -421,7 +327,7 @@ let vm = new Vue({
     getManagerAttachments () {
       var app = this
       app.manager_attachments.items = []
-      var quote_form = app.quotes.editedItem
+      var quote_form = app.inbox.editedItem
       var url = api_url + 'ra_elite_usa_insurance_get_quote_manager_attachments'
       var data = {
         post_parent: quote_form.ID,
@@ -441,7 +347,7 @@ let vm = new Vue({
     getInformationRequests () {
       var app = this
       app.information_requests.items = []
-      var quote_form = app.quotes.editedItem
+      var quote_form = app.inbox.editedItem
       var url = api_url + 'ra_elite_usa_insurance_get_quote_information_requests'
       var data = {
         post_parent: quote_form.ID,
@@ -472,7 +378,7 @@ let vm = new Vue({
         if (res.body.length > 0) {
           res.body.forEach( (e, i) => {
             e.extra_info = JSON.parse(e.extra_info)
-            e.created_at = usesGMT ? moment.utc(moment(e.created_at).format('YYYY-MM-DD, h:mm:ss')).local() : e.created_at
+            //e.created_at = usesGMT ? moment.utc(moment(e.created_at).format('YYYY-MM-DD, h:mm:ss')).local() : e.created_at
             if (e.extra_info.post_type == 'quote_doc_r') {
               if (e.extra_info.meta_input.attachment_url.includes('[')) {
                 e.extra_info.meta_input.attachment_url = JSON.parse(e.extra_info.meta_input.attachment_url)
@@ -498,34 +404,15 @@ let vm = new Vue({
       action_history.details_dialog = true
     },
 
-    checkStatusColor (status) {
-
-      switch (status) {
-
-        case 'Processing':
-
-          return 'warning'
-          break;
-
-        case 'Approved':
-          return 'green'
-          break;
-
-        case 'In tray':
-          return 'primary';
-          break;
-      }
-    },
-
     showItem (item) {
-      this.quotes.editedIndex = this.quotes.items.indexOf(item)
-      this.quotes.editedItem = Object.assign({}, item)
+      this.inbox.editedIndex = this.inbox.items.indexOf(item)
+      this.inbox.editedItem = Object.assign({}, item)
       this.view_dialog = true
     },
 
     editItem (item) {
-      this.quotes.editedIndex = this.quotes.items.indexOf(item)
-      this.quotes.editedItem = Object.assign({}, item)
+      this.inbox.editedIndex = this.inbox.items.indexOf(item)
+      this.inbox.editedItem = Object.assign({}, item)
       this.edit_dialog = true
     },
 
@@ -533,12 +420,6 @@ let vm = new Vue({
       this.manager_attachments.editedIndex = this.manager_attachments.items.indexOf(item)
       this.manager_attachments.editedItem = Object.assign({}, item)
       this.manager_attachments.dialog = true
-    },
-
-    editInformationRequestItem (item) {
-      this.information_requests.editedIndex = this.information_requests.items.indexOf(item)
-      this.information_requests.editedItem = Object.assign({}, item)
-      this.information_requests.dialog = true
     },
 
     editAttachmentItem (item) {
@@ -554,8 +435,8 @@ let vm = new Vue({
     },
 
     deleteItem (item) {
-      this.quotes.editedIndex = this.quotes.items.indexOf(item)
-      this.quotes.editedItem = Object.assign({}, item)
+      this.inbox.editedIndex = this.inbox.items.indexOf(item)
+      this.inbox.editedItem = Object.assign({}, item)
       this.delete_dialog = true
     },
 
@@ -580,8 +461,8 @@ let vm = new Vue({
     closeView () {
       this.view_dialog = false
       this.$nextTick(() => {
-        this.quotes.editedItem = Object.assign({}, {})
-        this.quotes.editedIndex = -1
+        this.inbox.editedItem = Object.assign({}, {})
+        this.inbox.editedIndex = -1
       })
     },
 
@@ -593,6 +474,22 @@ let vm = new Vue({
       })
     },
 
+    closeInformationRequest () {
+      this.information_requests.dialog = false
+      this.$nextTick(() => {
+        this.information_requests.editedItem = Object.assign({}, {})
+        this.information_requests.editedIndex = -1
+      })
+    },
+   
+    closeUploadInformationRequest () {
+      this.information_requests.dialog = false
+      this.$nextTick(() => {
+        this.information_requests.editedItem = Object.assign({}, {})
+        this.information_requests.editedIndex = -1
+      })
+    },
+   
     closeManagerAttachment () {
       this.manager_attachments.dialog = false
       this.$nextTick(() => {
@@ -617,20 +514,12 @@ let vm = new Vue({
       })
     },
 
-    closeUploadInformationRequest () {
-      this.information_requests.upload_dialog = false
-      this.$nextTick(() => {
-        this.information_requests.editedItem = Object.assign({}, {})
-        this.information_requests.editedIndex = -1
-      })
-    },
-
     closeEdit () {
       this.edit_dialog = false
       if (!this.view_dialog) {
         this.$nextTick(() => {
-          this.quotes.editedItem = Object.assign({}, {})
-          this.quotes.editedIndex = -1
+          this.inbox.editedItem = Object.assign({}, {})
+          this.inbox.editedIndex = -1
         })
       }
     },
@@ -638,16 +527,8 @@ let vm = new Vue({
     closeDelete () {
       this.delete_dialog = false
       this.$nextTick(() => {
-        this.quotes.editedItem = Object.assign({}, {})
-        this.quotes.editedIndex = -1
-      })
-    },
-
-    closeAttachmentDelete () {
-      this.attachments.delete_dialog = false
-      this.$nextTick(() => {
-        this.attachments.editedItem = Object.assign({}, {})
-        this.attachments.editedIndex = -1
+        this.inbox.editedItem = Object.assign({}, {})
+        this.inbox.editedIndex = -1
       })
     },
 
@@ -659,16 +540,24 @@ let vm = new Vue({
       })
     },
 
+    closeAttachmentDelete () {
+      this.attachments.delete_dialog = false
+      this.$nextTick(() => {
+        this.attachments.editedItem = Object.assign({}, {})
+        this.attachments.editedIndex = -1
+      })
+    },
+
     getAge(form) {
       var app = this
-      var age = moment().diff(app.quotes.editedItem[form].birthdate, 'years')
-      app.quotes.editedItem[form].age = age
+      var age = moment().diff(app.inbox.editedItem[form].birthdate, 'years')
+      app.inbox.editedItem[form].age = age
       return age
     },
 
     calcTotalIncome() {
       var app = this
-      var form = app.quotes.editedItem
+      var form = app.inbox.editedItem
       var personal_income = typeof form.employment_information.income === 'string' ? app.numberFormat(form.employment_information.income) : parseInt(form.employment_information.income)
       var espouse_income = typeof form.espouse_employment_information.income === 'string' ? app.numberFormat(form.espouse_employment_information.income) : parseInt(form.espouse_employment_information.income)
 
@@ -696,7 +585,7 @@ let vm = new Vue({
         document_from: '',
         document_expires: '',
       }
-      app.quotes.editedItem.dependents.push(item)
+      app.inbox.editedItem.dependents.push(item)
     },
 
     inputRelative(dependent) {
@@ -724,14 +613,14 @@ let vm = new Vue({
 
     removeDependent(index) {
       var app = this
-      app.quotes.editedItem.dependents.splice(index, 1)
+      app.inbox.editedItem.dependents.splice(index, 1)
     },
 
     updateQuoteForm () {
       var app = this
-      var quote_form = app.quotes.editedItem
+      var quote_form = app.inbox.editedItem
       var url = api_url + 'ra_elite_usa_insurance_save_quote_form'
-      var index = app.quotes.editedIndex
+      var index = app.inbox.editedIndex
 
       app.quote_loading = true
       app.$http.post(url,quote_form).then( res => {
@@ -740,7 +629,7 @@ let vm = new Vue({
         if (res.body.hasOwnProperty('message')) {
           app.barMessage = res.body.message
           if (res.body.status == 'success') {
-            Object.assign(app.quotes.items[index], quote_form)
+            Object.assign(app.inbox.items[index], quote_form)
             app.edit_dialog = false
           }
         }
@@ -758,11 +647,11 @@ let vm = new Vue({
     saveAttachmentRequest () {
       var app = this
       var attachment = app.attachments.editedItem
-      var url = api_url + 'ra_elite_usa_insurance_save_quote_information_request'
+      var url = api_url + 'ra_elite_usa_insurance_save_quote_attachment_request'
       var index = app.attachments.editedIndex
 
-      attachment.post_parent = app.quotes.editedItem.ID
-      attachment.post_author = app.quotes.editedItem.post_author
+      attachment.post_parent = app.inbox.editedItem.ID
+      attachment.post_author = app.inbox.editedItem.post_author
 
       app.attachment_loading = true
       app.$http.post(url, attachment).then( res => {
@@ -800,8 +689,8 @@ let vm = new Vue({
       var url = api_url + 'ra_elite_usa_insurance_save_quote_information_request'
       var index = app.information_requests.editedIndex
 
-      information.post_parent = app.quotes.editedItem.ID
-      information.post_author = app.quotes.editedItem.post_author
+      information.post_parent = app.inbox.editedItem.ID
+      information.post_author = app.inbox.editedItem.post_author
 
       app.information_requests_loading = true
       app.$http.post(url, information).then( res => {
@@ -842,8 +731,8 @@ let vm = new Vue({
       if (attachment.hasOwnProperty('ID') && attachment.ID != undefined) {
         data.append('ID', attachment.ID)
       }
-      data.append('post_parent', app.quotes.editedItem.ID)
-      data.append('agent', app.quotes.editedItem.post_author)
+      data.append('post_parent', app.inbox.editedItem.ID)
+      data.append('agent', app.inbox.editedItem.post_author)
       data.append('post_title', attachment.post_title)
       if (attachment.doc != undefined || attachment.doc != '') {
         data.append('attachment', attachment.doc)
@@ -911,13 +800,21 @@ let vm = new Vue({
       })      
     },
 
+    closeInformationRequest () {
+      this.information_requests.dialog = false
+      this.$nextTick(() => {
+        this.information_requests.editedItem = Object.assign({}, {})
+        this.information_requests.editedIndex = -1
+      })
+    },
+    
     updateAttachmentName (item) {
       var app = this
       var attachment = item
       var url = api_url + 'ra_elite_usa_insurance_save_quote_attachment_request'
       var index = app.attachments.items.indexOf(item)
-      attachment.post_parent = app.quotes.editedItem.ID
-      attachment.post_author = app.quotes.editedItem.post_author
+      attachment.post_parent = app.inbox.editedItem.ID
+      attachment.post_author = app.inbox.editedItem.post_author
 
       app.$http.post(url, attachment).then( res => {
         app.barAlert = true
@@ -926,34 +823,6 @@ let vm = new Vue({
           if (res.body.status == 'success') {
             app.$refs.attachment_edit_dialog.save()
             app.attachments.dialog = false
-          }
-        }
-        else {
-          app.alert_type = 'error'
-          app.barMessage = 'There was an error'
-        }
-      }, err => {
-        app.attachment_loading = false
-        app.barAlert = true
-        app.barMessage = "There was an error, it can't be possible process the information sent"
-      })
-    },
-
-    updateInformationTitle (item) {
-      var app = this
-      var information = item
-      var url = api_url + 'ra_elite_usa_insurance_save_quote_information_request'
-      var index = app.information_requests.items.indexOf(item)
-      information.post_parent = app.quotes.editedItem.ID
-      information.post_author = app.quotes.editedItem.post_author
-
-      app.$http.post(url, information).then( res => {
-        app.barAlert = true
-        if (res.body.hasOwnProperty('message')) {
-          app.barMessage = res.body.message
-          if (res.body.status == 'success') {
-            app.$refs.information_request_edit_dialog.save()
-            app.information_requests.dialog = false
           }
         }
         else {
@@ -1038,7 +907,7 @@ let vm = new Vue({
         app.barMessage = "There was an error, it can't be possible process the information sent"
       })
     },
-
+  
     markAsProcessingDocumentRequested (item) {
       var app = this
       var url = api_url + 'ra_elite_usa_insurance_process_form_document_requested'
@@ -1063,9 +932,9 @@ let vm = new Vue({
 
     deleteQuoteForm () {
       var app = this
-      var quote_form = app.quotes.editedItem
+      var quote_form = app.inbox.editedItem
       var url = api_url + 'ra_elite_usa_insurance_delete_quote'
-      var index = app.quotes.editedIndex
+      var index = app.inbox.editedIndex
 
       app.$http.post(url, {ID: quote_form.ID}).then( res => {
         app.barAlert = true
@@ -1073,7 +942,7 @@ let vm = new Vue({
         if (res.body.hasOwnProperty('message')) {
           app.barMessage = res.body.message
           if (res.body.status == 'success') {
-            app.quotes.items.splice(index, 1)
+            app.inbox.items.splice(index, 1)
           }
         }
         else {
@@ -1139,32 +1008,6 @@ let vm = new Vue({
       })
     },
 
-    deleteInformationRequest () {
-      var app = this
-      var attachment = app.information_requests.editedItem
-      var url = api_url + 'ra_elite_usa_insurance_delete_quote_information_request'
-      var index = app.information_requests.editedIndex
-
-      app.$http.post(url, {ID: attachment.ID}).then( res => {
-        app.barAlert = true
-        app.information_requests.delete_dialog = false
-        if (res.body.hasOwnProperty('message')) {
-          app.barMessage = res.body.message
-          if (res.body.status == 'success') {
-            app.information_requests.items.splice(index, 1)
-          }
-        }
-        else {
-          app.alert_type = 'error'
-          app.barMessage = 'There was an error'
-        }
-      }, err => {
-        app.manager_attachments.delete_dialog = false
-        app.barAlert = true
-        app.barMessage = "There was an error, it can't be possible process the information sent"
-      })
-    },
-
     uploadAttachment () {
       var app = this
       var attachment = app.attachments.editedItem
@@ -1176,7 +1019,7 @@ let vm = new Vue({
       data.append('ID', attachment.ID)
       data.append('post_title', attachment.post_title)
       data.append('post_author', attachment.post_author)
-      data.append('agent', app.quotes.editedItem.affordable_care_act.agent_name)
+      data.append('agent', app.inbox.editedItem.affordable_care_act.agent_name)
 
       if (attachment.attachment_id != '' ) {
         data.append('attachment_id', attachment.attachment_id)
@@ -1225,13 +1068,12 @@ let vm = new Vue({
     uploadInformationRequest () {
       var app = this
       var information = app.information_requests.editedItem
+      information.agent = app.inbox.editedItem.affordable_care_act.agent_name
       var url = api_url + 'ra_elite_usa_insurance_upload_quote_information_requested'
       var index = app.information_requests.editedIndex
 
-      var data = new FormData();
-
       app.information_requests_loading = true
-      app.$http.post(url, data).then( res => {
+      app.$http.post(url, information).then( res => {
         app.information_requests_loading = false
         app.barAlert = true
         if (res.body.hasOwnProperty('message')) {
@@ -1248,6 +1090,32 @@ let vm = new Vue({
         }
       }, err => {
         app.attachment_loading = false
+        app.barAlert = true
+        app.barMessage = "There was an error, it can't be possible process the information sent"
+      })
+    },
+
+    deleteInformationRequest () {
+      var app = this
+      var attachment = app.information_requests.editedItem
+      var url = api_url + 'ra_elite_usa_insurance_delete_quote_information_request'
+      var index = app.information_requests.editedIndex
+
+      app.$http.post(url, {ID: attachment.ID}).then( res => {
+        app.barAlert = true
+        app.information_requests.delete_dialog = false
+        if (res.body.hasOwnProperty('message')) {
+          app.barMessage = res.body.message
+          if (res.body.status == 'success') {
+            app.information_requests.items.splice(index, 1)
+          }
+        }
+        else {
+          app.alert_type = 'error'
+          app.barMessage = 'There was an error'
+        }
+      }, err => {
+        app.manager_attachments.delete_dialog = false
         app.barAlert = true
         app.barMessage = "There was an error, it can't be possible process the information sent"
       })
@@ -1280,6 +1148,122 @@ let vm = new Vue({
       return Number(amount.replace(/[^0-9.-]+/g,""))
     },
 
+    showDetailsItem (item) {
+      this.inbox.editedItem = Object.assign({}, item)
+      this.inbox.view_dialog = true
+    },
+
+    closeDetailsView () {
+      this.inbox.view_dialog = false
+      this.$nextTick(() => {
+        this.inbox.editedItem = Object.assign({}, {})
+        this.inbox.editedIndex = -1
+      })
+    },
+
+    returnPostType (post_type) {
+      switch (post_type) {
+
+        case 'quote_form':
+          return 'Quote Form'
+          break;
+
+        case 'quote_form_mr':
+          return 'Modification'
+          break;
+
+        case 'quote_data_r':
+          return 'Information Requested'
+          break;
+
+        case 'quote_doc_r':
+          return 'Document Requested'
+          break;
+      }
+    },
+
+    checkStatusColor (status, post_type) {
+      if (post_type == 'quote_form') {
+        switch (status) {
+
+          case 'Processing':
+
+            return 'warning'
+            break;
+
+          case 'Approved':
+            return 'green'
+            break;
+
+          case 'In tray':
+            return 'primary';
+            break;
+        }
+      }
+      else if (post_type == 'quote_doc_r') {
+        status = parseInt(status)
+        switch (status) {
+          case 0:
+
+            return 'warning'
+            break;
+
+          case 1:
+            return 'green'
+            break;
+
+          case 2:
+            return 'primary'
+            break;
+
+          case 3:
+            return 'warning'
+            break;
+        }
+      }
+      else {
+        status = parseInt(status)
+        switch (status) {
+          case 0:
+
+            return 'warning'
+            break;
+
+          case 1:
+            return 'green'
+            break;
+
+          case 2:
+            return 'primary'
+            break;
+        }
+      }
+    },
+
+    returnStatusType (status, post_type) {
+      if (post_type == 'quote_form') {
+         return status
+      }
+      else {
+        status = parseInt(status)
+        switch (status) {
+          case 0:
+
+            return 'Processing'
+            break;
+
+          case 1:
+            return 'Approved'
+            break;
+
+          case 2:
+
+            return 'Received'
+            break;
+        }
+      }
+    },
+
     getFormatDate(d) {
       if (d == '') {
         return ''
@@ -1301,31 +1285,52 @@ let vm = new Vue({
       return moment(d).format('MM/DD/YYYY, h:mm:ss a')
     },
 
-    countStatus (status) {
-      if (status == '') {
-        return this.quotes.items.length
-      }
-      var items = this.quotes.items.filter( (e, i) => {
-        return e.status == status
-      })
-      return items.length
-    },
-
     filterQuotes (id) {
       var app = this
-      var item = app.quotes.items.filter(quote => parseInt(quote.ID) == parseInt(id))
-      if (item.length > 0) {
-        app.showItem(item[0])
+      var inbox = app.inbox
+      inbox.loading_details = true
+      var quote = inbox.items.filter( (e) => {
+        return e.ID == id
+      })
+      if (quote.length > 0) {
+        app.showItem(quote[0]) 
         app.getModificationRequests()
-        app.getInformationRequests()
         app.getAttachmentsRequests()
         app.getManagerAttachments()
+        app.getInformationRequests()
+        inbox.view_dialog = false
+        inbox.loading_details = false
       }
       else {
-        app.barAlert = true
-        app.barMessage = 'The quote requested is not available'
-      }
-    }
+        var app = this
+        var url = api_url + 'ra_elite_usa_insurance_get_quote'
+        app.$http.post(url, {ID: id}).then( res => {
+          if (res.body != null && res.body.hasOwnProperty('ID')) {
+              quote = res.body
+              quote.published_at = moment(quote.affordable_care_act.date).format('DD/MM/YYYY, h:mm:ss a')
+              quote.applicant = quote.personal_information.first_name + ' ' + 
+              quote.personal_information.middle_name + ' ' + 
+              quote.personal_information.last_name
+
+              inbox.editedItem = Object.assign({}, quote)
+              app.showItem(quote) 
+              app.getModificationRequests()
+              app.getAttachmentsRequests()
+              app.getManagerAttachments()
+              app.getInformationRequests()
+              inbox.view_dialog = false
+              inbox.loading_details = false
+          }
+          else {
+            app.barAlert = true
+            app.barMessage = 'Any quote was found using the item requested'
+            inbox.loading_details = false
+          }
+        }, err => {
+          app.table_loading = false
+        })
+      } 
+    },
 
   }
 });

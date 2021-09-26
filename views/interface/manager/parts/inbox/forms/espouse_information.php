@@ -1,4 +1,5 @@
-<v-form ref="espouse_information_form" v-model="espouse_information_valid" v-if="inbox.editedItem.affordable_care_act.coverage_type == 'FAMILY'" lazy-validation>
+<v-form ref="espouse_information_form" v-model="espouse_information_valid" 
+v-if="inbox.editedItem.affordable_care_act.coverage_type == 'FAMILY' && inbox.editedItem.personal_information.marital_status == 'MARRIED'" lazy-validation>
   <v-row class="mt-md-12 mt-lg-0">
     <v-col cols="12">
       <h3 class="font-weight-bold primary--text">SPOUSE INFORMATION</h3>
