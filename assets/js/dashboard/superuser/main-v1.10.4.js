@@ -157,6 +157,19 @@ let vm = new Vue({
       },
       editedIndex: -1,
     },
+    action_history: {
+      dialog: false,
+      details_dialog: false,
+      loading: false,
+      headers: [
+        { text: 'Date', align: 'center', value: 'created_at' },
+        { text: 'Description', align: 'center', value: 'action_message' },
+        { text: 'Action', align: 'center', value: 'actions' },
+      ],
+      items: [],
+      editedItem: {},
+      detail_items: [],
+    },
     quotes: {
       search: '',
       excel: {

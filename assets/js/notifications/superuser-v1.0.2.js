@@ -1,3 +1,5 @@
+var set_n_loading = false
+var set_n_function = false
 function initNotifications (app) {
   if (!set_n_function) {
     app.markNotificationAsRead = markNotificationAsRead
