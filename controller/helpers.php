@@ -18,10 +18,10 @@ function ra_elite_usa_insurance_register_style($style, $deps = array(), $inline_
     if (!empty($inline_css)) wp_add_inline_style('ra-project-filter-' . $style, $inline_css);
 }
 
-function ra_elite_usa_insurance_register_script($script, $deps = array(), $footer = false, $inline_scripts = '')
+function ra_elite_usa_insurance_register_script($script, $deps = array(), $footer = false, $inline_scripts = '', $version = RA_ELITE_USA_INSURANCE_VERSION)
 {
     $handle = "ra-project-filter-{$script}";
-    wp_enqueue_script($handle, RA_ELITE_USA_INSURANCE_URL . 'assets/js/' . $script . '.js', $deps, '', $footer);
+    wp_enqueue_script($handle, RA_ELITE_USA_INSURANCE_URL . 'assets/js/' . $script . '.js', $deps, $version, $footer);
     if (!empty($inline_scripts)) wp_add_inline_script($handle, $inline_scripts);
 }
 
