@@ -246,6 +246,8 @@ let vm = new Vue({
               item.applicant = item.personal_information.first_name + ' ' + 
               item.personal_information.middle_name + ' ' + 
               item.personal_information.last_name
+              item.type = item.post_parent <= 0 ? 'First-Time' : 'Renewal'
+              item.year = moment(item.affordable_care_act.date).format('YYYY')
             }
             else if (item.post_type == 'quote_doc_r' && parseInt(item.status) == 0) {
               return;

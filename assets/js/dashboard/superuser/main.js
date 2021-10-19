@@ -147,6 +147,8 @@ let vm = new Vue({
         { text: 'Date', align: 'center', value: 'published_at' },
         { text: 'Information', align: 'center', value: 'post_title' },
         { text: 'Content', align: 'center', value: 'post_content' },
+        { text: 'Year', value: 'year' },
+        { text: 'Type', value: 'type' },
         { text: 'Status', align: 'center', value: 'status' },
         { text: 'Action', align: 'center', value: 'actions' },
       ],
@@ -251,6 +253,8 @@ let vm = new Vue({
         { text: 'Date', align: 'start', value: 'published_at' },
         { text: 'Applicant', align: 'start', value: 'applicant' },
         { text: 'Agent', align: 'start', value: 'agent' },
+        { text: 'Year', value: 'year' },
+        { text: 'Type', value: 'type' },
         { text: 'Status', value: 'status' },
         { text: 'Actions', value: 'actions', align:'center', sortable: false },
       ],
@@ -321,6 +325,8 @@ let vm = new Vue({
             item.applicant = item.personal_information.first_name + ' ' + 
             item.personal_information.middle_name + ' ' + 
             item.personal_information.last_name
+            item.type = item.post_parent <= 0 ? 'First-Time' : 'Renewal'
+            item.year = moment(item.affordable_care_act.date).format('YYYY')
 
             items.push(item)
           })

@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       EliteUSAInsurance
  * Description:       Insurance quote applications
- * Version:           1.1.4
+ * Version:           1.2.0
  * Requires at least: 5.1
  * Requires PHP:      7.2
  * Author:            Roiner Adrianza
@@ -14,7 +14,7 @@ define( 'RA_ELITE_USA_INSURANCE_FILE', __FILE__);
 define( 'RA_ELITE_USA_INSURANCE', dirname( RA_ELITE_USA_INSURANCE_FILE));
 define( 'RA_ELITE_USA_INSURANCE_URL', plugin_dir_url( RA_ELITE_USA_INSURANCE_FILE));
 define( 'RA_ELITE_USA_INSURANCE_DB_VERSION', '1.1' );
-define( 'RA_ELITE_USA_INSURANCE_VERSION', '1.1.4' );
+define( 'RA_ELITE_USA_INSURANCE_VERSION', '1.2.0' );
 
 define( 'RA_ELITE_USA_ENV', false );
 

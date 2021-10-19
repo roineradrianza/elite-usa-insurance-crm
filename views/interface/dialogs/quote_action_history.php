@@ -24,7 +24,11 @@
                             </template>
                             <template #item.actions="{ item }">
                                 <v-icon md @click="showActionDetails(item)" color="primary"
-                                    v-if="item.post_parent != null">
+                                    v-if="item.post_type != 'quote_form' && item.post_parent !== null">
+                                    mdi-eye
+                                </v-icon>
+                                <v-icon md @click="filterQuotes(item.post_parent); action_history.dialog = false"
+                                    color="primary" v-else>
                                     mdi-eye
                                 </v-icon>
                             </template>

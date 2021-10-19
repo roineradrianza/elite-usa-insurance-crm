@@ -45,6 +45,12 @@ class RA_ELITE_USA_INSURANCE_INBOX
             $post = (array) $post;
             $author = RA_ELITE_USA_INSURANCE_USER::get_current_user($post['post_author']);
             $post['agent'] = $author['first_name'] . ' ' . $author['last_name'];
+            $post['renewals'] = get_posts(
+                [
+                    'post_parent' => $post['ID'], 
+                    'post_type' => 'quote_form'
+                ]
+            );
             foreach ($metadata as $meta) {
                 if ($meta == 'status') {
                    $post[$meta] = get_post_meta( $post['ID'], $meta, true );
@@ -98,6 +104,12 @@ class RA_ELITE_USA_INSURANCE_INBOX
         foreach ($query as $post) {
             $post = (array) $post;
             $post['agent'] = $author['first_name'] . ' ' . $author['last_name'];
+            $post['renewals'] = get_posts(
+                [
+                    'post_parent' => $post['ID'], 
+                    'post_type' => 'quote_form'
+                ]
+            );
             foreach ($metadata as $meta) {
                 if ($meta == 'status') {
                    $post[$meta] = get_post_meta( $post['ID'], $meta, true );

@@ -1,6 +1,13 @@
 <?php
 RA_ELITE_USA_INSURANCE_QUOTES::init();
-
+/** 
+ * 
+ * 
+ * TO-DO
+ * 
+ * 
+ * 
+*/
 class RA_ELITE_USA_INSURANCE_QUOTES
 {
     public static function init()
@@ -49,6 +56,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
         $data = empty($_POST) ? json_decode(file_get_contents("php://input"), true) : $post_data;
         $documents = [];
         $post_arguments = [
+            'post_parent' => !empty($data['post_parent']) ? intval($data['post_parent']) : '',
             'post_title' => 'Quote Form - ' . $data['personal_information']['first_name'] . ' ' . $data['personal_information']['last_name'],
             'post_type' => 'quote_form',
             'post_status' => 'publish',
@@ -83,9 +91,20 @@ class RA_ELITE_USA_INSURANCE_QUOTES
                 'created_at' => $data['affordable_care_act']['date'],
                 'extra_info' => json_encode($post_arguments, JSON_UNESCAPED_UNICODE),
             ];
-            $action_data['post_id'] = $result;
             $action_history = new RA_EUI_ACTIONS_HISTORY_MODEL();
             $action_result = $action_history->create($action_data);
+            if (!empty($post_arguments['post_parent'])) {
+                $action_data = [
+                    'post_id' => $post_arguments['post_parent'],
+                    'post_parent' => $result,
+                    'action_message' => "Quote's renewal",
+                    'post_type' => $post_arguments['post_type'],
+                    'action_type' => 'renewal',
+                    'created_at' => $data['affordable_care_act']['date'],
+                    'extra_info' => json_encode($post_arguments, JSON_UNESCAPED_UNICODE),
+                ];
+                $action_result = $action_history->create($action_data);
+            }
         }
         if (isset($_FILES['documents']) && $result != 0) {
             $files = $_FILES['documents'];
@@ -216,11 +235,11 @@ class RA_ELITE_USA_INSURANCE_QUOTES
 
     public static function get_my_quotes()
     {
-        $args = array(
+        $args = [
             'author' => RA_ELITE_USA_INSURANCE_USER::get_current_user()['id'],
             'posts_per_page' => 1000,
             'post_type' => 'quote_form',
-        );
+        ];
         $metadata =
             [
             'status',
@@ -237,6 +256,12 @@ class RA_ELITE_USA_INSURANCE_QUOTES
         $posts = [];
         foreach ($query as $post) {
             $post = (array) $post;
+            $post['renewals'] = get_posts(
+                [
+                    'post_parent' => $post['ID'], 
+                    'post_type' => 'quote_form'
+                ]
+            );
             foreach ($metadata as $meta) {
                 if ($meta == 'status') {
                     $post[$meta] = get_post_meta($post['ID'], $meta, true);
@@ -253,7 +278,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
     {
         $data = json_decode(file_get_contents("php://input"), true);
         $args = array(
-            'include' => $data['ID'],
+            'include' => intval($data['ID']),
             'post_type' => 'quote_form',
         );
         $metadata =
@@ -282,6 +307,9 @@ class RA_ELITE_USA_INSURANCE_QUOTES
                 }
             }
             $posts[] = $post;
+        }
+        if (!empty($post[0]) && !self::can_manage_current_quote('', $posts[0])) {
+            wp_send_json_error(null, 403);
         }
         wp_send_json($posts[0]);
     }
@@ -311,6 +339,12 @@ class RA_ELITE_USA_INSURANCE_QUOTES
             $post = (array) $post;
             $author = RA_ELITE_USA_INSURANCE_USER::get_current_user($post['post_author']);
             $post['agent'] = $author['first_name'] . ' ' . $author['last_name'];
+            $post['renewals'] = get_posts(
+                [
+                    'post_parent' => $post['ID'], 
+                    'post_type' => 'quote_form'
+                ]
+            );
             foreach ($metadata as $meta) {
                 if ($meta == 'status') {
                     $post[$meta] = get_post_meta($post['ID'], $meta, true);
@@ -882,6 +916,18 @@ class RA_ELITE_USA_INSURANCE_QUOTES
         $action_result = $action_history->create($action_data);
 
         wp_send_json($message);
+    }
+
+    public static function can_manage_current_quote($current_user, $quote)
+    {
+        $current_user = is_a($current_user, 'RA_ELITE_USA_INSURANCE_USER') ? $current_user : RA_ELITE_USA_INSURANCE_USER::get_current_user();
+        $role = $current_user['role'][0];
+        if ($current_user['id'] == $quote['post_author']) {
+            return true;
+        } else if ($role == 'elite_usa_superuser' || $role == 'elite_usa_quote_manager' || $role == 'administrator') {
+            return true;
+        }
+        return false;
     }
 
 }

@@ -40,6 +40,11 @@
                   </v-icon>
                 </a>
               </template>
+
+              <template #item.type="{ item }">
+                <v-chip :color="item.type == 'Renewal' ? 'primary' : 'success'" outlined dark>{{ item.type }}</v-chip>
+              </template>
+              
               <template #item.status="{ item }">
                 <v-chip :color="checkStatusColor(item.status)" dark>{{ item.status }}</v-chip>
               </template>

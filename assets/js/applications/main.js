@@ -4,6 +4,9 @@
 const vuetify = new Vuetify(vuetify_opts);
 const api_url = ra_elite_usa_insurance_ajaxurl
 
+const quote_id = url_params.get('quote_id')
+const action = url_params.get('action')
+
 /*VUE INSTANCE*/
 let vm = new Vue({
   vuetify,
@@ -25,6 +28,9 @@ let vm = new Vue({
     quote_loading: false,
     pdf_loading: false,
     logout_loading: false,
+    renew_loading: false,
+    not_able_to_renew: false,
+    not_quote_found: false,
     stepper: 1,
     preview: false,
     routes,
@@ -301,11 +307,40 @@ let vm = new Vue({
   created () {
     initNotifications(this)
     setInterval(initNotifications, 30000, this)
+    this.initialize()
   },
 
   mounted () {},
 
   methods: {
+
+    initialize () {
+      var app = this
+      if (quote_id !== null) {
+        var url = api_url + 'ra_elite_usa_insurance_get_quote'
+        app.renew_loading = true
+        app.$http.post(url, {ID: quote_id}).then( res => {
+          app.renew_loading = false
+          if (res.body != null && res.body.hasOwnProperty('ID')) {
+            res.body.published_at = moment(res.body.affordable_care_act.date).format('DD/MM/YYYY, h:mm:ss a')
+            res.body.affordable_care_act.date = moment().format('YYYY-MM-DD hh:mm:ss a')
+            res.body.affordable_care_act.effectiveness_date = moment().format('YYYY-MM-DD')
+            res.body.documents = []
+            res.body.applicant = res.body.personal_information.first_name + ' ' + 
+            res.body.personal_information.middle_name + ' ' + 
+            res.body.personal_information.last_name
+            app.form.content = res.body
+          } else {
+            app.not_quote_found = true
+          }
+        }, err => {
+          if (err.status == 403) {
+            app.not_able_to_renew = true
+          }
+          app.renew_loading = false
+        })
+      }
+    },
 
     amountOfNumbers (v) {
       if (!v == '' && v.length != 9) {
@@ -322,14 +357,6 @@ let vm = new Vue({
         window.location = res.body.redirect_url
       }, err => {
         app.logout_loading = false
-      })
-    },
-
-    closeEdit () {
-      this.edit_dialog = false
-      this.$nextTick(() => {
-        this.quotes.editedItem = Object.assign({}, {})
-        this.quotes.editedIndex = -1
       })
     },
 
@@ -413,6 +440,7 @@ let vm = new Vue({
       var data = new FormData()
       var url = api_url + 'ra_elite_usa_insurance_save_quote_form'
 
+      data.append('post_parent', quote_id)
       data.append('affordable_care_act', JSON.stringify(quote_form.affordable_care_act))
       data.append('personal_information', JSON.stringify(quote_form.personal_information))
       data.append('employment_information', JSON.stringify(quote_form.employment_information))
@@ -470,11 +498,11 @@ let vm = new Vue({
 
     resetQuoteForm () {
       var app = this
-      var default_form = app.form.default
       app.preview = false
-      app.already_sent = false
+      app.already_sent = false 
       app.stepper = 1
-      app.form.content = Object.assign({}, default_form)
+      quote_id = null
+      app.form.content = Object.assign({}, app.form.default)
       app.scrollToTopStepper()
     },
 
