@@ -1,5 +1,13 @@
 {
-    "require": {
-        "mpdf/mpdf": "^8.0"
-    }
+    "name": "roineradrianza/elite-usa-insurance-crm",
+    "description": "Insurance policy management project",
+    "type": "project",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Roiner Adrianza",
+            "email": "roineradrianzap@gmail.com"
+        }
+    ],
+    "require": {}
 }
