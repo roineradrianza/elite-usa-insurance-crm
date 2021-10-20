@@ -326,7 +326,9 @@ let vm = new Vue({
             item.personal_information.middle_name + ' ' + 
             item.personal_information.last_name
             item.type = item.post_parent <= 0 ? 'First-Time' : 'Renewal'
-            item.year = moment(item.affordable_care_act.date).format('YYYY')
+            item.year = item.affordable_care_act.hasOwnProperty('renewal_date') ?
+                moment(item.affordable_care_act.renewal_date).format('YYYY')
+                : moment(item.affordable_care_act.date).format('YYYY')
 
             items.push(item)
           })

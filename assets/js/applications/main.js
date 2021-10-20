@@ -325,6 +325,7 @@ let vm = new Vue({
             res.body.published_at = moment(res.body.affordable_care_act.date).format('DD/MM/YYYY, h:mm:ss a')
             res.body.affordable_care_act.date = moment().format('YYYY-MM-DD hh:mm:ss a')
             res.body.affordable_care_act.effectiveness_date = moment().format('YYYY-MM-DD')
+            res.body.affordable_care_act.renewal_date = moment(moment().format('YYYY') + '-11-22').add('1', 'year').format('YYYY-MM-DD')
             res.body.documents = []
             res.body.applicant = res.body.personal_information.first_name + ' ' + 
             res.body.personal_information.middle_name + ' ' + 
