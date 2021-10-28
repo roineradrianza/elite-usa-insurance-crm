@@ -2,24 +2,27 @@
 /**
  * Plugin Name:       EliteUSAInsurance
  * Description:       Insurance quote applications
- * Version:           1.2.1
+ * Version:           1.2.2
  * Requires at least: 5.1
  * Requires PHP:      7.2
  * Author:            Roiner Adrianza
  * Developer:         Roiner Adrianza
  * License:           GPL v2 or later
-*/
-if( !defined( 'ABSPATH' ) ) exit; //Exit if accessed directly
-define( 'RA_ELITE_USA_INSURANCE_FILE', __FILE__);
-define( 'RA_ELITE_USA_INSURANCE', dirname( RA_ELITE_USA_INSURANCE_FILE));
-define( 'RA_ELITE_USA_INSURANCE_URL', plugin_dir_url( RA_ELITE_USA_INSURANCE_FILE));
-define( 'RA_ELITE_USA_INSURANCE_DB_VERSION', '1.1' );
-define( 'RA_ELITE_USA_INSURANCE_VERSION', '1.2.1' );
+ */
+if (!defined('ABSPATH')) {
+    exit;
+}
+//Exit if accessed directly
+define('RA_ELITE_USA_INSURANCE_FILE', __FILE__);
+define('RA_ELITE_USA_INSURANCE', dirname(RA_ELITE_USA_INSURANCE_FILE));
+define('RA_ELITE_USA_INSURANCE_URL', plugin_dir_url(RA_ELITE_USA_INSURANCE_FILE));
+define('RA_ELITE_USA_INSURANCE_DB_VERSION', '1.1');
+define('RA_ELITE_USA_INSURANCE_VERSION', '1.2.2');
 
-define( 'RA_ELITE_USA_ENV', false );
+define('RA_ELITE_USA_ENV', false);
 
-require_once( RA_ELITE_USA_INSURANCE . '/models/main.php' );
+require_once RA_ELITE_USA_INSURANCE . '/models/main.php';
 
-require_once( RA_ELITE_USA_INSURANCE . '/controller/main.php' );
+require_once RA_ELITE_USA_INSURANCE . '/controller/main.php';
 
-require_once( RA_ELITE_USA_INSURANCE . '/shortcodes/shortcodes.php' );
+require_once RA_ELITE_USA_INSURANCE . '/shortcodes/shortcodes.php';

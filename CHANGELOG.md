@@ -1,3 +1,10 @@
+## V1.2.2
+1. QUOTES REFACTORING
+2. NEW CLASSES: DocumentRequest, InformationRequest, ManagerAttachment & Modifications
+
+## V1.2.1
+1. ADJUSTMENT OF QUOTES RENEWAL YEAR
+
 ## V1.2.0
 1. FEATURE ADDED: QUOTES RENEWALS 
 
