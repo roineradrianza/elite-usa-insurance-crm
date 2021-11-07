@@ -119,7 +119,6 @@ class RA_ELITE_USA_INSURANCE_QUOTES
 
     public static function generate_quote_pdf()
     {
-        require_once RA_ELITE_USA_INSURANCE . "/vendor/autoload.php";
         set_time_limit(3600);
         $mpdf = new \Mpdf\Mpdf(
             [

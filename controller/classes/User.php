@@ -127,7 +127,6 @@ class RA_ELITE_USA_INSURANCE_USER
 
     public static function generate_contract_pdf()
     {
-        require_once RA_ELITE_USA_INSURANCE . "/vendor/autoload.php";
         set_time_limit(3600);
         $mpdf = new \Mpdf\Mpdf(
             [

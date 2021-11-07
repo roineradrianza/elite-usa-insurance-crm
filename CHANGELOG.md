@@ -1,3 +1,6 @@
+## V1.2.3
+1. MINOR BUG FIXES
+
 ## V1.2.2
 1. QUOTES REFACTORING
 2. NEW CLASSES: DocumentRequest, InformationRequest, ManagerAttachment & Modifications

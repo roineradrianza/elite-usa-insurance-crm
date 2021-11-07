@@ -79,7 +79,7 @@
                                     <v-stepper-content id="vs_affodable_care_act" step="1">
                                         <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/affordable_care_act'); ?>
 
-                                        <v-btn color="primary" @click="stepper = 2;scrollToTopStepper()"
+                                        <v-btn color="primary" @click="stepper = stepper + 1;scrollToTopStepper()"
                                             :disabled="!affordable_care_act_valid">
                                             Continue
                                         </v-btn>
@@ -89,20 +89,13 @@
                                     <v-stepper-content id="vs_personal_information" step="2">
                                         <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/personal_information'); ?>
                                         <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/employment_information'); ?>
-                                        <template v-if="form.content.affordable_care_act.coverage_type == 'FAMILY'">
-                                            <v-btn color="primary" @click="stepper = 3;scrollToTopStepper()"
-                                                :disabled="!personal_information_valid || !employment_information_valid">
-                                                Continue
-                                            </v-btn>
-                                        </template>
-                                        <template v-else>
-                                            <v-btn color="primary" @click="stepper = 3;scrollToTopStepper()"
-                                                :disabled="!personal_information_valid || !employment_information_valid">
-                                                Continue
-                                            </v-btn>
-                                        </template>
+                                        <v-btn color="primary" @click="stepper = stepper + 1;scrollToTopStepper()"
+                                            :disabled="!personal_information_valid || !employment_information_valid">
+                                            Continue
+                                        </v-btn>
 
-                                        <v-btn @click="stepper = 1;scrollToTopStepper();updateFormDate();" text>
+                                        <v-btn @click="stepper = stepper - 1;scrollToTopStepper();updateFormDate();"
+                                            text>
                                             GO BACK
                                         </v-btn>
                                     </v-stepper-content>
@@ -111,12 +104,12 @@
                                             :step="form.content.personal_information.marital_status == 'MARRIED' ? 3 : 100">
                                             <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/espouse_information'); ?>
                                             <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/espouse_employment_information'); ?>
-                                            <v-btn color="primary" @click="stepper = 4;scrollToTopStepper()"
+                                            <v-btn color="primary" @click="stepper = stepper + 1;scrollToTopStepper()"
                                                 :disabled="!espouse_information_valid || !espouse_employment_information_valid">
                                                 Continue
                                             </v-btn>
 
-                                            <v-btn @click="stepper = 2;scrollToTopStepper()" text>
+                                            <v-btn @click="stepper = stepper - 1;scrollToTopStepper()" text>
                                                 GO BACK
                                             </v-btn>
                                         </v-stepper-content>
@@ -125,45 +118,25 @@
                                             :step="form.content.personal_information.marital_status == 'MARRIED' ? 4 : 3">
                                             <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/dependents'); ?>
 
-                                            <v-btn color="primary"
-                                                @click="form.content.personal_information.marital_status == 'MARRIED' ? stepper = 5 : stepper = 4;scrollToTopStepper()"
+                                            <v-btn color="primary" @click="stepper = stepper + 1;scrollToTopStepper()"
                                                 :disabled="!dependents_information_valid">
                                                 Continue
                                             </v-btn>
 
-                                            <v-btn
-                                                @click="form.content.personal_information.marital_status == 'MARRIED' ? stepper = 3 : stepper = 2;scrollToTopStepper()"
-                                                text>
+                                            <v-btn @click="stepper = stepper - 1;scrollToTopStepper()" text>
                                                 GO BACK
                                             </v-btn>
                                         </v-stepper-content>
                                         <v-stepper-content id="vs_payments"
                                             :step="form.content.personal_information.marital_status == 'MARRIED' ? 5 : 4">
                                             <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/payment_information'); ?>
-                                            <template
-                                                v-if="form.content.personal_information.marital_status == 'MARRIED'">
-                                                <v-btn color="primary" @click="stepper = 6;scrollToTopStepper()"
-                                                    :disabled="!payment_information_valid">
-                                                    CONTINUE
-                                                </v-btn>
-                                            </template>
-                                            <template v-else>
-                                                <v-btn color="primary" @click="stepper = 5;scrollToTopStepper()"
-                                                    :disabled="!payment_information_valid">
-                                                    CONTINUE
-                                                </v-btn>
-                                            </template>
-                                            <template
-                                                v-if="form.content.affordable_care_act.coverage_type == 'MARRIED'">
-                                                <v-btn @click="stepper = 4;scrollToTopStepper()" text>
-                                                    GO BACK
-                                                </v-btn>
-                                            </template>
-                                            <template v-else>
-                                                <v-btn @click="stepper = 2;scrollToTopStepper()" text>
-                                                    GO BACK
-                                                </v-btn>
-                                            </template>
+                                            <v-btn color="primary" @click="stepper = stepper + 1;scrollToTopStepper()"
+                                                :disabled="!payment_information_valid">
+                                                CONTINUE
+                                            </v-btn>
+                                            <v-btn @click="stepper = stepper - 1;scrollToTopStepper()" text>
+                                                GO BACK
+                                            </v-btn>
                                         </v-stepper-content>
                                         <v-stepper-content id="vs_files"
                                             :step="form.content.personal_information.marital_status == 'MARRIED' ? 6 : 5">
@@ -173,30 +146,23 @@
                                                 ref="application_preview" :disabled="!payment_information_valid">
                                                 PREVIEW
                                             </v-btn>
-                                            <template
-                                                v-if="form.content.personal_information.marital_status == 'MARRIED'">
-                                                <v-btn @click="stepper = 5;scrollToTopStepper()" text>
-                                                    GO BACK
-                                                </v-btn>
-                                            </template>
-                                            <template v-else>
-                                                <v-btn @click="stepper = 3;scrollToTopStepper()" text>
-                                                    GO BACK
-                                                </v-btn>
-                                            </template>
+                                            <v-btn @click="stepper = stepper - 1;scrollToTopStepper()" text>
+                                                GO BACK
+                                            </v-btn>
                                         </v-stepper-content>
                                     </template>
                                     <template v-else>
                                         <v-stepper-content id="vs_payments" step="3">
                                             <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/payment_information'); ?>
                                             <template>
-                                                <v-btn color="primary" @click="stepper = 4;scrollToTopStepper()"
+                                                <v-btn color="primary"
+                                                    @click="stepper = stepper + 1;scrollToTopStepper()"
                                                     :disabled="!payment_information_valid">
                                                     CONTINUE
                                                 </v-btn>
                                             </template>
                                             <template>
-                                                <v-btn @click="stepper = 2;scrollToTopStepper()" text>
+                                                <v-btn @click="stepper = stepper - 1;scrollToTopStepper()" text>
                                                     GO BACK
                                                 </v-btn>
                                             </template>
@@ -209,7 +175,7 @@
                                                 PREVIEW
                                             </v-btn>
                                             <template>
-                                                <v-btn @click="stepper = 3;scrollToTopStepper()" text>
+                                                <v-btn @click="stepper = stepper - 1;scrollToTopStepper()" text>
                                                     GO BACK
                                                 </v-btn>
                                             </template>
@@ -230,6 +196,10 @@
                                     <v-btn color="info" @click="generateQuotePDF" :loading="pdf_loading" dark>Download
                                         Quote
                                     </v-btn>
+
+                                    <v-btn color="secondary" @click="stepper = stepper - 1;scrollToTopStepper()"
+                                        v-if="stepper > 1" dark>Go
+                                        back</v-btn>
                                 </v-col>
                                 <v-col class="d-flex justify-center" cols="12" v-if="already_sent">
                                     <v-btn-toggle>
@@ -237,9 +207,8 @@
                                             Download
                                             Quote</v-btn>
                                         <v-btn color="primary" @click="resetQuoteForm()" dark>Sent Another Quote</v-btn>
-                                        <v-btn color="secondary"
-                                            href="<?php echo site_url() . '/' . RA_ELITE_USA_INSURANCE_OPTIONS::get_option('routes')['quotes'] ?>"
-                                            dark>Go to Dashboard</v-btn>
+                                        <v-btn color="secondary" @click="stepper = stepper - 1;scrollToTopStepper()"
+                                            v-if="stepper > 1" dark>Go back</v-btn>
                                     </v-btn-toggle>
                                 </v-col>
                                 <v-col cols="12" md="8" offset-md="2">
