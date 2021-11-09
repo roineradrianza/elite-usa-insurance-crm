@@ -548,5 +548,15 @@ let vm = new Vue({
       this.form.content.affordable_care_act.date = moment().format('YYYY-MM-DD hh:mm:ss a')
     },
 
+    validateFields(form, stepper) {
+      var app = this
+      if (app.$refs[form].validate()) {
+        app.stepper++
+        app.scrollToTopStepper()
+        return true
+      }
+      return false
+    }
+
   }
 });

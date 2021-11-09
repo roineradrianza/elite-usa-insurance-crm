@@ -79,7 +79,7 @@
                                     <v-stepper-content id="vs_affodable_care_act" step="1">
                                         <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/affordable_care_act'); ?>
 
-                                        <v-btn color="primary" @click="stepper = stepper + 1;scrollToTopStepper()"
+                                        <v-btn color="primary" @click="validateFields('affordable_care_act_form')"
                                             :disabled="!affordable_care_act_valid">
                                             Continue
                                         </v-btn>
@@ -89,7 +89,7 @@
                                     <v-stepper-content id="vs_personal_information" step="2">
                                         <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/personal_information'); ?>
                                         <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/employment_information'); ?>
-                                        <v-btn color="primary" @click="stepper = stepper + 1;scrollToTopStepper()"
+                                        <v-btn color="primary" @click="validateFields('personal_information_form')"
                                             :disabled="!personal_information_valid || !employment_information_valid">
                                             Continue
                                         </v-btn>
@@ -104,7 +104,7 @@
                                             :step="form.content.personal_information.marital_status == 'MARRIED' ? 3 : 100">
                                             <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/espouse_information'); ?>
                                             <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/espouse_employment_information'); ?>
-                                            <v-btn color="primary" @click="stepper = stepper + 1;scrollToTopStepper()"
+                                            <v-btn color="primary" @click="validateFields('espouse_information_form')"
                                                 :disabled="!espouse_information_valid || !espouse_employment_information_valid">
                                                 Continue
                                             </v-btn>
@@ -118,7 +118,7 @@
                                             :step="form.content.personal_information.marital_status == 'MARRIED' ? 4 : 3">
                                             <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/dependents'); ?>
 
-                                            <v-btn color="primary" @click="stepper = stepper + 1;scrollToTopStepper()"
+                                            <v-btn color="primary" @click="validateFields('dependent_information_form')"
                                                 :disabled="!dependents_information_valid">
                                                 Continue
                                             </v-btn>
@@ -130,7 +130,7 @@
                                         <v-stepper-content id="vs_payments"
                                             :step="form.content.personal_information.marital_status == 'MARRIED' ? 5 : 4">
                                             <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/payment_information'); ?>
-                                            <v-btn color="primary" @click="stepper = stepper + 1;scrollToTopStepper()"
+                                            <v-btn color="primary" @click="validateFields('payment_information_form')"
                                                 :disabled="!payment_information_valid">
                                                 CONTINUE
                                             </v-btn>
@@ -156,7 +156,7 @@
                                             <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/payment_information'); ?>
                                             <template>
                                                 <v-btn color="primary"
-                                                    @click="stepper = stepper + 1;scrollToTopStepper()"
+                                                    @click="validateFields('payment_information_form')"
                                                     :disabled="!payment_information_valid">
                                                     CONTINUE
                                                 </v-btn>

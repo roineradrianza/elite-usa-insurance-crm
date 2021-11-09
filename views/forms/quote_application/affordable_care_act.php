@@ -10,7 +10,7 @@
       </v-col>
       <v-col cols="12" md="6">
         <v-dialog ref="affordable_care_act_effectiveness_date_dialog" v-model="form.affordable_care_act_effectiveness_date_modal" :return-value.sync="form.content.affordable_care_act.effectiveness_date" width="300px">
-          <template v-slot:activator="{ on, attrs }">
+          <template #activator="{ on, attrs }">
             <v-text-field :value="getFormatDate(form.content.affordable_care_act.effectiveness_date)" label="DATE OF EFFECTIVENESS" prepend-icon="mdi-calendar" readonly v-bind="attrs" v-on="on" :rules="form.rules.required"></v-text-field>
           </template>
           <v-date-picker v-model="form.content.affordable_care_act.effectiveness_date" scrollable>
