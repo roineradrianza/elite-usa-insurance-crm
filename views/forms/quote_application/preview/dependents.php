@@ -54,7 +54,9 @@
     </v-col>
     <template>
       <v-col cols="12" md="6">
-        <p class="font-weight-bold">SOCIAL SECURITY NUMBER (SSN): <span class="font-weight-light">{{ dependent.ssn }}</span></p>
+        <p class="font-weight-bold">SOCIAL SECURITY NUMBER (SSN): 
+          <span class="font-weight-light">{{ dependent.ssn != '' ? dependent.ssn : 'Not registered' }}</span>
+        </p>
       </v-col>
     </template>
     <template v-if="!dependent.is_citizen">

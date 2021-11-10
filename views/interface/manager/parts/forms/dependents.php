@@ -76,7 +76,8 @@
         <v-col cols="12" md="6">
           <v-dialog ref="dependent_expires_dialog" v-model="dependent_expires_modal" persistent width="290px">
             <template v-slot:activator="{ on, attrs }">
-              <v-text-field :value="getFormatDate(dependent.document_expires)" label="DOCUMENT EXPIRATION DATE" prepend-icon="mdi-calendar" readonly v-bind="attrs" v-on="on" :rules="rules.required" :rules="rules.required"></v-text-field>
+              <v-text-field :value="getFormatDate(dependent.document_expires)" label="DOCUMENT EXPIRATION DATE" prepend-icon="mdi-calendar" 
+              readonly v-bind="attrs" v-on="on"></v-text-field>
             </template>
             <v-date-picker v-model="dependent.document_expires" scrollable>
               <v-spacer></v-spacer>

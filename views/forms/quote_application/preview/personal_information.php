@@ -61,7 +61,9 @@
   </v-col>
   <template v-if="form.content.personal_information.is_citizen">
     <v-col cols="12" md="6">
-      <p class="font-weight-bold">SOCIAL SECURITY NUMBER (SSN): <span class="font-weight-light">{{ form.content.personal_information.ssn }}</span></p>
+      <p class="font-weight-bold">SOCIAL SECURITY NUMBER (SSN): 
+        <span class="font-weight-light">{{ form.content.personal_information.ssn ? form.content.personal_information.ssn : 'Not registered' }}</span>
+      </p>
     </v-col>
   </template>
   <template v-else>
