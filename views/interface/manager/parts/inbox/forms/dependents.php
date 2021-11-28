@@ -23,7 +23,7 @@
         </v-col>
         <v-col cols="12" md="6">
           <v-dialog ref="dependent_dialog" v-model="dependent_birthdate_modal" persistent width="290px">
-            <template v-slot:activator="{ on, attrs }">
+            <template #activator="{ on, attrs }">
               <v-text-field :value="getFormatDate(dependent.birthdate)" label="BIRTHDATE" prepend-icon="mdi-calendar" readonly v-bind="attrs" v-on="on" :rules="rules.required"></v-text-field>
             </template>
             <v-date-picker v-model="dependent.birthdate" scrollable>
@@ -68,14 +68,14 @@
           <v-text-field v-model="dependent.card_number" label="CARD NUMBER" :rules="rules.card_number" maxlength="13" counter="13"></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field v-model="dependent.category" label="CATEGORY" :rules="rules.required"></v-text-field>
+          <v-text-field v-model="dependent.category" label="CATEGORY"></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field v-model="dependent.document_from" label="DOCUMENT FROM"></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
           <v-dialog ref="dependent_expires_dialog" v-model="dependent_expires_modal" persistent width="290px">
-            <template v-slot:activator="{ on, attrs }">
+            <template #activator="{ on, attrs }">
               <v-text-field :value="getFormatDate(dependent.document_expires)" label="DOCUMENT EXPIRATION DATE" prepend-icon="mdi-calendar" 
               readonly v-bind="attrs" v-on="on"></v-text-field>
             </template>
