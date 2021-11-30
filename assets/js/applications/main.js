@@ -40,6 +40,7 @@ let vm = new Vue({
       personal_information_document_expiration_modal: false,
       affordable_care_act_date_modal: false,
       espouse_information_birthdate_modal: false,
+      autopay_date_modal: false,
       espouse_information_document_expiration_modal: false,
       dependent_birthdate_modal: false,
       dependent_expires_modal: false,
@@ -127,11 +128,17 @@ let vm = new Vue({
           category: '',
           document_from: '',
           document_expires: '',
+          same_address: 1,
           address: '',
           state: '',
           zip_code: '',
           county: '',
           city: '',
+          mailing_address: '',
+          mailing_state: '',
+          mailing_zip_code: '',
+          mailing_county: '',
+          mailing_city: '',
           birth_country: '',
         },
         espouse_information: {
@@ -172,6 +179,8 @@ let vm = new Vue({
         documents: [],
         payment_information: {
           type: '',
+          autopay: 0,
+          autopay_date: '',
           bank: {
             name: '',
             type: '',
@@ -230,11 +239,17 @@ let vm = new Vue({
           category: '',
           document_from: '',
           document_expires: '',
+          same_address: 1,
           address: '',
           state: '',
           zip_code: '',
           county: '',
           city: '',
+          mailing_address: '',
+          mailing_state: '',
+          mailing_zip_code: '',
+          mailing_county: '',
+          mailing_city: '',
           birth_country: '',
         },
         espouse_information: {
@@ -277,6 +292,8 @@ let vm = new Vue({
         documents: [],
         payment_information: {
           type: '',
+          autopay: 0,
+          autopay_date: '',
           bank: {
             name: '',
             type: '',
@@ -326,6 +343,9 @@ let vm = new Vue({
             res.body.affordable_care_act.date = moment().format('YYYY-MM-DD hh:mm:ss a')
             res.body.affordable_care_act.effectiveness_date = moment().format('YYYY-MM-DD')
             res.body.affordable_care_act.renewal_date = moment(moment().format('YYYY') + '-11-22').add('1', 'year').format('YYYY-MM-DD')
+            res.body.personal_information.same_address = res.body.personal_information.hasOwnProperty('same_address') 
+            ? res.body.personal_information.same_address : 1
+
             res.body.documents = []
             res.body.applicant = res.body.personal_information.first_name + ' ' + 
             res.body.personal_information.middle_name + ' ' + 

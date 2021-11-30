@@ -16,6 +16,14 @@
       </span>
     </p>
   </v-col>
+  <v-col cols="6" v-if="inbox.editedItem.payment_information.autopay && inbox.editedItem.payment_information.autopay_date != '' 
+        && inbox.editedItem.payment_information.autopay_date != undefined">
+        <p class="font-weight-bold">PAYMENT DATE:
+            <span class="font-weight-light">
+                {{ inbox.editedItem.payment_information.autopay_date }}
+            </span>
+        </p>
+    </v-col>
   <template v-if="inbox.editedItem.payment_information.type == 'BANK ACCOUNT'">
     <v-col cols="12" md="6">
       <p class="font-weight-bold">ACCOUNT TYPE: <span class="font-weight-light">{{ inbox.editedItem.payment_information.bank.type }}</span></p>
