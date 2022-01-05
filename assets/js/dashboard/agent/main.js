@@ -66,6 +66,12 @@ let vm = new Vue({
           'Email': {
             field: 'personal_information.email',
           },
+          'Agent': {
+            field: 'agent'
+          },
+          'Year': {
+            field: 'year'
+          },
           'Company / Plan': {
             field: 'affordable_care_act.company_plan'
           },

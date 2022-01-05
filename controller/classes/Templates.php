@@ -25,6 +25,7 @@ class RA_ELITE_USA_INSURANCE_TEMPLATE
         return (locate_template($template_name)) ? locate_template($template_name) : $template;
 
     }
+    
     public static function render_view($styles = [], $scripts = [], $template = '', $vars = [])
     {
         foreach ($styles as $style) {
