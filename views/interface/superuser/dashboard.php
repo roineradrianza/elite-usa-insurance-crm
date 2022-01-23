@@ -44,17 +44,22 @@
                                 </v-row>
                             </template>
                             <template #item.actions="{ item }">
-                                <a>
-                                    <v-icon md color="primary"
-                                        @click="showItem(item); getModificationRequests();getAttachmentsRequests();getManagerAttachments();getInformationRequests();">
-                                        mdi-eye
-                                    </v-icon>
-                                </a>
+                                <v-icon md color="primary"
+                                    @click="showItem(item); getModificationRequests();getAttachmentsRequests();getManagerAttachments();getInformationRequests();">
+                                    mdi-eye
+                                </v-icon>
                                 <v-icon md @click="editItem(item)" color="#00BFA5">
                                     mdi-pencil
                                 </v-icon>
-                                <v-icon md @click="deleteItem(item)" color="error">
-                                    mdi-trash-can
+                                <v-icon md @click="deleteItem(item)" color="error" v-if="item.post_status == 'publish'">
+                                    mdi-archive-arrow-down
+                                </v-icon>
+                                <v-icon md
+                                    @click="
+                                        quotes.editedItem = Object.assign({}, item); 
+                                        deleteQuoteForm({action: 'unarchive', post_status: 'publish', status: 'Processing'})"
+                                    color="info" v-else-if="item.post_status == 'trash'">
+                                    mdi-archive-arrow-up
                                 </v-icon>
                             </template>
                             <template #item.type="{ item }">

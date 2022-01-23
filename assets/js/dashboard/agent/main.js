@@ -24,6 +24,9 @@ let vm = new Vue({
     requests_table_loading: false,
     attachments_table_loading: false,
     manager_attachments_table_loading: false,
+    manager_attachment_loading: false,
+    agent_attachments_table_loading: false,
+    agent_attachment_loading: false,
     information_requests_table_loading: false,
     information_requests_loading: false,
     attachment_loading: false,
@@ -167,6 +170,20 @@ let vm = new Vue({
       ],
       items: [],
     },
+    agent_attachments: {
+      dialog: false,
+      delete_dialog: false,
+      header: [
+        { text: 'Date', align: 'center', value: 'published_at' },
+        { text: 'Name', align: 'center', value: 'post_title' },
+        { text: 'Action', align: 'center', value: 'actions' },
+      ],
+      items: [],
+      editedItem: {
+        post_title: '',
+      },
+      editedIndex: -1,
+    },
     information_requests: {
       dialog: false,
       delete_dialog: false,
@@ -209,8 +226,15 @@ let vm = new Vue({
     initNotifications(this)
     setInterval(initNotifications, 30000, this)
   },
+
   mounted() {
 
+  },
+  
+  computed: {
+    formAgentAttachmentTitle() {
+      return this.agent_attachments.editedIndex === -1 ? 'New Document Attachment' : 'Edit Document Attachment'
+    },
   },
 
   methods: {
@@ -287,6 +311,7 @@ let vm = new Vue({
             app.getInformationRequests()
             app.getAttachmentsRequests()
             app.getManagerAttachments()
+            app.getAgentAttachments()
           }
           else {
             app.barAlert = true
@@ -356,6 +381,26 @@ let vm = new Vue({
           items = res.body
         }
         app.manager_attachments.items = items
+      }, err => {
+      })
+    },
+
+    getAgentAttachments() {
+      var app = this
+      app.agent_attachments.items = []
+      var quote_form = app.quotes.editedItem
+      var url = api_url + 'ra_elite_usa_insurance_get_quote_agent_attachments'
+      var data = {
+        post_parent: quote_form.ID,
+      }
+      app.agent_attachments_table_loading = true
+      app.$http.post(url, data).then(res => {
+        app.agent_attachments_table_loading = false
+        var items = []
+        if (res.body.length > 0) {
+          items = res.body
+        }
+        app.agent_attachments.items = items
       }, err => {
       })
     },
@@ -438,6 +483,10 @@ let vm = new Vue({
         case 'In tray':
           return 'primary';
           break;
+
+        default:
+          return 'grey darken-2'
+          break;
       }
     },
 
@@ -459,10 +508,22 @@ let vm = new Vue({
       this.attachments.dialog = true
     },
 
+    editAgentAttachmentItem(item) {
+      this.agent_attachments.editedIndex = this.agent_attachments.items.indexOf(item)
+      this.agent_attachments.editedItem = Object.assign({}, item)
+      this.agent_attachments.dialog = true
+    },
+
     editInformationRequestItem(item) {
       this.information_requests.editedIndex = this.information_requests.items.indexOf(item)
       this.information_requests.editedItem = Object.assign({}, item)
       this.information_requests.dialog = true
+    },
+
+    deleteAgentAttachmentItem(item) {
+      this.agent_attachments.editedIndex = this.agent_attachments.items.indexOf(item)
+      this.agent_attachments.editedItem = Object.assign({}, item)
+      this.agent_attachments.delete_dialog = true
     },
 
     closeView() {
@@ -485,6 +546,22 @@ let vm = new Vue({
       this.$nextTick(() => {
         this.attachments.editedItem = Object.assign({}, { file: '' })
         this.attachments.editedIndex = -1
+      })
+    },
+
+    closeAgentAttachment() {
+      this.agent_attachments.dialog = false
+      this.$nextTick(() => {
+        this.agent_attachments.editedItem = Object.assign({}, {})
+        this.agent_attachments.editedIndex = -1
+      })
+    },
+
+    closeAgentAttachmentDelete() {
+      this.agent_attachments.delete_dialog = false
+      this.$nextTick(() => {
+        this.agent_attachments.editedItem = Object.assign({}, {})
+        this.agent_attachments.editedIndex = -1
       })
     },
 
@@ -620,6 +697,103 @@ let vm = new Vue({
       })
     },
 
+    saveAgentAttachment() {
+      var app = this
+      var attachment = app.agent_attachments.editedItem
+      var url = api_url + 'ra_elite_usa_insurance_save_quote_agent_attachment'
+      var index = app.agent_attachments.editedIndex
+
+      var data = new FormData();
+      if (attachment.hasOwnProperty('ID') && attachment.ID != undefined) {
+        data.append('ID', attachment.ID)
+      }
+      data.append('post_parent', app.quotes.editedItem.ID)
+      data.append('agent', app.quotes.editedItem.post_author)
+      data.append('post_title', attachment.post_title)
+      if (attachment.doc != undefined || attachment.doc != '') {
+        data.append('attachment', attachment.doc)
+      }
+
+      if (attachment.hasOwnProperty('post_author') && attachment.post_author != '') {
+        data.append('post_author', attachment.post_author)
+      }
+
+      if (attachment.hasOwnProperty('attachment_id') && attachment.attachment_id != '') {
+        data.append('attachment_id', attachment.attachment_id)
+      }
+
+      if (attachment.hasOwnProperty('attachment_url') && attachment.attachment_url != '') {
+        data.append('attachment_url', attachment.attachment_url)
+      }
+
+      app.manager_attachment_loading = true
+      app.$http.post(url, data, {
+        progress(e) {
+          if (e.lengthComputable) {
+            app.percent_loading_active = true
+            app.percent_loading = (e.loaded / e.total) * 100
+          }
+        }
+      }).then(res => {
+        app.manager_attachment_loading = false
+        app.barAlert = true
+        app.percent_loading_active = false
+        app.percent_loading_active = 0
+        if (res.body.hasOwnProperty('message')) {
+          app.barMessage = res.body.message
+          if (res.body.status == 'success') {
+            if (!attachment.hasOwnProperty('attachment_id') || attachment.attachment_id == '') {
+              attachment.ID = res.body.data.ID
+              attachment.attachment_id = res.body.data.attachment_id
+              attachment.published_at = moment()
+            }
+            attachment.attachment_url = res.body.data.hasOwnProperty('attachment_url') ? res.body.data.attachment_url : attachment.attachment_url
+            if (index === -1) {
+              app.agent_attachments.items.push(attachment)
+            }
+            else {
+              Object.assign(app.agent_attachments.items[index], attachment)
+            }
+            app.agent_attachments.dialog = false
+          }
+        }
+        else {
+          app.alert_type = 'error'
+          app.barMessage = 'There was an error'
+        }
+      }, err => {
+        app.manager_attachment_loading = false
+        app.barAlert = true
+        app.barMessage = "There was an error, it can't be possible process the information sent"
+      })
+    },
+
+    deleteAgentAttachment() {
+      var app = this
+      var attachment = app.agent_attachments.editedItem
+      var url = api_url + 'ra_elite_usa_insurance_delete_quote_manager_attachment'
+      var index = app.agent_attachments.editedIndex
+
+      app.$http.post(url, { ID: attachment.ID }).then(res => {
+        app.barAlert = true
+        app.agent_attachments.delete_dialog = false
+        if (res.body.hasOwnProperty('message')) {
+          app.barMessage = res.body.message
+          if (res.body.status == 'success') {
+            app.agent_attachments.items.splice(index, 1)
+          }
+        }
+        else {
+          app.alert_type = 'error'
+          app.barMessage = 'There was an error'
+        }
+      }, err => {
+        app.agent_attachments.delete_dialog = false
+        app.barAlert = true
+        app.barMessage = "There was an error, it can't be possible process the information sent"
+      })
+    },
+
     getAge(form) {
       var app = this
       var age = moment().diff(app.quotes.editedItem[form].birthdate, 'years')
@@ -728,6 +902,7 @@ let vm = new Vue({
         app.getInformationRequests()
         app.getAttachmentsRequests()
         app.getManagerAttachments()
+        app.getAgentAttachments()
       }
       else {
         app.barAlert = true

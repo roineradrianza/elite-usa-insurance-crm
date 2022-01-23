@@ -17,7 +17,8 @@ class RA_ELITE_USA_INSURANCE_INBOX
     {
         $args = array(
             'posts_per_page' => 1000,
-            'post_type' => ['quote_form', 'quote_data_r', 'quote_doc_r', 'quote_form_mr'],
+            'post_type' => ['quote_form', 'quote_data_r', 'quote_doc_r', 'quote_form_mr', 'quote_a_doc'],
+            'post_status' => 'publish',
             'meta_query' => [
                 [
                     'key'   => 'status',
@@ -71,6 +72,7 @@ class RA_ELITE_USA_INSURANCE_INBOX
             'posts_per_page' => 1000,
             'author' => $author['id'],
             'post_type' => ['quote_form', 'quote_data_r', 'quote_doc_r'],
+            'post_status' => 'publish',
             'meta_query' => [
                 'relation' => 'OR',
                 [
@@ -128,7 +130,7 @@ class RA_ELITE_USA_INSURANCE_INBOX
         $current_user = RA_ELITE_USA_INSURANCE_USER::get_current_user();
         $args = array(
             'posts_per_page' => 1000,
-            'post_type' => ['quote_data_r', 'quote_doc_r', 'quote_form_mr'],
+            'post_type' => ['quote_data_r', 'quote_doc_r', 'quote_form_mr', 'quote_a_doc'],
             'meta_query' => [
                 [
                     'key'   => 'status',

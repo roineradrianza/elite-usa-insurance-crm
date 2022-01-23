@@ -16,13 +16,13 @@
         <v-container fluid>
           <v-row>
             <v-col cols="12">
-              <h3 class="text-center text-h4">Are you sure that you want to delete it? This action can not be undone.</h3>
+              <h3 class="text-center text-h4">Are you sure that you want to archive it?</h3>
             </v-col>
             <v-col class="d-flex justify-end" cols="6">
               <v-btn color="primary" @click="closeDelete" text light>Cancel</v-btn>
             </v-col>
             <v-col class="d-flex justify-start" cols="6">
-              <v-btn color="secondary" @click="deleteQuoteForm" light>Delete</v-btn>
+              <v-btn color="secondary" @click="deleteQuoteForm" light>Archive</v-btn>
             </v-col>
           </v-row>
         </v-container>

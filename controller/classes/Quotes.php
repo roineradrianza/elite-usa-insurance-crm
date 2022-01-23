@@ -10,7 +10,8 @@ class RA_ELITE_USA_INSURANCE_QUOTES
         add_action('wp_ajax_ra_elite_usa_insurance_get_my_quote_forms', 'RA_ELITE_USA_INSURANCE_QUOTES::get_my_quotes');
         add_action('wp_ajax_ra_elite_usa_insurance_get_quote', 'RA_ELITE_USA_INSURANCE_QUOTES::get_quote');
         add_action('wp_ajax_ra_elite_usa_insurance_get_quotes', 'RA_ELITE_USA_INSURANCE_QUOTES::get_quotes');
-        add_action('wp_ajax_ra_elite_usa_insurance_delete_quote', 'RA_ELITE_USA_INSURANCE_QUOTES::delete_quote');
+        add_action('wp_ajax_ra_elite_usa_insurance_archive_quote', 'RA_ELITE_USA_INSURANCE_QUOTES::archive_quote');
+        add_action('wp_ajax_ra_elite_usa_insurance_unarchive_quote', 'RA_ELITE_USA_INSURANCE_QUOTES::unarchive_quote');
     }
 
     public static function store_quote()
@@ -147,11 +148,36 @@ class RA_ELITE_USA_INSURANCE_QUOTES
         wp_send_json($data);
     }
 
-    public static function delete_quote()
+    public static function archive_quote()
     {
         $data = json_decode(file_get_contents("php://input"), true);
-        $message = ['message' => 'Quote form deleted', 'status' => 'success'];
-        $results = wp_delete_post($data['ID'], true);
+        $message = ['message' => 'Quote form archived', 'status' => 'success'];
+        $post_arguments = [
+            'ID' => $data['ID'],
+            'post_status' => 'trash',
+            'meta_input' => [
+                'status' => 'Archived'
+            ]
+        ];
+        $results = wp_update_post($post_arguments);
+        if (!$results) {
+            $message = ['message' => 'There was an error, try again.', 'status' => 'error'];
+        }
+        wp_send_json($message);
+    }
+
+    public static function unarchive_quote()
+    {
+        $data = json_decode(file_get_contents("php://input"), true);
+        $message = ['message' => 'Quote form unarchived', 'status' => 'success'];
+        $post_arguments = [
+            'ID' => $data['ID'],
+            'post_status' => 'publish',
+            'meta_input' => [
+                'status' => 'Processing'
+            ]
+        ];
+        $results = wp_update_post($post_arguments);
         if (!$results) {
             $message = ['message' => 'There was an error, try again.', 'status' => 'error'];
         }
@@ -164,6 +190,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
             'author' => RA_ELITE_USA_INSURANCE_USER::get_current_user()['id'],
             'posts_per_page' => 1000,
             'post_type' => 'quote_form',
+            'post_status' => ['publish', 'trash']
         ];
         $metadata =
             [
@@ -245,6 +272,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
             'ID' => 1000,
             'posts_per_page' => 1000,
             'post_type' => 'quote_form',
+            'post_status' => ['publish', 'trash']
         );
         $metadata =
             [

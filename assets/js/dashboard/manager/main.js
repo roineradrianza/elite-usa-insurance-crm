@@ -20,6 +20,9 @@ let vm = new Vue({
     requests_table_loading: false,
     attachments_table_loading: false,
     manager_attachments_table_loading: false,
+    manager_attachment_loading: false,
+    agent_attachments_table_loading: false,
+    agent_attachment_loading: false,
     information_requests_table_loading: false,
     information_requests_loading: false,
     percent_loading_active: false,
@@ -55,7 +58,7 @@ let vm = new Vue({
     options: {
       general: [{ text: 'Yes', value: 1 }, { text: 'No', value: 0 }],
       coverage_type: ['INDIVIDUAL', 'FAMILY'],
-      status: ['Processing', 'In tray', 'Approved'],
+      status: ['Processing', 'In tray', 'Approved', 'Archived'],
       marital_status: ['MARRIED', 'SINGLE'],
       inmigration_status: ['WORK PERMIT AUTHORIZATION', 'RESIDENT / GREEN CARD', 'OTHER'],
       work_type: ['W2', '1099'],
@@ -126,6 +129,20 @@ let vm = new Vue({
       editedIndex: -1,
     },
     manager_attachments: {
+      dialog: false,
+      delete_dialog: false,
+      header: [
+        { text: 'Date', align: 'center', value: 'published_at' },
+        { text: 'Name', align: 'center', value: 'post_title' },
+        { text: 'Action', align: 'center', value: 'actions' },
+      ],
+      items: [],
+      editedItem: {
+        post_title: '',
+      },
+      editedIndex: -1,
+    },
+    agent_attachments: {
       dialog: false,
       delete_dialog: false,
       header: [
@@ -277,6 +294,10 @@ let vm = new Vue({
       return this.manager_attachments.editedIndex === -1 ? 'New Document Attachment' : 'Edit Document Attachment'
     },
 
+    formAgentAttachmentTitle() {
+      return this.agent_attachments.editedIndex === -1 ? 'New Document Attachment' : 'Edit Document Attachment'
+    },
+
     formRequestInformationTitle() {
       return this.information_requests.editedIndex === -1 ? 'New Information Request' : 'Edit Information Request'
     },
@@ -367,6 +388,7 @@ let vm = new Vue({
             app.getInformationRequests()
             app.getAttachmentsRequests()
             app.getManagerAttachments()
+            app.getAgentAttachments()
           }
           else {
             app.barAlert = true
@@ -449,7 +471,7 @@ let vm = new Vue({
       var data = {
         post_parent: quote_form.ID,
       }
-      app.manager_attachments_table_loading = true
+      app.agent_attachments_table_loading = true
       app.$http.post(url, data).then(res => {
         app.manager_attachments_table_loading = false
         var items = []
@@ -457,6 +479,26 @@ let vm = new Vue({
           items = res.body
         }
         app.manager_attachments.items = items
+      }, err => {
+      })
+    },
+
+    getAgentAttachments() {
+      var app = this
+      app.agent_attachments.items = []
+      var quote_form = app.quotes.editedItem
+      var url = api_url + 'ra_elite_usa_insurance_get_quote_agent_attachments'
+      var data = {
+        post_parent: quote_form.ID,
+      }
+      app.agent_attachments_table_loading = true
+      app.$http.post(url, data).then(res => {
+        app.agent_attachments_table_loading = false
+        var items = []
+        if (res.body.length > 0) {
+          items = res.body
+        }
+        app.agent_attachments.items = items
       }, err => {
       })
     },
@@ -535,8 +577,13 @@ let vm = new Vue({
           break;
 
         case 'In tray':
-          return 'primary';
+          return 'primary'
           break;
+
+        default:
+          return 'grey darken-2'
+          break;
+
       }
     },
 
@@ -556,6 +603,12 @@ let vm = new Vue({
       this.manager_attachments.editedIndex = this.manager_attachments.items.indexOf(item)
       this.manager_attachments.editedItem = Object.assign({}, item)
       this.manager_attachments.dialog = true
+    },
+
+    editAgentAttachmentItem(item) {
+      this.agent_attachments.editedIndex = this.agent_attachments.items.indexOf(item)
+      this.agent_attachments.editedItem = Object.assign({}, item)
+      this.agent_attachments.dialog = true
     },
 
     editInformationRequestItem(item) {
@@ -580,6 +633,12 @@ let vm = new Vue({
       this.manager_attachments.editedIndex = this.manager_attachments.items.indexOf(item)
       this.manager_attachments.editedItem = Object.assign({}, item)
       this.manager_attachments.delete_dialog = true
+    },
+
+    deleteAgentAttachmentItem(item) {
+      this.agent_attachments.editedIndex = this.agent_attachments.items.indexOf(item)
+      this.agent_attachments.editedItem = Object.assign({}, item)
+      this.agent_attachments.delete_dialog = true
     },
 
     deleteInformationRequestItem(item) {
@@ -609,6 +668,14 @@ let vm = new Vue({
       this.$nextTick(() => {
         this.manager_attachments.editedItem = Object.assign({}, {})
         this.manager_attachments.editedIndex = -1
+      })
+    },
+
+    closeAgentAttachment() {
+      this.agent_attachments.dialog = false
+      this.$nextTick(() => {
+        this.agent_attachments.editedItem = Object.assign({}, {})
+        this.agent_attachments.editedIndex = -1
       })
     },
 
@@ -651,6 +718,14 @@ let vm = new Vue({
       this.$nextTick(() => {
         this.attachments.editedItem = Object.assign({}, {})
         this.attachments.editedIndex = -1
+      })
+    },
+
+    closeAgentAttachmentDelete() {
+      this.agent_attachments.delete_dialog = false
+      this.$nextTick(() => {
+        this.agent_attachments.editedItem = Object.assign({}, {})
+        this.agent_attachments.editedIndex = -1
       })
     },
 
@@ -715,7 +790,6 @@ let vm = new Vue({
         return false
       }
     },
-
 
     removeDependent(index) {
       var app = this
@@ -1048,10 +1122,10 @@ let vm = new Vue({
       })
     },
 
-    deleteQuoteForm() {
+    deleteQuoteForm({action = 'archive', post_status = 'trash', status = 'Archived'}) {
       var app = this
       var quote_form = app.quotes.editedItem
-      var url = api_url + 'ra_elite_usa_insurance_delete_quote'
+      var url = api_url + `ra_elite_usa_insurance_${action}_quote`
       var index = app.quotes.editedIndex
 
       app.$http.post(url, { ID: quote_form.ID }).then(res => {
@@ -1060,7 +1134,8 @@ let vm = new Vue({
         if (res.body.hasOwnProperty('message')) {
           app.barMessage = res.body.message
           if (res.body.status == 'success') {
-            app.quotes.items.splice(index, 1)
+            app.quotes.items[index].post_status = post_status
+            app.quotes.items[index].status = status
           }
         }
         else {
@@ -1126,6 +1201,32 @@ let vm = new Vue({
       })
     },
 
+    deleteAgentAttachment() {
+      var app = this
+      var attachment = app.agent_attachments.editedItem
+      var url = api_url + 'ra_elite_usa_insurance_delete_quote_manager_attachment'
+      var index = app.agent_attachments.editedIndex
+
+      app.$http.post(url, { ID: attachment.ID }).then(res => {
+        app.barAlert = true
+        app.agent_attachments.delete_dialog = false
+        if (res.body.hasOwnProperty('message')) {
+          app.barMessage = res.body.message
+          if (res.body.status == 'success') {
+            app.agent_attachments.items.splice(index, 1)
+          }
+        }
+        else {
+          app.alert_type = 'error'
+          app.barMessage = 'There was an error'
+        }
+      }, err => {
+        app.agent_attachments.delete_dialog = false
+        app.barAlert = true
+        app.barMessage = "There was an error, it can't be possible process the information sent"
+      })
+    },
+
     deleteInformationRequest() {
       var app = this
       var attachment = app.information_requests.editedItem
@@ -1150,6 +1251,23 @@ let vm = new Vue({
         app.barAlert = true
         app.barMessage = "There was an error, it can't be possible process the information sent"
       })
+    },
+
+    markAgentAttachmentAsSeen(item) {
+      var app = this
+      var url = api_url + 'ra_elite_usa_insurance_mark_seen_quote_agent_attachment'
+      if (item.status == 0) {
+        app.$http.post(url, item).then(res => {
+          if (res.body.status == 'success') {
+            item.status = 1
+          }
+          app.download([item.attachment_url])
+        }, err => {
+  
+        }) 
+      } else {
+        app.download([item.attachment_url])
+      }
     },
 
     currencyFormat(amount, show_prefix) {
@@ -1219,6 +1337,7 @@ let vm = new Vue({
         app.getInformationRequests()
         app.getAttachmentsRequests()
         app.getManagerAttachments()
+        app.getAgentAttachments()
       }
       else {
         app.barAlert = true

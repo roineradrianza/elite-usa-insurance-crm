@@ -35,7 +35,10 @@
               </template>
               <template #item.actions="{ item }">
                 <a>
-                  <v-icon md color="primary" @click="showItem(item);getModificationRequests();getAttachmentsRequests();getManagerAttachments();getInformationRequests();">
+                  <v-icon md color="primary" @click="
+                      showItem(item); getModificationRequests();
+                      getAttachmentsRequests();getManagerAttachments();
+                      getInformationRequests();getAgentAttachments();">
                     mdi-eye
                   </v-icon>
                 </a>

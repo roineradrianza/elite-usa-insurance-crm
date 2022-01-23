@@ -59,6 +59,7 @@
                     </v-col>
                     <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/dialogs/quote_action_history') ?>
                     <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/manager/parts/manager_attachments') ?>
+                    <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/manager/parts/agent_attachments') ?>
                     <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/manager/parts/information_requests') ?>
                     <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/manager/parts/modification_requests') ?>
                     <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/agent/parts/request-edit') ?>

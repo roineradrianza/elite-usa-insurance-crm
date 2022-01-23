@@ -7,3 +7,6 @@
 <template v-else-if="n.post_type == 'quote_form_mr'">
     Quote modification has been requested: <b>{{ n.post_content }}</b>
 </template>
+<template v-else-if="n.post_type == 'quote_a_doc'">
+    Document <b>{{ n.post_title }}</b> attached by the agent
+</template>

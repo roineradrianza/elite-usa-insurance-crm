@@ -46,12 +46,13 @@
                                     </template>
                                     <template #item.actions="{ item }">
                                         <v-icon class="ml-n2" md color="primary"
-                                            @click="showItem(item); getModificationRequests();getAttachmentsRequests();getManagerAttachments();getInformationRequests();"
+                                            @click="showItem(item); getModificationRequests();getAttachmentsRequests();
+                                            getManagerAttachments();getInformationRequests();getAgentAttachments();"
                                             v-if="item.post_type == 'quote_form'">
                                             mdi-eye
                                         </v-icon>
                                         <v-icon class="ml-n2" md color="primary" @click="filterQuotes(item.post_parent)"
-                                            v-if="item.post_type == 'quote_doc_r'">
+                                            v-if="item.post_type == 'quote_doc_r' || item.post_type == 'quote_a_doc'">
                                             mdi-eye
                                         </v-icon>
                                         <v-icon class="ml-n2" md color="primary" @click="showDetailsItem(item)"

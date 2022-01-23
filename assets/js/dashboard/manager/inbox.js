@@ -26,6 +26,8 @@ let vm = new Vue({
     attachments_table_loading: false,
     manager_attachments_table_loading: false,
     manager_attachment_loading: false,
+    agent_attachments_table_loading: false,
+    agent_attachment_loading: false,
     information_requests_table_loading: false,
     information_requests_loading: false,
     quote_loading: false,
@@ -57,7 +59,7 @@ let vm = new Vue({
     options: {
       general: [{ text: 'Yes', value: 1 }, { text: 'No', value: 0 }],
       coverage_type: ['INDIVIDUAL', 'FAMILY'],
-      status: ['Processing', 'In tray', 'Approved'],
+      status: ['Processing', 'In tray', 'Approved', 'Archived'],
       marital_status: ['MARRIED', 'SINGLE'],
       inmigration_status: ['WORK PERMIT AUTHORIZATION', 'RESIDENT / GREEN CARD', 'OTHER'],
       work_type: ['W2', '1099'],
@@ -141,6 +143,20 @@ let vm = new Vue({
       },
       editedIndex: -1,
     },
+    agent_attachments: {
+      dialog: false,
+      delete_dialog: false,
+      header: [
+        { text: 'Date', align: 'center', value: 'published_at' },
+        { text: 'Name', align: 'center', value: 'post_title' },
+        { text: 'Action', align: 'center', value: 'actions' },
+      ],
+      items: [],
+      editedItem: {
+        post_title: '',
+      },
+      editedIndex: -1,
+    },
     inbox: {
       view_dialog: false,
       loading_details: false,
@@ -196,6 +212,10 @@ let vm = new Vue({
 
     formManagerAttachmentTitle() {
       return this.manager_attachments.editedIndex === -1 ? 'New Document Attachment' : 'Edit Document Attachment'
+    },
+
+    formAgentAttachmentTitle() {
+      return this.agent_attachments.editedIndex === -1 ? 'New Document Attachment' : 'Edit Document Attachment'
     },
 
     formRequestInformationTitle() {
@@ -349,6 +369,26 @@ let vm = new Vue({
           items = res.body
         }
         app.manager_attachments.items = items
+      }, err => {
+      })
+    },
+
+    getAgentAttachments() {
+      var app = this
+      app.agent_attachments.items = []
+      var quote_form = app.inbox.editedItem
+      var url = api_url + 'ra_elite_usa_insurance_get_quote_agent_attachments'
+      var data = {
+        post_parent: quote_form.ID,
+      }
+      app.agent_attachments_table_loading = true
+      app.$http.post(url, data).then(res => {
+        app.agent_attachments_table_loading = false
+        var items = []
+        if (res.body.length > 0) {
+          items = res.body
+        }
+        app.agent_attachments.items = items
       }, err => {
       })
     },
@@ -1022,6 +1062,23 @@ let vm = new Vue({
       this.information_requests.delete_dialog = true
     },
 
+    markAgentAttachmentAsSeen(item) {
+      var app = this
+      var url = api_url + 'ra_elite_usa_insurance_mark_seen_quote_agent_attachment'
+      if (item.status == 0) {
+        app.$http.post(url, item).then(res => {
+          if (res.body.status == 'success') {
+            item.status = 1
+          }
+          app.download([item.attachment_url])
+        }, err => {
+  
+        }) 
+      } else {
+        app.download([item.attachment_url])
+      }
+    },
+
     uploadAttachment() {
       var app = this
       var attachment = app.attachments.editedItem
@@ -1117,6 +1174,10 @@ let vm = new Vue({
           return 'Information Requested'
           break;
 
+        case 'quote_a_doc':
+          return 'Document received'
+          break;
+
         case 'quote_doc_r':
           return 'Document Requested'
           break;
@@ -1139,6 +1200,11 @@ let vm = new Vue({
           case 'In tray':
             return 'primary';
             break;
+
+          default:
+            return 'grey darken-2'
+            break;
+
         }
       }
       else if (post_type == 'quote_doc_r') {
@@ -1160,6 +1226,21 @@ let vm = new Vue({
           case 3:
             return 'warning'
             break;
+        }
+      }
+      else if (post_type == 'quote_a_doc') {
+        status = parseInt(status)
+        switch (status) {
+
+          case 0:
+
+            return 'primary'
+            break;
+
+          case 1:
+            return 'Approved'
+            break;
+            
         }
       }
       else {
@@ -1184,6 +1265,18 @@ let vm = new Vue({
     returnStatusType(status, post_type) {
       if (post_type == 'quote_form') {
         return status
+      } else if (post_type == 'quote_a_doc') {
+        status = parseInt(status)
+        switch (status) {
+          case 0:
+            return 'Received'
+            break;
+
+          case 1:
+            return 'Approved'
+            break;
+
+        }
       }
       else {
         status = parseInt(status)
@@ -1266,6 +1359,7 @@ let vm = new Vue({
         app.getAttachmentsRequests()
         app.getManagerAttachments()
         app.getInformationRequests()
+        app.getAgentAttachments()
         inbox.view_dialog = false
         inbox.loading_details = false
       }
@@ -1286,6 +1380,7 @@ let vm = new Vue({
             app.getAttachmentsRequests()
             app.getManagerAttachments()
             app.getInformationRequests()
+            app.getAgentAttachments()
             inbox.view_dialog = false
             inbox.loading_details = false
           }
