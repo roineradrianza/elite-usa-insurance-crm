@@ -106,6 +106,7 @@
         <FONT SIZE=2 STYLE="font-size: 10pt"><?php echo $personal_information['is_citizen'] ? 'YES' : 'NO' ?></FONT>
     </FONT>
 </P>
+<?php if(!empty($personal_information['is_citizen'])) : ?>
 <P STYLE="margin-bottom: 0.17in; background: #ffffff; border: none; padding: 0in; line-height: 100%">
     <FONT FACE="Roboto, serif">
         <FONT SIZE=2 STYLE="font-size: 10pt"><B>SOCIAL
@@ -115,6 +116,7 @@
         <FONT SIZE=2 STYLE="font-size: 10pt"><?php echo $personal_information['ssn'] ?></FONT>
     </FONT>
 </P>
+<?php endif ?>
 <P STYLE="margin-bottom: 0.17in; background: #ffffff; border: none; padding: 0in; line-height: 100%">
     <?php if (!$personal_information['is_citizen']) : ?>
     <FONT FACE="Roboto, serif">
@@ -201,6 +203,17 @@
         <FONT SIZE=2 STYLE="font-size: 10pt"><?php echo $personal_information['state'] ?></FONT>
     </FONT>
 </P>
+<?php if(!empty($personal_information['apartment_number'])) : ?>
+<P STYLE="margin-bottom: 0.17in; background: #ffffff; border: none; padding: 0in; line-height: 100%">
+    <FONT FACE="Roboto, serif">
+        <FONT SIZE=2 STYLE="font-size: 10pt"><B>APARTAMENT NUMBER:
+            </B></FONT>
+    </FONT>
+    <FONT FACE="Roboto, serif">
+        <FONT SIZE=2 STYLE="font-size: 10pt"><?php echo $personal_information['apartment_number'] ?></FONT>
+    </FONT>
+</P>
+<?php endif ?>
 <P STYLE="margin-bottom: 0.17in; background: #ffffff; border: none; padding: 0in; line-height: 100%">
     <FONT FACE="Roboto, serif">
         <FONT SIZE=2 STYLE="font-size: 10pt"><B>COUNTY:</B></FONT>
