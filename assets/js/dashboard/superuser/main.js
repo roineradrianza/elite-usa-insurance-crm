@@ -1464,7 +1464,7 @@ let vm = new Vue({
     },
 
     currencyFormat (amount, show_prefix) {
-      if (typeof amount !== String) {
+      if (typeof amount !== 'string') {
         var formatter = new Intl.NumberFormat('en-US', {
           style: 'currency',
           currency: 'USD',
