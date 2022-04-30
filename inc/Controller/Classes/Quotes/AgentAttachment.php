@@ -1,15 +1,20 @@
 <?php
 
-RA_ELITE_USA_INSURANCE_AGENT_ATTACHMENT::init();
+namespace RA_ELITE_USA\Controller\Classes\Quotes;
 
-class RA_ELITE_USA_INSURANCE_AGENT_ATTACHMENT
+use \RA_ELITE_USA\Controller\Classes\User;
+use \RA_ELITE_USA\Models\ActionsHistory;
+
+\RA_ELITE_USA\Controller\Classes\Quotes\AgentAttachment::init();
+
+class AgentAttachment
 {
     public static function init()
     {
-        add_action('wp_ajax_ra_elite_usa_insurance_save_quote_agent_attachment', 'RA_ELITE_USA_INSURANCE_AGENT_ATTACHMENT::store');
-        add_action('wp_ajax_ra_elite_usa_insurance_mark_seen_quote_agent_attachment', 'RA_ELITE_USA_INSURANCE_AGENT_ATTACHMENT::mark_seen');
-        add_action('wp_ajax_ra_elite_usa_insurance_get_quote_agent_attachments', 'RA_ELITE_USA_INSURANCE_AGENT_ATTACHMENT::get');
-        add_action('wp_ajax_ra_elite_usa_insurance_delete_quote_agent_attachment', 'RA_ELITE_USA_INSURANCE_AGENT_ATTACHMENT::delete');
+        add_action('wp_ajax_ra_elite_usa_insurance_save_quote_agent_attachment', '\RA_ELITE_USA\Controller\Classes\Quotes\AgentAttachment::store');
+        add_action('wp_ajax_ra_elite_usa_insurance_mark_seen_quote_agent_attachment', '\RA_ELITE_USA\Controller\Classes\Quotes\AgentAttachment::mark_seen');
+        add_action('wp_ajax_ra_elite_usa_insurance_get_quote_agent_attachments', '\RA_ELITE_USA\Controller\Classes\Quotes\AgentAttachment::get');
+        add_action('wp_ajax_ra_elite_usa_insurance_delete_quote_agent_attachment', '\RA_ELITE_USA\Controller\Classes\Quotes\AgentAttachment::delete');
     }
 
     public static function store()
@@ -21,7 +26,7 @@ class RA_ELITE_USA_INSURANCE_AGENT_ATTACHMENT
             wp_send_json(['message' => 'You must upload the file before create the attachment.', 'status' => 'error']);
         }
 
-        $agent = RA_ELITE_USA_INSURANCE_USER::get_current_user();
+        $agent = User::get_current_user();
         $post_arguments = [
             'post_parent' => $data['post_parent'],
             'post_title' => $data['post_title'],
@@ -105,7 +110,7 @@ class RA_ELITE_USA_INSURANCE_AGENT_ATTACHMENT
                     $action_data['action_message'] = 'Attachment updated';
                 }
                 unset($action_data['raw_data_extra_info']);
-                $action_history = new RA_EUI_ACTIONS_HISTORY_MODEL();
+                $action_history = new ActionsHistory();
                 $action_result = $action_history->create($action_data);
                 wp_send_json($message);
             } else {

@@ -1,6 +1,10 @@
 <?php
 
-class RA_ELITE_USA_INSURANCE_MAIL
+namespace RA_ELITE_USA\Controller\Classes;
+
+use \RA_ELITE_USA\Controller\Template;
+
+class Mail
 {
 
 	public static function send_mail($to = [], $subject = '', $message = '', $headers = [], $attachments = [] )
@@ -15,8 +19,8 @@ class RA_ELITE_USA_INSURANCE_MAIL
 		$headers[] = 'Content-Type: text/html; charset=UTF-8';
 		$template_select = $user_created ? 'emails/account-credentials-created' : 'emails/account-credentials-updated';
 		ob_start();
-     RA_ELITE_USA_INSURANCE_TEMPLATE::show_template($template_select,['email' => $user['user_email'], 'password' => $user['user_pass']]);
-    $template = ob_get_clean();
+     		Template::show_template($template_select,['email' => $user['user_email'], 'password' => $user['user_pass']]);
+    	$template = ob_get_clean();
 		$email_response = wp_mail( $user['user_email'], 'Account Credentials', $template, $headers, []);
 		return $email_response;
 	}

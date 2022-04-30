@@ -1,4 +1,4 @@
-<?php $current_user = RA_ELITE_USA_INSURANCE_USER::get_current_user(); ?>
+<?php $current_user = \RA_ELITE_USA\Controller\Classes\User::get_current_user(); ?>
 
 <v-row class="d-flex justify-center">
   <v-col class="d-flex justify-center" cols="4" md="2">

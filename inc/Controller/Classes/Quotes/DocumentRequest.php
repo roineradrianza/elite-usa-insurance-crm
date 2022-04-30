@@ -1,17 +1,21 @@
 <?php
 
-RA_ELITE_USA_INSURANCE_DOCUMENT_REQUEST::init();
+namespace RA_ELITE_USA\Controller\Classes\Quotes;
 
-class RA_ELITE_USA_INSURANCE_DOCUMENT_REQUEST
+use \RA_ELITE_USA\Models\ActionsHistory;
+
+\RA_ELITE_USA\Controller\Classes\Quotes\DocumentRequest::init();
+
+class DocumentRequest
 {
     public static function init()
     {
-        add_action('wp_ajax_ra_elite_usa_insurance_save_quote_attachment_request', 'RA_ELITE_USA_INSURANCE_DOCUMENT_REQUEST::store');
-        add_action('wp_ajax_ra_elite_usa_insurance_get_quote_attachment_requests', 'RA_ELITE_USA_INSURANCE_DOCUMENT_REQUEST::get');
-        add_action('wp_ajax_ra_elite_usa_insurance_upload_quote_attachment_requested', 'RA_ELITE_USA_INSURANCE_DOCUMENT_REQUEST::upload');
-        add_action('wp_ajax_ra_elite_usa_insurance_delete_quote_attachment_requested', 'RA_ELITE_USA_INSURANCE_DOCUMENT_REQUEST::delete');
-        add_action('wp_ajax_ra_elite_usa_insurance_process_form_document_requested', 'RA_ELITE_USA_INSURANCE_DOCUMENT_REQUEST::process');
-        add_action('wp_ajax_ra_elite_usa_insurance_approve_form_document_requested', 'RA_ELITE_USA_INSURANCE_DOCUMENT_REQUEST::approve_quote_document_request');
+        add_action('wp_ajax_ra_elite_usa_insurance_save_quote_attachment_request', '\RA_ELITE_USA\Controller\Classes\Quotes\DocumentRequest::store');
+        add_action('wp_ajax_ra_elite_usa_insurance_get_quote_attachment_requests', '\RA_ELITE_USA\Controller\Classes\Quotes\DocumentRequest::get');
+        add_action('wp_ajax_ra_elite_usa_insurance_upload_quote_attachment_requested', '\RA_ELITE_USA\Controller\Classes\Quotes\DocumentRequest::upload');
+        add_action('wp_ajax_ra_elite_usa_insurance_delete_quote_attachment_requested', '\RA_ELITE_USA\Controller\Classes\Quotes\DocumentRequest::delete');
+        add_action('wp_ajax_ra_elite_usa_insurance_process_form_document_requested', '\RA_ELITE_USA\Controller\Classes\Quotes\DocumentRequest::process');
+        add_action('wp_ajax_ra_elite_usa_insurance_approve_form_document_requested', '\RA_ELITE_USA\Controller\Classes\Quotes\DocumentRequest::approve_quote_document_request');
     }
 
     public static function store()
@@ -53,7 +57,7 @@ class RA_ELITE_USA_INSURANCE_DOCUMENT_REQUEST
                 'action_type' => 'request',
                 'extra_info' => json_encode($post_arguments, JSON_UNESCAPED_UNICODE),
             ];
-            $action_history = new RA_EUI_ACTIONS_HISTORY_MODEL();
+            $action_history = new ActionsHistory();
             $action_result = $action_history->create($action_data);
         }
         wp_send_json($message);
@@ -146,7 +150,7 @@ class RA_ELITE_USA_INSURANCE_DOCUMENT_REQUEST
             'post_type' => 'quote_doc_r',
             'extra_info' => json_encode($data, JSON_UNESCAPED_UNICODE),
         ];
-        $action_history = new RA_EUI_ACTIONS_HISTORY_MODEL();
+        $action_history = new ActionsHistory();
         $action_result = $action_history->create($action_data);
         $message_data = ['attachment_id' => $attachs_id, 'attachment_url' => $attachs_url];
         $message['data'] = $message_data;
@@ -168,7 +172,7 @@ class RA_ELITE_USA_INSURANCE_DOCUMENT_REQUEST
             'action_type' => 'delete',
             'post_id' => $data['post_parent'],
         ];
-        $action_history = new RA_EUI_ACTIONS_HISTORY_MODEL();
+        $action_history = new ActionsHistory();
         $action_result = $action_history->create($action_data);
         wp_send_json($message);
     }
@@ -201,7 +205,7 @@ class RA_ELITE_USA_INSURANCE_DOCUMENT_REQUEST
             'action_type' => 'status update',
             'extra_info' => json_encode($data, JSON_UNESCAPED_UNICODE),
         ];
-        $action_history = new RA_EUI_ACTIONS_HISTORY_MODEL();
+        $action_history = new ActionsHistory();
         $action_result = $action_history->create($action_data);
         wp_send_json($message);
     }
@@ -234,7 +238,7 @@ class RA_ELITE_USA_INSURANCE_DOCUMENT_REQUEST
             'action_type' => 'status update',
             'extra_info' => json_encode($data, JSON_UNESCAPED_UNICODE),
         ];
-        $action_history = new RA_EUI_ACTIONS_HISTORY_MODEL();
+        $action_history = new ActionsHistory();
         $action_result = $action_history->create($action_data);
         wp_send_json($message);
     }

@@ -1,6 +1,11 @@
 <?php
 
-class RA_ELITE_USA_INSURANCE_TEMPLATE
+namespace RA_ELITE_USA\Controller\Classes;
+
+use \RA_ELITE_USA\Controller\Classes\Options;
+use \RA_ELITE_USA\Controller\Classes\User;
+
+class Template
 {
 
     public static function load_template($template_name, $ra_elite_usa_insurance_vars = [])
@@ -39,7 +44,7 @@ class RA_ELITE_USA_INSURANCE_TEMPLATE
 
     public static function dashboard_tabs()
     {
-        $options = RA_ELITE_USA_INSURANCE_OPTIONS::get_option('routes');
+        $options = Options::get_option('routes');
         $tabs = ['tabs' => [
             /*['name'=> 'Dashboard', 'icon' => 'mdi-view-dashboard', 'url' => $options['dashboard']],*/
             ['name' => 'Inbox', 'icon' => 'mdi-inbox', 'url' => $options['inbox'], 'tab_index' => 4],
@@ -60,14 +65,14 @@ class RA_ELITE_USA_INSURANCE_TEMPLATE
 
     public static function dashboard_manager_tabs()
     {
-        $options = RA_ELITE_USA_INSURANCE_OPTIONS::get_option('routes');
+        $options = Options::get_option('routes');
         $tabs = ['tabs' => [
             ['name' => 'Inbox', 'icon' => 'mdi-inbox', 'url' => $options['inbox'], 'tab_index' => 4],
             ['name' => 'Quotes', 'icon' => 'mdi-text-box-multiple', 'url' => $options['quotes'], 'tab_index' => 0],
             ['name' => 'Settings', 'icon' => 'mdi-cog', 'url' => $options['user_settings'], 'tab_index' => 2],
         ],
         ];
-        $current_user = RA_ELITE_USA_INSURANCE_USER::get_current_user();
+        $current_user = User::get_current_user();
         if ($current_user['roles'][0] == 'administrator') {
             $tabs['tabs'][] = ['name' => 'Manage Users', 'icon' => 'mdi-account-group', 'url' => $options['user_manager'], 'tab_index' => 3];
         }
@@ -76,7 +81,7 @@ class RA_ELITE_USA_INSURANCE_TEMPLATE
 
     public static function dashboard_superuser_tabs()
     {
-        $options = RA_ELITE_USA_INSURANCE_OPTIONS::get_option('routes');
+        $options = Options::get_option('routes');
         $tabs = ['tabs' => [
             ['name' => 'Inbox', 'icon' => 'mdi-inbox', 'url' => $options['inbox'], 'tab_index' => 4],
             ['name' => 'Quotes', 'icon' => 'mdi-text-box-multiple', 'url' => $options['quotes'], 'tab_index' => 0],

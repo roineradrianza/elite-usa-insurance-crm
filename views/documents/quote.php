@@ -19,9 +19,9 @@
 <FONT FACE="Roboto, serif"><FONT SIZE=2 STYLE="font-size: 10pt;"><B>Quote ID: <?php echo $data['ID'] ?> </B>    
 <?php endif ?>
 <?php echo $affordable_care_act['deductible'] ?></FONT></FONT></P>
-<?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('documents/quote/affordable_care_act', ['affordable_care_act' =>$data['affordable_care_act']]) ?>
-<?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('documents/quote/personal_information', ['personal_information' => $data['personal_information'], 'employment_information' => $data['employment_information'], 'applicant' => $data['applicant']]) ?>
-<?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('documents/quote/espouse_information', ['espouse_information' => $data['espouse_information'], 'employment_information' => $data['espouse_employment_information'], 'applicant' => $data['applicant'], 'coverage_type' => $data['affordable_care_act']['coverage_type']]) ?>
-<?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('documents/quote/dependents', ['dependents' => $data['dependents'], 'coverage_type' => $data['affordable_care_act']['coverage_type']]) ?>
-<?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('documents/quote/payment_information', ['payment_information' => $data['payment_information']]) ?>
+<?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('documents/quote/affordable_care_act', ['affordable_care_act' =>$data['affordable_care_act']]) ?>
+<?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('documents/quote/personal_information', ['personal_information' => $data['personal_information'], 'employment_information' => $data['employment_information'], 'applicant' => $data['applicant']]) ?>
+<?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('documents/quote/espouse_information', ['espouse_information' => $data['espouse_information'], 'employment_information' => $data['espouse_employment_information'], 'applicant' => $data['applicant'], 'coverage_type' => $data['affordable_care_act']['coverage_type']]) ?>
+<?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('documents/quote/dependents', ['dependents' => $data['dependents'], 'coverage_type' => $data['affordable_care_act']['coverage_type']]) ?>
+<?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('documents/quote/payment_information', ['payment_information' => $data['payment_information']]) ?>
 </BODY>

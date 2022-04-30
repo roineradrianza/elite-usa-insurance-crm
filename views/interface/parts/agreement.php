@@ -1,5 +1,5 @@
-<?php $current_user = RA_ELITE_USA_INSURANCE_USER::get_current_user(); ?>
-<?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/parts/preloader') ?>
+<?php $current_user = \RA_ELITE_USA\Controller\Classes\User::get_current_user(); ?>
+<?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/parts/preloader') ?>
 <!-- App.vue -->
 <div id="ra-elite-usa-insurance-container">
   <v-app class="ml-0" style="display: none;">
@@ -23,10 +23,10 @@
           <v-col cols="12" md="10" lg="8" offset-md="1" offset-lg="2" style="max-height: 85vh; overflow-y: scroll;">
             <v-form ref="agreement_form" v-model="agreement_form_valid" lazy-validation>
               <v-row ref="agreement_container">
-                <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('components/snackbar') ?>
-                <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/parts/agreement_form/general'); ?>
-                <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/parts/agreement_form/introduction'); ?>
-                <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/parts/agreement_form/ethics_code'); ?>
+                <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('components/snackbar') ?>
+                <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/parts/agreement_form/general'); ?>
+                <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/parts/agreement_form/introduction'); ?>
+                <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/parts/agreement_form/ethics_code'); ?>
                 <v-col cols="8" offset-md="2" v-if="declined">
                   <v-alert border="bottom" colored-border type="warning" elevation="2">
                     THANK YOU

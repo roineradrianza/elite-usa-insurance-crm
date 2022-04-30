@@ -1,4 +1,4 @@
-<?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/parts/preloader') ?>
+<?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/parts/preloader') ?>
 <!-- App.vue -->
 <div id="ra-elite-usa-insurance-container">
     <v-app style="display: none;">
@@ -9,14 +9,14 @@
             <v-container class="mb-n2" id="app-container" fluid>
                 <v-row>
                     <v-col cols="2">
-                        <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/parts/sidebar', RA_ELITE_USA_INSURANCE_TEMPLATE::dashboard_superuser_tabs()); ?>
+                        <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/parts/sidebar', \RA_ELITE_USA\Controller\Classes\Template::dashboard_superuser_tabs()); ?>
                     </v-col>
                     <v-col cols="10">
-                        <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/agent/parts/preview') ?>
-                        <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/manager/parts/edit') ?>
-                        <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/manager/parts/delete') ?>
-                        <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('components/snackbar') ?>
-                        <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/parts/status_filter') ?>
+                        <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/agent/parts/preview') ?>
+                        <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/manager/parts/edit') ?>
+                        <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/manager/parts/delete') ?>
+                        <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('components/snackbar') ?>
+                        <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/parts/status_filter') ?>
 
                         <v-data-table :headers="quotes.header" :items="quotes.items" sort-by="['status','published_at']"
                             class="elevation-1" :loading="table_loading" :search="quotes.search" multi-sort>

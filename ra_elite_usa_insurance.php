@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       EliteUSAInsurance
  * Description:       Insurance quote applications
- * Version:           1.4.2
+ * Version:           1.4.3
  * Requires at least: 5.1
  * Requires PHP:      7.2
  * Author:            Roiner Adrianza
@@ -17,7 +17,7 @@ define('RA_ELITE_USA_INSURANCE_FILE', __FILE__);
 define('RA_ELITE_USA_INSURANCE', dirname(RA_ELITE_USA_INSURANCE_FILE));
 define('RA_ELITE_USA_INSURANCE_URL', plugin_dir_url(RA_ELITE_USA_INSURANCE_FILE));
 define('RA_ELITE_USA_INSURANCE_DB_VERSION', '1.1');
-define('RA_ELITE_USA_INSURANCE_VERSION', '1.4.2');
+define('RA_ELITE_USA_INSURANCE_VERSION', '1.4.3');
 
 define('RA_ELITE_USA_ENV', false);
 
@@ -25,10 +25,11 @@ if (RA_ELITE_USA_ENV) {
     @ini_set('display_errors', 1);
 }
 
-require_once RA_ELITE_USA_INSURANCE . "/vendor/autoload.php";
+require_once plugin_dir_path( __FILE__ ) . "/vendor/autoload.php";
 
-require_once RA_ELITE_USA_INSURANCE . '/models/main.php';
+use \RA_ELITE_USA\Shortcode\Init as ShortcodeInit;
+use \RA_ELITE_USA\Controller\Init as ControllerInit;
 
-require_once RA_ELITE_USA_INSURANCE . '/controller/main.php';
+new ShortcodeInit();
+new ControllerInit();
 
-require_once RA_ELITE_USA_INSURANCE . '/shortcodes/shortcodes.php';

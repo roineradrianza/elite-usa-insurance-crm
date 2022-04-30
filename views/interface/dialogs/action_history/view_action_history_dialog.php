@@ -16,10 +16,10 @@
             <v-container fluid>
                 <v-row>
                     <v-col cols="12">
-                        <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/dialogs/action_history/timelines/information_requested') ?>
-                        <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/dialogs/action_history/timelines/document_requested') ?>
-                        <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/dialogs/action_history/timelines/modification_requested') ?>
-                        <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/dialogs/action_history/timelines/attachments') ?>
+                        <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/dialogs/action_history/timelines/information_requested') ?>
+                        <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/dialogs/action_history/timelines/document_requested') ?>
+                        <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/dialogs/action_history/timelines/modification_requested') ?>
+                        <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/dialogs/action_history/timelines/attachments') ?>
                     </v-col>
                 </v-row>
             </v-container>

@@ -1,16 +1,21 @@
 <?php
-RA_ELITE_USA_INSURANCE_INBOX::init();
 
-class RA_ELITE_USA_INSURANCE_INBOX
+namespace RA_ELITE_USA\Controller\Classes;
+
+use \RA_ELITE_USA\Controller\Classes\User;
+
+Inbox::init();
+
+class Inbox
 {
     public static function init() {
         //INBOX
-        add_action( 'wp_ajax_ra_elite_usa_insurance_get_inbox', 'RA_ELITE_USA_INSURANCE_INBOX::get_admin_inbox' );
-        add_action( 'wp_ajax_ra_elite_usa_insurance_get_agent_inbox', 'RA_ELITE_USA_INSURANCE_INBOX::get_agent_inbox' );
+        add_action( 'wp_ajax_ra_elite_usa_insurance_get_inbox', '\RA_ELITE_USA\Controller\Classes\Inbox::get_admin_inbox' );
+        add_action( 'wp_ajax_ra_elite_usa_insurance_get_agent_inbox', '\RA_ELITE_USA\Controller\Classes\Inbox::get_agent_inbox' );
         //NOTIFICATIONS
-        add_action( 'wp_ajax_ra_elite_usa_insurance_get_admin_notifications', 'RA_ELITE_USA_INSURANCE_INBOX::get_admin_notifications' );
-        add_action( 'wp_ajax_ra_elite_usa_insurance_get_agent_notifications', 'RA_ELITE_USA_INSURANCE_INBOX::get_agent_notifications' );
-        add_action( 'wp_ajax_ra_elite_usa_insurance_mark_read_notification', 'RA_ELITE_USA_INSURANCE_INBOX::mark_notification_as_read' );
+        add_action( 'wp_ajax_ra_elite_usa_insurance_get_admin_notifications', '\RA_ELITE_USA\Controller\Classes\Inbox::get_admin_notifications' );
+        add_action( 'wp_ajax_ra_elite_usa_insurance_get_agent_notifications', '\RA_ELITE_USA\Controller\Classes\Inbox::get_agent_notifications' );
+        add_action( 'wp_ajax_ra_elite_usa_insurance_mark_read_notification', '\RA_ELITE_USA\Controller\Classes\Inbox::mark_notification_as_read' );
     }
 
     public static function get_admin_inbox()
@@ -44,7 +49,7 @@ class RA_ELITE_USA_INSURANCE_INBOX
         $posts = [];
         foreach ($query as $post) {
             $post = (array) $post;
-            $author = RA_ELITE_USA_INSURANCE_USER::get_current_user($post['post_author']);
+            $author = User::get_current_user($post['post_author']);
             $post['agent'] = $author['first_name'] . ' ' . $author['last_name'];
             $post['renewals'] = get_posts(
                 [
@@ -67,7 +72,7 @@ class RA_ELITE_USA_INSURANCE_INBOX
 
     public static function get_agent_inbox()
     {
-        $author = RA_ELITE_USA_INSURANCE_USER::get_current_user();
+        $author = User::get_current_user();
         $args = array(
             'posts_per_page' => 1000,
             'author' => $author['id'],
@@ -127,7 +132,7 @@ class RA_ELITE_USA_INSURANCE_INBOX
 
     public static function get_admin_notifications()
     {
-        $current_user = RA_ELITE_USA_INSURANCE_USER::get_current_user();
+        $current_user = User::get_current_user();
         $args = array(
             'posts_per_page' => 1000,
             'post_type' => ['quote_data_r', 'quote_doc_r', 'quote_form_mr', 'quote_a_doc'],
@@ -157,7 +162,7 @@ class RA_ELITE_USA_INSURANCE_INBOX
         $posts = [];
         foreach ($query as $post) {
             $post = (array) $post;
-            $author = RA_ELITE_USA_INSURANCE_USER::get_current_user($post['post_author']);
+            $author = User::get_current_user($post['post_author']);
             $post['agent'] = $author['first_name'] . ' ' . $author['last_name'];
             foreach ($metadata as $meta) {
                 if ($meta == 'status' || $meta == "date_user_{$current_user['id']}_n_seen") {
@@ -174,7 +179,7 @@ class RA_ELITE_USA_INSURANCE_INBOX
     
     public static function get_agent_notifications()
     {
-        $author = RA_ELITE_USA_INSURANCE_USER::get_current_user();
+        $author = User::get_current_user();
         $args = array(
             'posts_per_page' => 1000,
             'author' => $author['id'],
@@ -229,7 +234,7 @@ class RA_ELITE_USA_INSURANCE_INBOX
     public static function mark_notification_as_read()
     {
         $data = json_decode( file_get_contents("php://input"), true );
-        $current_user = RA_ELITE_USA_INSURANCE_USER::get_current_user();
+        $current_user = User::get_current_user();
         $result = update_post_meta( $data['ID'], "date_user_{$current_user['id']}_n_seen", date('Y-m-d h:i:s a', time()) );
         $message = ['message' => 'Notification marked as read', 'status' => 'success', 'data' => $result];
         wp_send_json( $message );

@@ -9,6 +9,14 @@
             "email": "roineradrianzap@gmail.com"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "RA_ELITE_USA\\": "inc/"
+        },
+        "files": [
+            "inc/Controller/helpers.php"
+        ]
+    },
     "require": {
         "mpdf/mpdf": "^8.0"
     }

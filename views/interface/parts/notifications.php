@@ -1,5 +1,5 @@
 <?php 
- $folder = RA_ELITE_USA_INSURANCE_TEMPLATE::folder_by_rol($current_user);
+ $folder = \RA_ELITE_USA\Controller\Classes\Template::folder_by_rol($current_user);
 ?>
 <v-list dense>
 	<v-sheet class="d-flex justify-center">
@@ -18,7 +18,7 @@
           <v-list-item-title class="black--text">Quote ID: <b>{{ n.quote_id }}</b></v-list-item-title>
 
           <v-list-item-subtitle class="no-white-space">
-            <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template("interface/parts/notifications/{$folder}/description"); ?>
+            <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template("interface/parts/notifications/{$folder}/description"); ?>
           </v-list-item-subtitle>
           <v-list-item-subtitle class="primary--text">{{ n.since }}</v-list-item-subtitle>
         </v-list-item-content>
@@ -43,7 +43,7 @@
             <v-list-item-title class="black--text">Quote ID: <b>{{ n.quote_id }}</b></v-list-item-title>
 
             <v-list-item-subtitle class="no-white-space">
-            	<?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template("interface/parts/notifications/{$folder}/description"); ?>
+            	<?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template("interface/parts/notifications/{$folder}/description"); ?>
           	</v-list-item-subtitle>
             <v-list-item-subtitle class="primary--text">{{ n.since }}</v-list-item-subtitle>
           </a>

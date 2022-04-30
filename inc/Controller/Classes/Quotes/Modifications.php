@@ -1,14 +1,18 @@
 <?php
 
-RA_ELITE_USA_INSURANCE_MODIFICATIONS::init();
+namespace RA_ELITE_USA\Controller\Classes\Quotes;
 
-class RA_ELITE_USA_INSURANCE_MODIFICATIONS
+use \RA_ELITE_USA\Models\ActionsHistory;
+
+\RA_ELITE_USA\Controller\Classes\Quotes\Modifications::init();
+
+class Modifications
 {
     public static function init()
     {
-        add_action('wp_ajax_ra_elite_usa_insurance_save_quote_modification_request', 'RA_ELITE_USA_INSURANCE_MODIFICATIONS::store');
-        add_action('wp_ajax_ra_elite_usa_insurance_get_quote_modification_requests', 'RA_ELITE_USA_INSURANCE_MODIFICATIONS::get');
-        add_action('wp_ajax_ra_elite_usa_insurance_approve_form_modification_request', 'RA_ELITE_USA_INSURANCE_MODIFICATIONS::approve');
+        add_action('wp_ajax_ra_elite_usa_insurance_save_quote_modification_request', '\RA_ELITE_USA\Controller\Classes\Quotes\Modifications::store');
+        add_action('wp_ajax_ra_elite_usa_insurance_get_quote_modification_requests', '\RA_ELITE_USA\Controller\Classes\Quotes\Modifications::get');
+        add_action('wp_ajax_ra_elite_usa_insurance_approve_form_modification_request', '\RA_ELITE_USA\Controller\Classes\Quotes\Modifications::approve');
     }
 
     public static function store()
@@ -41,7 +45,7 @@ class RA_ELITE_USA_INSURANCE_MODIFICATIONS
             'post_id' => $post_arguments['post_parent'],
             'extra_info' => json_encode($post_arguments, JSON_UNESCAPED_UNICODE),
         ];
-        $action_history = new RA_EUI_ACTIONS_HISTORY_MODEL();
+        $action_history = new ActionsHistory();
         $action_result = $action_history->create($action_data);
 
         wp_send_json($message);
@@ -99,7 +103,7 @@ class RA_ELITE_USA_INSURANCE_MODIFICATIONS
             'action_type' => 'status update',
             'extra_info' => json_encode($data, JSON_UNESCAPED_UNICODE),
         ];
-        $action_history = new RA_EUI_ACTIONS_HISTORY_MODEL();
+        $action_history = new ActionsHistory();
         $action_result = $action_history->create($action_data);
         wp_send_json($message);
     }

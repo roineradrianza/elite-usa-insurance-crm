@@ -1,4 +1,4 @@
-<?php $current_user = RA_ELITE_USA_INSURANCE_USER::get_current_user(); ?>
+<?php $current_user = \RA_ELITE_USA\Controller\Classes\User::get_current_user(); ?>
 <v-col cols="12" md="6">
   <v-data-table :headers="information_requests.header" :items="information_requests.items" item-key="ID" sort-by="['status','published_at']" class="elevation-1" :loading="information_requests_table_loading" multi-sort>
     <template #top>

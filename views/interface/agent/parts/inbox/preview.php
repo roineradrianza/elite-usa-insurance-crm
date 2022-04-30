@@ -1,4 +1,4 @@
-  <?php $current_user = RA_ELITE_USA_INSURANCE_USER::get_current_user(); ?>
+  <?php $current_user = \RA_ELITE_USA\Controller\Classes\User::get_current_user(); ?>
   <v-dialog v-model="view_dialog" max-width="95%" style="z-index: 100000;" @click:outside="closeView">
       <v-card>
           <v-toolbar color="primary" elevation="0">
@@ -41,7 +41,7 @@
                       </v-col>
                       <v-col class="d-flex justify-end mt-n10" cols="12">
                           <v-btn class="mr-3 py-4" color="primary"
-                              :href="'<?php echo site_url() . "/" . RA_ELITE_USA_INSURANCE_TEMPLATE::get_tab_url('New Quote') ?>/?quote_id='+ inbox.editedItem.ID +'&action=renew'"
+                              :href="'<?php echo site_url() . "/" . \RA_ELITE_USA\Controller\Classes\Template::get_tab_url('New Quote') ?>/?quote_id='+ inbox.editedItem.ID +'&action=renew'"
                               v-if="inbox.editedItem.renewals.length <= 0" outlined small>Renew Quote</v-btn>
                           <v-btn class="mr-3 py-4" color="info"
                               @click="action_history.dialog = true;getActionsHistory(inbox.editedItem)" small>View
@@ -56,19 +56,19 @@
                           <v-chip :color="checkStatusColor(inbox.editedItem.status, inbox.editedItem.post_type)" dark>
                               {{ returnStatusType(inbox.editedItem.status, inbox.editedItem.post_type) }}</v-chip>
                       </v-col>
-                      <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/dialogs/quote_action_history') ?>
-                      <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/manager/parts/inbox/manager_attachments') ?>
-                      <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/manager/parts/inbox/information_requests') ?>
-                      <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/manager/parts/inbox/modification_requests') ?>
-                      <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/manager/parts/inbox/request-edit') ?>
-                      <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/manager/parts/inbox/modification-form') ?>
-                      <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/manager/parts/inbox/attachments') ?>
-                      <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/manager/parts/inbox/preview/files') ?>
-                      <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/manager/parts/inbox/preview/affordable_care_act') ?>
-                      <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/manager/parts/inbox/preview/personal_information') ?>
-                      <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/manager/parts/inbox/preview/espouse_information') ?>
-                      <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/manager/parts/inbox/preview/dependents') ?>
-                      <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/manager/parts/inbox/preview/payment_information') ?>
+                      <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/dialogs/quote_action_history') ?>
+                      <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/manager/parts/inbox/manager_attachments') ?>
+                      <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/manager/parts/inbox/information_requests') ?>
+                      <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/manager/parts/inbox/modification_requests') ?>
+                      <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/manager/parts/inbox/request-edit') ?>
+                      <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/manager/parts/inbox/modification-form') ?>
+                      <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/manager/parts/inbox/attachments') ?>
+                      <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/manager/parts/inbox/preview/files') ?>
+                      <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/manager/parts/inbox/preview/affordable_care_act') ?>
+                      <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/manager/parts/inbox/preview/personal_information') ?>
+                      <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/manager/parts/inbox/preview/espouse_information') ?>
+                      <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/manager/parts/inbox/preview/dependents') ?>
+                      <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/manager/parts/inbox/preview/payment_information') ?>
                   </v-row>
               </v-container>
           </v-card-text>

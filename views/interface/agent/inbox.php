@@ -1,4 +1,4 @@
-<?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/parts/preloader') ?>
+<?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/parts/preloader') ?>
 <!-- App.vue -->
 <div id="ra-elite-usa-insurance-container">
     <v-app style="display: none;">
@@ -9,12 +9,12 @@
             <v-container class="mb-n2" id="app-container" fluid>
                 <v-row>
                     <v-col cols="2">
-                        <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/parts/sidebar', RA_ELITE_USA_INSURANCE_TEMPLATE::dashboard_tabs()); ?>
+                        <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/parts/sidebar', \RA_ELITE_USA\Controller\Classes\Template::dashboard_tabs()); ?>
                     </v-col>
                     <v-col cols="10">
-                        <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/agent/parts/inbox/preview') ?>
-                        <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/manager/parts/inbox/view_modification') ?>
-                        <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('components/snackbar') ?>
+                        <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/agent/parts/inbox/preview') ?>
+                        <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/manager/parts/inbox/view_modification') ?>
+                        <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('components/snackbar') ?>
                         <v-row>
                             <v-col cols="12">
                                 <v-data-table :headers="inbox.header" :items="inbox.items"

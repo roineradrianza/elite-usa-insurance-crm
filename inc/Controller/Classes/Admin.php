@@ -1,8 +1,13 @@
 <?php
 
-new RA_ELITE_USA_INSURANCE_ADMIN();
+namespace RA_ELITE_USA\Controller\Classes;
 
-class RA_ELITE_USA_INSURANCE_ADMIN
+use \RA_ELITE_USA\Controller\Classes\User;
+use \RA_ELITE_USA\Controller\Classes\Template;
+
+new \RA_ELITE_USA\Controller\Classes\Admin();
+
+class Admin
 {
 
      function __construct()
@@ -30,7 +35,7 @@ class RA_ELITE_USA_INSURANCE_ADMIN
         add_action('wp_enqueue_scripts', $this->ra_elite_usa_insurance_enqueue_ss());
         $nonce = wp_create_nonce( 'ra_elite_usa_insurance_settings_nonce');
         wp_localize_script('vue-js', 'nonce', $nonce);
-        echo RA_ELITE_USA_INSURANCE_TEMPLATE::render_view(['admin/main'],['setup-v1.0.1.min', 'lib/moment.min', 'admin/settings'],'admin/settings');
+        echo Template::render_view(['admin/main'],['setup-v1.0.1.min', 'lib/moment.min', 'admin/settings'],'admin/settings');
     }
 
     public function ra_elite_usa_insurance_enqueue_ss() {
@@ -44,7 +49,7 @@ class RA_ELITE_USA_INSURANCE_ADMIN
     wp_enqueue_script('jquery');
 
     wp_enqueue_script('vue-js', $assets . '/js/vue.js', array('jquery'));
-    wp_localize_script( 'vue-js', 'udata', RA_ELITE_USA_INSURANCE_USER::get_current_user());
+    wp_localize_script( 'vue-js', 'udata', User::get_current_user());
     wp_enqueue_script('vuetify-js', $assets . '/js/vue-complements/vuetify.js', array('vue-js'));
     wp_enqueue_script('vue-resource-js', $assets . '/js/vue-complements/vue-resource.min.js', array('vue-js'));
     return true;

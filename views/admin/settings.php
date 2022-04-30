@@ -31,7 +31,7 @@
               <v-text-field v-model="settings.routes.inbox" :counter="60" label="Inbox" persistent-hint :hint="domain + settings.routes.inbox" required></v-text-field>
             </v-col>
           </v-row>
-          <?php RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('components/alert'); ?>
+          <?php \RA_ELITE_USA\Controller\Classes\Template::show_template('components/alert'); ?>
           <v-btn class="mb-10" color="primary" :loading="loading" @click="save_settings" elevation="6" block>
             <?php _e('Save', 'twoffactor-laboratory'); ?>
           </v-btn>

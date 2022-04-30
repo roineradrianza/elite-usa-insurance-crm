@@ -1,20 +1,27 @@
 <?php
-RA_ELITE_USA_INSURANCE_QUOTES::init();
 
-class RA_ELITE_USA_INSURANCE_QUOTES
+namespace RA_ELITE_USA\Controller\Classes;
+
+use \RA_ELITE_USA\Controller\Classes\User;
+use \RA_ELITE_USA\Controller\Classes\Template;
+use \RA_ELITE_USA\Controller\Classes\ActionsHistory;
+
+\RA_ELITE_USA\Controller\Classes\Quotes::init();
+
+class Quotes
 {
     public static function init()
     {
-        add_action('wp_ajax_ra_elite_usa_insurance_save_quote_form', 'RA_ELITE_USA_INSURANCE_QUOTES::store_quote');
-        add_action('wp_ajax_ra_elite_usa_insurance_generate_quote_pdf', 'RA_ELITE_USA_INSURANCE_QUOTES::generate_quote_pdf');
-        add_action('wp_ajax_ra_elite_usa_insurance_get_my_quote_forms', 'RA_ELITE_USA_INSURANCE_QUOTES::get_my_quotes');
-        add_action('wp_ajax_ra_elite_usa_insurance_get_quote', 'RA_ELITE_USA_INSURANCE_QUOTES::get_quote');
-        add_action('wp_ajax_ra_elite_usa_insurance_get_quotes', 'RA_ELITE_USA_INSURANCE_QUOTES::get_quotes');
-        add_action('wp_ajax_ra_elite_usa_insurance_archive_quote', 'RA_ELITE_USA_INSURANCE_QUOTES::archive_quote');
-        add_action('wp_ajax_ra_elite_usa_insurance_unarchive_quote', 'RA_ELITE_USA_INSURANCE_QUOTES::unarchive_quote');
+        add_action('wp_ajax_ra_elite_usa_insurance_save_quote_form', '\RA_ELITE_USA\Controller\Classes\Quotes::store');
+        add_action('wp_ajax_ra_elite_usa_insurance_generate_quote_pdf', '\RA_ELITE_USA\Controller\Classes\Quotes::generate_pdf');
+        add_action('wp_ajax_ra_elite_usa_insurance_get_my_quote_forms', '\RA_ELITE_USA\Controller\Classes\Quotes::get_my_quotes');
+        add_action('wp_ajax_ra_elite_usa_insurance_get_quote', '\RA_ELITE_USA\Controller\Classes\Quotes::get_quote');
+        add_action('wp_ajax_ra_elite_usa_insurance_get_quotes', '\RA_ELITE_USA\Controller\Classes\Quotes::get_quotes');
+        add_action('wp_ajax_ra_elite_usa_insurance_archive_quote', '\RA_ELITE_USA\Controller\Classes\Quotes::archive');
+        add_action('wp_ajax_ra_elite_usa_insurance_unarchive_quote', '\RA_ELITE_USA\Controller\Classes\Quotes::unarchive');
     }
 
-    public static function store_quote()
+    public static function store()
     {
         $post_data = [];
         if (!empty($_POST)) {
@@ -61,7 +68,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
                 'created_at' => $data['affordable_care_act']['date'],
                 'extra_info' => json_encode($post_arguments, JSON_UNESCAPED_UNICODE),
             ];
-            $action_history = new RA_EUI_ACTIONS_HISTORY_MODEL();
+            $action_history = new ActionsHistory();
             $action_result = $action_history->create($action_data);
             if (!empty($post_arguments['post_parent'])) {
                 $action_data = [
@@ -118,7 +125,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
         wp_send_json($message);
     }
 
-    public static function generate_quote_pdf()
+    public static function generate_pdf()
     {
         set_time_limit(3600);
         $mpdf = new \Mpdf\Mpdf(
@@ -136,7 +143,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
         );
         $data = json_decode(file_get_contents("php://input"), true);
         ob_start();
-        RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('documents/quote', ['data' => $data]);
+        Template::show_template('documents/quote', ['data' => $data]);
         $template = ob_get_clean();
         $applicant = sanitize_title($data['applicant']);
         $mpdf->WriteHTML($template);
@@ -148,7 +155,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
         wp_send_json($data);
     }
 
-    public static function archive_quote()
+    public static function archive()
     {
         $data = json_decode(file_get_contents("php://input"), true);
         $message = ['message' => 'Quote form archived', 'status' => 'success'];
@@ -166,7 +173,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
         wp_send_json($message);
     }
 
-    public static function unarchive_quote()
+    public static function unarchive()
     {
         $data = json_decode(file_get_contents("php://input"), true);
         $message = ['message' => 'Quote form unarchived', 'status' => 'success'];
@@ -187,7 +194,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
     public static function get_my_quotes()
     {
         $args = [
-            'author' => RA_ELITE_USA_INSURANCE_USER::get_current_user()['id'],
+            'author' => User::get_current_user()['id'],
             'posts_per_page' => 1000,
             'post_type' => 'quote_form',
             'post_status' => ['publish', 'trash']
@@ -249,7 +256,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
         $posts = [];
         foreach ($query as $post) {
             $post = (array) $post;
-            $author = RA_ELITE_USA_INSURANCE_USER::get_current_user($post['post_author']);
+            $author = User::get_current_user($post['post_author']);
             $post['agent'] = $author['first_name'] . ' ' . $author['last_name'];
             foreach ($metadata as $meta) {
                 if ($meta == 'status') {
@@ -290,7 +297,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
         $posts = [];
         foreach ($query as $post) {
             $post = (array) $post;
-            $author = RA_ELITE_USA_INSURANCE_USER::get_current_user($post['post_author']);
+            $author = User::get_current_user($post['post_author']);
             $post['agent'] = $author['first_name'] . ' ' . $author['last_name'];
             $post['renewals'] = get_posts(
                 [
@@ -312,7 +319,7 @@ class RA_ELITE_USA_INSURANCE_QUOTES
 
     public static function can_manage_current_quote($current_user, $quote)
     {
-        $current_user = is_a($current_user, 'RA_ELITE_USA_INSURANCE_USER') ? $current_user : RA_ELITE_USA_INSURANCE_USER::get_current_user();
+        $current_user = is_a($current_user, 'User') ? $current_user : User::get_current_user();
         $role = $current_user['role'][0];
         if ($current_user['id'] == $quote['post_author']) {
             return true;

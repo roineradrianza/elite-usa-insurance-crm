@@ -13,7 +13,7 @@
 <P ALIGN=CENTER STYLE="text-indent: 0.5in; margin-bottom: 0.11in; line-height: 150%">
 <FONT FACE="Arial, serif"><FONT SIZE=3><B>&amp; APPOINTMENT
 APPLICATION</B></FONT></FONT></P>
-<?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('documents/contract/general', ['data' => $data]) ?>
-<?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('documents/contract/introduction', ['data' => $data]) ?>
-<?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('documents/contract/ethic_code', ['data' => $data]) ?>
+<?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('documents/contract/general', ['data' => $data]) ?>
+<?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('documents/contract/introduction', ['data' => $data]) ?>
+<?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('documents/contract/ethic_code', ['data' => $data]) ?>
 </BODY>

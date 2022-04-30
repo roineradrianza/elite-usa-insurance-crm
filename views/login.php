@@ -1,4 +1,4 @@
-<?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/parts/preloader') ?>
+<?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/parts/preloader') ?>
 <!-- App.vue -->
 <div id="ra-elite-usa-insurance-container">
   <v-app style="display: none;">
@@ -25,7 +25,7 @@
                     <v-btn color="primary" @click="login" :disabled="!login_form_valid" :loading="loading" light block>Login</v-btn>
                   </v-col>
                   <v-col cols="12">
-                    <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('components/alert') ?>
+                    <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('components/alert') ?>
                   </v-col>
                 </v-sheet>
               </v-row>

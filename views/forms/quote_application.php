@@ -1,5 +1,5 @@
-<?php $current_user = RA_ELITE_USA_INSURANCE_USER::get_current_user(); ?>
-<?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/parts/preloader') ?>
+<?php $current_user = \RA_ELITE_USA\Controller\Classes\User::get_current_user(); ?>
+<?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/parts/preloader') ?>
 <!-- App.vue -->
 <div id="ra-elite-usa-insurance-container" ref="stepper_h">
     <v-app style="display: none;">
@@ -11,13 +11,13 @@
                 <v-row>
                     <v-col cols="4" md="2">
                         <?php if ($current_user['roles'][0] == 'elite_usa_superuser'): ?>
-                        <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/parts/sidebar', RA_ELITE_USA_INSURANCE_TEMPLATE::dashboard_superuser_tabs()); ?>
+                        <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/parts/sidebar', \RA_ELITE_USA\Controller\Classes\Template::dashboard_superuser_tabs()); ?>
                         <?php endif ?>
                         <?php if ($current_user['roles'][0] == 'elite_usa_quote_manager' || $current_user['roles'][0] == 'administrator'): ?>
-                        <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/parts/sidebar', RA_ELITE_USA_INSURANCE_TEMPLATE::dashboard_manager_tabs()); ?>
+                        <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/parts/sidebar', \RA_ELITE_USA\Controller\Classes\Template::dashboard_manager_tabs()); ?>
                         <?php endif ?>
                         <?php if ($current_user['roles'][0] == 'elite_usa_insurance_agent'): ?>
-                        <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/parts/sidebar', RA_ELITE_USA_INSURANCE_TEMPLATE::dashboard_tabs()); ?>
+                        <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/parts/sidebar', \RA_ELITE_USA\Controller\Classes\Template::dashboard_tabs()); ?>
                         <?php endif ?>
                     </v-col>
                     <v-col cols="8" md="10">
@@ -77,7 +77,7 @@
 
                                 <v-stepper-items>
                                     <v-stepper-content id="vs_affodable_care_act" step="1">
-                                        <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/affordable_care_act'); ?>
+                                        <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('forms/quote_application/affordable_care_act'); ?>
 
                                         <v-btn color="primary" @click="validateFields('affordable_care_act_form')"
                                             :disabled="!affordable_care_act_valid">
@@ -87,8 +87,8 @@
                                     </v-stepper-content>
 
                                     <v-stepper-content id="vs_personal_information" step="2">
-                                        <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/personal_information'); ?>
-                                        <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/employment_information'); ?>
+                                        <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('forms/quote_application/personal_information'); ?>
+                                        <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('forms/quote_application/employment_information'); ?>
                                         <v-btn color="primary" @click="validateFields('personal_information_form')"
                                             :disabled="!personal_information_valid || !employment_information_valid">
                                             Continue
@@ -102,8 +102,8 @@
                                     <template v-if="form.content.affordable_care_act.coverage_type == 'FAMILY'">
                                         <v-stepper-content id="vs_espouse_information"
                                             :step="form.content.personal_information.marital_status == 'MARRIED' ? 3 : 100">
-                                            <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/espouse_information'); ?>
-                                            <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/espouse_employment_information'); ?>
+                                            <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('forms/quote_application/espouse_information'); ?>
+                                            <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('forms/quote_application/espouse_employment_information'); ?>
                                             <v-btn color="primary" @click="validateFields('espouse_information_form')"
                                                 :disabled="!espouse_information_valid || !espouse_employment_information_valid">
                                                 Continue
@@ -116,7 +116,7 @@
 
                                         <v-stepper-content id="vs_dependents"
                                             :step="form.content.personal_information.marital_status == 'MARRIED' ? 4 : 3">
-                                            <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/dependents'); ?>
+                                            <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('forms/quote_application/dependents'); ?>
 
                                             <v-btn color="primary" @click="validateFields('dependent_information_form')"
                                                 :disabled="!dependents_information_valid">
@@ -129,7 +129,7 @@
                                         </v-stepper-content>
                                         <v-stepper-content id="vs_payments"
                                             :step="form.content.personal_information.marital_status == 'MARRIED' ? 5 : 4">
-                                            <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/payment_information'); ?>
+                                            <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('forms/quote_application/payment_information'); ?>
                                             <v-btn color="primary" @click="validateFields('payment_information_form')"
                                                 :disabled="!payment_information_valid">
                                                 CONTINUE
@@ -140,7 +140,7 @@
                                         </v-stepper-content>
                                         <v-stepper-content id="vs_files"
                                             :step="form.content.personal_information.marital_status == 'MARRIED' ? 6 : 5">
-                                            <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/files'); ?>
+                                            <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('forms/quote_application/files'); ?>
 
                                             <v-btn color="primary" @click="preview = true;updateFormDate();"
                                                 ref="application_preview" :disabled="!payment_information_valid">
@@ -153,7 +153,7 @@
                                     </template>
                                     <template v-else>
                                         <v-stepper-content id="vs_payments" step="3">
-                                            <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/payment_information'); ?>
+                                            <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('forms/quote_application/payment_information'); ?>
                                             <template>
                                                 <v-btn color="primary"
                                                     @click="validateFields('payment_information_form')"
@@ -168,7 +168,7 @@
                                             </template>
                                         </v-stepper-content>
                                         <v-stepper-content id="vs_files" :step="4">
-                                            <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/files'); ?>
+                                            <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('forms/quote_application/files'); ?>
 
                                             <v-btn color="primary" @click="preview = true;updateFormDate();"
                                                 ref="application_preview" :disabled="!payment_information_valid">
@@ -185,11 +185,11 @@
                                 </v-stepper-items>
                             </v-stepper>
                             <v-row class="elite-usa-application-border mx-1" v-if="preview">
-                                <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/preview/affordable_care_act'); ?>
-                                <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/preview/personal_information'); ?>
-                                <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/preview/espouse_information'); ?>
-                                <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/preview/dependents'); ?>
-                                <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/preview/payment_information'); ?>
+                                <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('forms/quote_application/preview/affordable_care_act'); ?>
+                                <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('forms/quote_application/preview/personal_information'); ?>
+                                <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('forms/quote_application/preview/espouse_information'); ?>
+                                <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('forms/quote_application/preview/dependents'); ?>
+                                <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('forms/quote_application/preview/payment_information'); ?>
                                 <v-col class="d-flex justify-center" cols="12" v-if="!already_sent">
                                     <v-btn color="primary" @click="sendQuoteForm" :loading="quote_loading" dark>SUBMIT
                                     </v-btn>
@@ -212,7 +212,7 @@
                                     </v-btn-toggle>
                                 </v-col>
                                 <v-col cols="12" md="8" offset-md="2">
-                                    <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('components/alert'); ?>
+                                    <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('components/alert'); ?>
                                 </v-col>
                             </v-row>
                         </template>
@@ -232,11 +232,11 @@
                         </template>
 
                         <template v-else-if="not_able_to_renew">
-                            <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/unauthorized'); ?>
+                            <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('forms/quote_application/unauthorized'); ?>
                         </template>
 
                         <template v-else-if="not_quote_found">
-                            <?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('forms/quote_application/not_quote_found'); ?>
+                            <?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('forms/quote_application/not_quote_found'); ?>
                         </template>
 
                     </v-col>

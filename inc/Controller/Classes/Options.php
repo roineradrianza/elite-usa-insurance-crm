@@ -1,8 +1,10 @@
 <?php
 
-new RA_ELITE_USA_INSURANCE_OPTIONS();
+namespace RA_ELITE_USA\Controller\Classes;
 
-class RA_ELITE_USA_INSURANCE_OPTIONS {
+new \RA_ELITE_USA\Controller\Classes\Options();
+
+class Options {
 
 	private static $instance;
 

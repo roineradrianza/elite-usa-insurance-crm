@@ -1,14 +1,19 @@
 <?php
 
-RA_ELITE_USA_INSURANCE_MANAGER_ATTACHMENT::init();
+namespace RA_ELITE_USA\Controller\Classes\Quotes;
 
-class RA_ELITE_USA_INSURANCE_MANAGER_ATTACHMENT
+use \RA_ELITE_USA\Models\ActionsHistory;
+use \RA_ELITE_USA\Controller\Classes\User;
+
+\RA_ELITE_USA\Controller\Classes\Quotes\ManagerAttachment::init();
+
+class ManagerAttachment
 {
     public static function init()
     {
-        add_action('wp_ajax_ra_elite_usa_insurance_save_quote_manager_attachment', 'RA_ELITE_USA_INSURANCE_MANAGER_ATTACHMENT::store');
-        add_action('wp_ajax_ra_elite_usa_insurance_get_quote_manager_attachments', 'RA_ELITE_USA_INSURANCE_MANAGER_ATTACHMENT::get');
-        add_action('wp_ajax_ra_elite_usa_insurance_delete_quote_manager_attachment', 'RA_ELITE_USA_INSURANCE_MANAGER_ATTACHMENT::delete');
+        add_action('wp_ajax_ra_elite_usa_insurance_save_quote_manager_attachment', '\RA_ELITE_USA\Controller\Classes\Quotes\ManagerAttachment::store');
+        add_action('wp_ajax_ra_elite_usa_insurance_get_quote_manager_attachments', '\RA_ELITE_USA\Controller\Classes\Quotes\ManagerAttachment::get');
+        add_action('wp_ajax_ra_elite_usa_insurance_delete_quote_manager_attachment', '\RA_ELITE_USA\Controller\Classes\Quotes\ManagerAttachment::delete');
     }
 
     public static function store()
@@ -20,7 +25,7 @@ class RA_ELITE_USA_INSURANCE_MANAGER_ATTACHMENT
             wp_send_json(['message' => 'You must upload the file before create the attachment.', 'status' => 'error']);
         }
 
-        $manager = RA_ELITE_USA_INSURANCE_USER::get_current_user();
+        $manager = User::get_current_user();
         $post_arguments = [
             'post_parent' => $data['post_parent'],
             'post_title' => $data['post_title'],
@@ -104,7 +109,7 @@ class RA_ELITE_USA_INSURANCE_MANAGER_ATTACHMENT
                     $action_data['action_message'] = 'Attachment updated';
                 }
                 unset($action_data['raw_data_extra_info']);
-                $action_history = new RA_EUI_ACTIONS_HISTORY_MODEL();
+                $action_history = new ActionsHistory();
                 $action_result = $action_history->create($action_data);
                 wp_send_json($message);
             } else {

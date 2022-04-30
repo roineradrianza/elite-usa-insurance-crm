@@ -1,4 +1,4 @@
-<?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/dialogs/action_history/view_action_history_dialog') ?>
+<?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/dialogs/action_history/view_action_history_dialog') ?>
 <v-dialog v-model="action_history.dialog" max-width="800px" style="z-index: 100000;">
     <v-card>
         <v-toolbar color="primary" elevation="0">

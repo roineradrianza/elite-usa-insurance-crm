@@ -1,5 +1,5 @@
-<?php $current_user = RA_ELITE_USA_INSURANCE_USER::get_current_user(); ?>
-					<?php echo RA_ELITE_USA_INSURANCE_TEMPLATE::show_template('interface/parts/notifications', ['current_user' => $current_user]); ?>
+<?php $current_user = \RA_ELITE_USA\Controller\Classes\User::get_current_user(); ?>
+					<?php echo \RA_ELITE_USA\Controller\Classes\Template::show_template('interface/parts/notifications', ['current_user' => $current_user]); ?>
 			    <v-list dense>
 			    	<v-sheet color="primary">
 			      	<v-subheader class="subtitle-1 white--text">Panel</v-subheader>
