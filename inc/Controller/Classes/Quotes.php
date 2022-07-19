@@ -14,9 +14,9 @@ class Quotes
     {
         add_action('wp_ajax_ra_elite_usa_insurance_save_quote_form', '\RA_ELITE_USA\Controller\Classes\Quotes::store');
         add_action('wp_ajax_ra_elite_usa_insurance_generate_quote_pdf', '\RA_ELITE_USA\Controller\Classes\Quotes::generate_pdf');
-        add_action('wp_ajax_ra_elite_usa_insurance_get_my_quote_forms', '\RA_ELITE_USA\Controller\Classes\Quotes::get_my_quotes');
         add_action('wp_ajax_ra_elite_usa_insurance_get_quote', '\RA_ELITE_USA\Controller\Classes\Quotes::get_quote');
         add_action('wp_ajax_ra_elite_usa_insurance_get_quotes', '\RA_ELITE_USA\Controller\Classes\Quotes::get_quotes');
+        add_action('wp_ajax_ra_elite_usa_insurance_get_my_quote_forms', '\RA_ELITE_USA\Controller\Classes\Quotes::get_quotes');
         add_action('wp_ajax_ra_elite_usa_insurance_archive_quote', '\RA_ELITE_USA\Controller\Classes\Quotes::archive');
         add_action('wp_ajax_ra_elite_usa_insurance_unarchive_quote', '\RA_ELITE_USA\Controller\Classes\Quotes::unarchive');
     }
@@ -191,48 +191,6 @@ class Quotes
         wp_send_json($message);
     }
 
-    public static function get_my_quotes()
-    {
-        $args = [
-            'author' => User::get_current_user()['id'],
-            'posts_per_page' => 1000,
-            'post_type' => 'quote_form',
-            'post_status' => ['publish', 'trash']
-        ];
-        $metadata =
-            [
-            'status',
-            'affordable_care_act',
-            'personal_information',
-            'employment_information',
-            'espouse_information',
-            'espouse_employment_information',
-            'dependents',
-            'payment_information',
-            'documents',
-        ];
-        $query = get_posts($args);
-        $posts = [];
-        foreach ($query as $post) {
-            $post = (array) $post;
-            $post['renewals'] = get_posts(
-                [
-                    'post_parent' => $post['ID'], 
-                    'post_type' => 'quote_form'
-                ]
-            );
-            foreach ($metadata as $meta) {
-                if ($meta == 'status') {
-                    $post[$meta] = get_post_meta($post['ID'], $meta, true);
-                } else {
-                    $post[$meta] = json_decode(get_post_meta($post['ID'], $meta, true));
-                }
-            }
-            $posts[] = $post;
-        }
-        wp_send_json($posts);
-    }
-
     public static function get_quote()
     {
         $data = json_decode(file_get_contents("php://input"), true);
@@ -275,9 +233,10 @@ class Quotes
 
     public static function get_quotes()
     {
+        $current_user = \RA_ELITE_USA\Controller\Classes\User::get_current_user();
+
         $args = array(
-            'ID' => 1000,
-            'posts_per_page' => 1000,
+            'numberposts' => -1,
             'post_type' => 'quote_form',
             'post_status' => ['publish', 'trash']
         );
@@ -293,8 +252,12 @@ class Quotes
             'payment_information',
             'documents',
         ];
+
+        if($current_user['roles'][0] == 'elite_usa_insurance_agent') $args['author'] = $current_user['id'];
+
         $query = get_posts($args);
         $posts = [];
+        
         foreach ($query as $post) {
             $post = (array) $post;
             $author = User::get_current_user($post['post_author']);
