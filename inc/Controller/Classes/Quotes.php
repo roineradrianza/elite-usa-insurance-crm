@@ -32,6 +32,11 @@ class Quotes
         }
         $data = empty($_POST) ? json_decode(file_get_contents("php://input"), true) : $post_data;
         $documents = [];
+
+        if(!empty($data['affordable_care_act']['additional_notes'])) {
+            $data['affordable_care_act']['additional_notes'] = str_replace('"', "'", $data['affordable_care_act']['additional_notes']);
+        }
+
         $post_arguments = [
             'post_parent' => !empty($data['post_parent']) ? intval($data['post_parent']) : '',
             'post_title' => 'Quote Form - ' . $data['personal_information']['first_name'] . ' ' . $data['personal_information']['last_name'],
@@ -49,6 +54,8 @@ class Quotes
                 'documents' => empty($_POST) ? json_encode($data['documents'], JSON_UNESCAPED_UNICODE) : json_encode($documents, JSON_UNESCAPED_UNICODE),
             ],
         ];
+
+        
         if (!empty($data['ID'])) {
             $post_arguments['meta_input']['status'] = $data['status'];
             $post_arguments['post_author'] = $data['post_author'];
