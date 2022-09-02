@@ -1,3 +1,7 @@
+## V1.4.6
+1. ADJUSTMENTS
+   - SHOW SSN whether the client is citizen or not
+
 ## V1.4.5
 1. ADJUSTMENTS
    - REPLACE " FOR ' ON ADDITIONAL NOTES

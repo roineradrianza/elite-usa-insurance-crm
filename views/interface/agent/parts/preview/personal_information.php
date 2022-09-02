@@ -70,7 +70,7 @@
             </span>
         </p>
     </v-col>
-    <template v-if="quotes.editedItem.personal_information.is_citizen">
+    <template v-if="quotes.editedItem.personal_information.ssn != ''">
         <v-col cols="12" md="6">
             <p class="font-weight-bold">SOCIAL SECURITY NUMBER (SSN): <span
                     class="font-weight-light">{{ quotes.editedItem.personal_information.ssn }}</span></p>

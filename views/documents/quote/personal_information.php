@@ -106,7 +106,7 @@
         <FONT SIZE=2 STYLE="font-size: 10pt"><?php echo $personal_information['is_citizen'] ? 'YES' : 'NO' ?></FONT>
     </FONT>
 </P>
-<?php if(!empty($personal_information['is_citizen'])) : ?>
+<?php if(!empty($personal_information['ssn'])) : ?>
 <P STYLE="margin-bottom: 0.17in; background: #ffffff; border: none; padding: 0in; line-height: 100%">
     <FONT FACE="Roboto, serif">
         <FONT SIZE=2 STYLE="font-size: 10pt"><B>SOCIAL
