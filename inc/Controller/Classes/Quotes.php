@@ -223,6 +223,12 @@ class Quotes
             $post = (array) $post;
             $author = User::get_current_user($post['post_author']);
             $post['agent'] = $author['first_name'] . ' ' . $author['last_name'];
+            $post['renewals'] = get_posts(
+                [
+                    'post_parent' => $post['ID'], 
+                    'post_type' => 'quote_form'
+                ]
+            );
             foreach ($metadata as $meta) {
                 if ($meta == 'status') {
                     $post[$meta] = get_post_meta($post['ID'], $meta, true);

@@ -1,3 +1,8 @@
+## V1.4.7
+1. BUG FIXES
+   - Viewing quote modal fixed on inbox item detail
+   - VIEWING QUOTE MODAL FIXED ON INBOX ITEM DETAILS
+
 ## V1.4.6
 1. ADJUSTMENTS
    - SHOW SSN whether the client is citizen or not

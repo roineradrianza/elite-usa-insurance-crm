@@ -23,6 +23,7 @@ nbproject
 *.sublime-project
 *.sublime-workspace
 todo.md
+.vscode
 
 # Dreamweaver added files
 _notes
