@@ -6,29 +6,37 @@ use \RA_ELITE_USA\Controller\Classes\Template;
 use \RA_ELITE_USA\Controller\Classes\Options;
 use \RA_ELITE_USA\Controller\Classes\Mail;
 
-\RA_ELITE_USA\Controller\Classes\User::init();
-
 class User
 {
 
-    public static function init()
+    public static $session;
+
+    public function __construct()
     {
-    //USERS ACTIONS
-        add_action( 'init','\RA_ELITE_USA\Controller\Classes\User::hide_admin_bar' );
-        add_action( 'wp_ajax_nopriv_ra_elite_usa_insurance_login', '\RA_ELITE_USA\Controller\Classes\User::login' );
-        add_action( 'wp_ajax_ra_elite_usa_insurance_logout', '\RA_ELITE_USA\Controller\Classes\User::logout' );
-        add_action( 'wp_ajax_ra_elite_usa_insurance_change_password', '\RA_ELITE_USA\Controller\Classes\User::change_password' );
-    //USER MANAGER
-        add_action( 'wp_ajax_ra_elite_usa_insurance_get_users', '\RA_ELITE_USA\Controller\Classes\User::get' );
-        add_action( 'wp_ajax_ra_elite_usa_insurance_create_user', '\RA_ELITE_USA\Controller\Classes\User::create' );
-        add_action( 'wp_ajax_ra_elite_usa_insurance_update_user', '\RA_ELITE_USA\Controller\Classes\User::update' );
-        add_action( 'wp_ajax_ra_elite_usa_insurance_delete_user', '\RA_ELITE_USA\Controller\Classes\User::delete' );
-    //CONTRACTS
-        add_action( 'wp_ajax_ra_elite_usa_insurance_submit_contract', '\RA_ELITE_USA\Controller\Classes\User::submit_contract' );
-        add_action( 'wp_ajax_ra_elite_usa_insurance_generate_contract_pdf', '\RA_ELITE_USA\Controller\Classes\User::generate_contract_pdf' );
+        User::init();
     }
 
-    public static function login()
+    public static function init(): void
+    {
+        //USERS ACTIONS
+            add_action( 'init','\RA_ELITE_USA\Controller\Classes\User::hide_admin_bar' );
+            add_action( 'wp_ajax_nopriv_ra_elite_usa_insurance_login', '\RA_ELITE_USA\Controller\Classes\User::login' );
+            add_action( 'wp_ajax_ra_elite_usa_insurance_logout', '\RA_ELITE_USA\Controller\Classes\User::logout' );
+            add_action( 'wp_ajax_ra_elite_usa_insurance_change_password', '\RA_ELITE_USA\Controller\Classes\User::change_password' );
+        //USER MANAGER
+            add_action( 'wp_ajax_ra_elite_usa_insurance_get_users', '\RA_ELITE_USA\Controller\Classes\User::get' );
+            add_action( 'wp_ajax_ra_elite_usa_insurance_create_user', '\RA_ELITE_USA\Controller\Classes\User::create' );
+            add_action( 'wp_ajax_ra_elite_usa_insurance_update_user', '\RA_ELITE_USA\Controller\Classes\User::update' );
+            add_action( 'wp_ajax_ra_elite_usa_insurance_delete_user', '\RA_ELITE_USA\Controller\Classes\User::delete' );
+        //CONTRACTS
+            add_action( 'wp_ajax_ra_elite_usa_insurance_submit_contract', '\RA_ELITE_USA\Controller\Classes\User::submit_contract' );
+            add_action( 'wp_ajax_ra_elite_usa_insurance_generate_contract_pdf', '\RA_ELITE_USA\Controller\Classes\User::generate_contract_pdf' );
+
+        add_action( 'init','\RA_ELITE_USA\Controller\Classes\User::set_session' );
+
+    }
+
+    public static function login(): void
     {
         $data = json_decode( file_get_contents("php://input"), true );
         $credentials = ['user_login' => $data['email'], 'user_password' => $data['password'], 'remember' => $data['remember']];
@@ -43,23 +51,24 @@ class User
         wp_send_json( $message );
     }
 
-    public static function change_password()
+    public static function change_password(): void
     {
         $data = json_decode( file_get_contents("php://input"), true );
         if (empty($data['password'])) wp_send_json( ['status' => 'danger', 'message' => 'Password cannot be empty' ] );
-        $user = self::get_current_user();
+        $user = self::$session;
         wp_set_password($data['password'], $user['id'] );
         wp_signon(array('user_login' => $user['user_login'], 'user_password' => $data['password']));
         wp_send_json( ['status' => 'success', 'message' => 'Password changed successfully' ] );
     }
 
-    public static function logout()
+    public static function logout(): void
     {
         wp_logout();
+        self::$session = [];
         wp_send_json( ['status' => 'success', 'redirect_url' => site_url() ] );
     }
 
-    public static function get_current_user($id = '')
+    public static function get_current_user($id = ''): array
     {
         $user = array(
             'id' => 0
@@ -67,9 +76,7 @@ class User
 
         $current_user = (!empty($id)) ? get_userdata($id) : wp_get_current_user();
 
-        $avatar_url = '';
-
-        if (!empty($current_user->ID) and 0 != $current_user->ID) {
+        if (!empty($current_user->ID) && 0 != $current_user->ID) {
             $user_meta = get_userdata($current_user->ID);
             $user = array(
                 'id' => $current_user->ID,
@@ -81,13 +88,12 @@ class User
                 'roles' => $user_meta->roles,
             );
         }
-
         return $user;
     }
 
-    public static function create()
+    public static function create(): void
     {
-        if (!self::has_su_access()) wp_send_json('Forbidden');
+        if (!self::has_manager_access()) wp_send_json('Forbidden');
         $data = json_decode( file_get_contents("php://input"), true );
         $args = [
             'ID' => $data['id'],
@@ -111,27 +117,18 @@ class User
         wp_send_json( $message );
     }
 
-    public static function submit_contract()
+    public static function submit_contract(): void
     {
         $data = $_POST['form'];
-        $current_user = self::get_current_user();
-        $user_id = $current_user['id'];
-        $result = update_user_meta( $user_id, 'agreement_form', $data);
+        $result = update_user_meta( self::get_id(), 'agreement_form', $data);
         $message = ['status' => 'error', 'message' => "It couldn't be possible to store the contract, try again" ];
         if ($result) {
            $message = ['status' => 'success', 'message' => 'Contract signed successfully', 'data' => $result ];
-           /*
-           $routes = Options::get_option('routes');
-            ob_start();
-             Template::show_template('emails/contract-received',['id' => $user_id, 'first_name' => $current_user['first_name'], 'last_name' => $current_user['last_name'], 'users_url' => $routes['user_manager']]);
-            $template = ob_get_clean();
-            $send_mail = $result ? Mail::send_notification_to_admins('New contract signed has been received', $template, true) : null;
-            */
         }
         wp_send_json( $message );
     }
 
-    public static function generate_contract_pdf()
+    public static function generate_contract_pdf(): void
     {
         set_time_limit(3600);
         $mpdf = new \Mpdf\Mpdf(
@@ -171,14 +168,19 @@ class User
         wp_send_json( $data );
     }
 
-    public static function get()
+    public static function get(): void
     {
-        if (!self::has_su_access()) wp_send_json('Forbidden');
-        $current_user = self::get_current_user();
+        if (!self::has_manager_access()) wp_send_json('Forbidden');
+        $data = json_decode(file_get_contents("php://input"), true);
         $args = [
             'role__in' => [ 'elite_usa_quote_manager', 'elite_usa_superuser', 'elite_usa_insurance_agent' ]
         ];
-        $users = $current_user['roles'][0] == 'administrator' ? get_users() : get_users( $args );
+
+        if (!empty($data['args'])) {
+            $args = array_merge($args, $data['args']);
+        }
+
+        $users = self::get_role() == 'administrator' && empty($data['args']) ? get_users() : get_users( $args );
         $items = [];
         foreach ($users as $user) {
             $item = self::get_current_user($user->ID);
@@ -188,9 +190,9 @@ class User
         wp_send_json( $users );
     }
 
-    public static function update()
+    public static function update(): void
     {
-        if (!self::has_su_access()) wp_send_json('Forbidden');
+        if (!self::has_manager_access()) wp_send_json('Forbidden');
         add_filter( 'send_password_change_email', '__return_false' );
         add_filter( 'send_email_change_email', '__return_false' );
         $data = json_decode( file_get_contents("php://input"), true );
@@ -215,9 +217,9 @@ class User
         wp_send_json( $message );
     }
 
-    public static function delete()
+    public static function delete(): void
     {
-        if (!self::has_su_access()) wp_send_json( 'Forbidden' );
+        if (!self::has_manager_access()) wp_send_json( 'Forbidden' );
         $data = json_decode( file_get_contents("php://input"), true );
         $result = wp_delete_user( $data['id'] );
         $message = ['status' => 'success', 'message' => 'User deleted successfully' ];
@@ -227,21 +229,46 @@ class User
         wp_send_json( $message );
     }
 
-    public static function hide_admin_bar () {
+    public static function hide_admin_bar(): void
+    {
         if (is_user_logged_in()) {
-            $current_user = self::get_current_user();
-            if ($current_user['roles'][0] == 'elite_usa_quote_manager' || $current_user['roles'][0] == 'elite_usa_superuser' || $current_user['roles'][0] == 'elite_usa_insurance_agent') show_admin_bar( false );
+            $role = self::get_role();
+            if ($role == 'elite_usa_quote_manager' || $role == 'elite_usa_superuser' || $role == 'elite_usa_insurance_agent') show_admin_bar( false );
         }
     }
 
-    public static function has_su_access () {
+    public static function has_manager_access(): bool
+    {
+        $hasAccess = false;
+        $roles_allowed = [
+            'elite_usa_superuser',
+            'administrator',
+            'elite_usa_quote_manager'
+        ];
+
         if (is_user_logged_in()) {
-            $current_user = self::get_current_user();
-            if ($current_user['roles'][0] == 'elite_usa_superuser' || $current_user['roles'][0] == 'administrator') return true;
-            return false;
+            if (in_array(self::get_role(), $roles_allowed)) {
+                $hasAccess = true;
+            }
         }
-        else {
-            return false;
-        }
+
+        return $hasAccess;
+    }
+
+    public static function set_session(): void
+    {
+        if (is_user_logged_in()) {
+            self::$session = self::get_current_user();
+        };
+    }
+
+    public static function get_role(): string
+    {
+        return isset(self::$session['roles'][0]) ? self::$session['roles'][0] : '';
+    }
+
+    public static function get_id(): int|string
+    {
+        return isset(self::$session['id']) ? self::$session['id'] : '';
     }
 }

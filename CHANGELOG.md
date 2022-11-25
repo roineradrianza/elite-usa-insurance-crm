@@ -1,3 +1,7 @@
+## V1.5.0
+1. OPTIMIZATION
+   - USER CLASS REFACTORED
+
 ## V1.4.7
 1. BUG FIXES
    - Viewing quote modal fixed on inbox item detail
