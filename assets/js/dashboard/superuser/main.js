@@ -344,17 +344,17 @@ let vm = new Vue({
           var item = {}
           res.body.forEach( (quote) => {
             var item = quote
-            item.published_at = moment(item.affordable_care_act.date).format('DD/MM/YYYY, h:mm:ss a')
+            item.published_at = formatDateByBrowser(item.affordable_care_act.date, moment, 'DD/MM/YYYY, h:mm:ss a')
             item.applicant = item.personal_information.first_name + ' ' + 
             item.personal_information.middle_name + ' ' + 
             item.personal_information.last_name
             item.type = item.post_parent <= 0 ? 'First-Time' : 'Renewal'
             item.personal_information.same_address = item.personal_information.hasOwnProperty('same_address') ? item.personal_information.same_address : 1
             if (item.affordable_care_act.hasOwnProperty('renewal_date')) {
-              item.year = moment(item.affordable_care_act.renewal_date).format('YYYY')
+              item.year = formatDateByBrowser(item.affordable_care_act.renewal_date, moment, 'YYYY')
             } else {
               item.year = moment(item.affordable_care_act.effectiveness_date).isSameOrAfter(moment(item.affordable_care_act.date)) 
-              ? moment(item.affordable_care_act.effectiveness_date).format('YYYY') : moment(item.affordable_care_act.date).format('YYYY')
+              ? moment(item.affordable_care_act.effectiveness_date).format('YYYY') : formatDateByBrowser(item.affordable_care_act.date, moment, 'YYYY')
             }
             items.push(item)
           })
@@ -1494,21 +1494,21 @@ let vm = new Vue({
       if (d == '') {
         return ''
       }
-      return moment(d).format('MM/DD/YYYY')
+      return formatDateByBrowser(d, moment, 'MM/DD/YYYY')
     },
 
     getFormatDateShort(d) {
       if (d == '') {
         return ''
       }
-      return moment(d).format('MM/YYYY')
+      return formatDateByBrowser(d, moment, 'MM/YYYY')
     },
 
     getFormatDateExtended(d) {
       if (d == '') {
         return ''
       }
-      return moment(d).format('MM/DD/YYYY, h:mm:ss a')
+      return formatDateByBrowser(d, moment, 'MM/DD/YYYY, h:mm:ss a')
     },
 
     countStatus (status) {

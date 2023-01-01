@@ -261,7 +261,7 @@ let vm = new Vue({
           var item = {}
           res.body.forEach((inbox) => {
             var item = inbox
-            item.published_at = moment(item.post_date).format('DD/MM/YYYY, h:mm:ss a')
+            item.published_at = formatDateByBrowser(item.post_date, moment, 'DD/MM/YYYY, h:mm:ss a')
             item.quote_id = item.post_type == 'quote_form' ? item.ID : item.post_parent
             if (item.post_type == 'quote_form') {
               item.applicant = item.personal_information.first_name + ' ' +
@@ -272,8 +272,8 @@ let vm = new Vue({
               if (item.affordable_care_act.hasOwnProperty('renewal_date')) {
                 item.year = moment(item.affordable_care_act.renewal_date).format('YYYY')
               } else {
-                item.year = moment(item.affordable_care_act.effectiveness_date).isSameOrAfter(moment(item.affordable_care_act.date)) 
-                ? moment(item.affordable_care_act.effectiveness_date).format('YYYY') : moment(item.affordable_care_act.date).format('YYYY')
+                item.year = moment(item.affordable_care_act.effectiveness_date).isSameOrAfter(moment(item.affordable_care_act.date)) ?
+                    moment(item.affordable_care_act.effectiveness_date).format('YYYY') : formatDateByBrowser(item.affordable_care_act.date, moment, 'YYYY')
               }
             }
             else if (item.post_type == 'quote_doc_r' && parseInt(item.status) == 0) {
@@ -1329,21 +1329,21 @@ let vm = new Vue({
       if (d == '') {
         return ''
       }
-      return moment(d).format('MM/DD/YYYY')
+      return formatDateByBrowser(d, moment, 'MM/DD/YYYY')
     },
 
     getFormatDateShort(d) {
       if (d == '') {
         return ''
       }
-      return moment(d).format('MM/YYYY')
+      return formatDateByBrowser(d, moment, 'MM/YYYY')
     },
 
     getFormatDateExtended(d) {
       if (d == '') {
         return ''
       }
-      return moment(d).format('MM/DD/YYYY, h:mm:ss a')
+      return formatDateByBrowser(d, moment, 'MM/DD/YYYY, h:mm:ss a')
     },
 
     filterQuotes(id) {

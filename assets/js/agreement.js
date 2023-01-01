@@ -117,21 +117,21 @@ let vm = new Vue({
       if (d == '') {
         return ''
       }
-      return moment(d).format('MM/DD/YYYY')
+      return formatDateByBrowser(d, moment, 'MM/DD/YYYY')
     },
 
     getFormatDateShort(d) {
       if (d == '') {
         return ''
       }
-      return moment(d).format('MM/YYYY')
+      return formatDateByBrowser(d, moment, 'MM/YYYY')
     },
 
     getFormatDateExtended(d) {
       if (d == '') {
         return ''
       }
-      return moment(d).format('MM/DD/YYYY, h:mm:ss a')
+      return formatDateByBrowser(d, moment, 'MM/DD/YYYY, h:mm:ss a')
     },
 
     getcustomDateFormat(d, format) {

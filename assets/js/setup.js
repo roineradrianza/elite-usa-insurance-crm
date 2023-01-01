@@ -30,3 +30,27 @@ document.addEventListener("DOMContentLoaded", e => {
     vm.download = download
   }
 });
+
+const formatDateByBrowser = (date, moment, format) => {
+  let user_agent = navigator.userAgent
+
+  if(user_agent.indexOf("Firefox") > -1) {
+    let regex = / am| pm/gi
+
+    let match = date.match(regex)
+    let extracted = match ? match[0] : ''
+    let replaced_date = date.replace(regex, '')
+    let formatted_date = moment(replaced_date).format(format).replace(regex, '')
+    let final_date = `${formatted_date} ${extracted}`
+
+    switch (format) {
+      case 'YYYY' || 'MM/YYYY' || 'MM/DD/YYYY':
+        final_date = formatted_date
+        break;
+    }
+
+    return final_date
+  }
+
+  return moment(date).format(format)
+}
