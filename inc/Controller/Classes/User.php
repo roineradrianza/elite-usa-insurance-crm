@@ -9,7 +9,7 @@ use \RA_ELITE_USA\Controller\Classes\Mail;
 class User
 {
 
-    public static $session;
+    protected static $session = [];
 
     public function __construct()
     {
@@ -270,5 +270,10 @@ class User
     public static function get_id(): int|string
     {
         return isset(self::$session['id']) ? self::$session['id'] : '';
+    }
+
+    public static function get_session(): array 
+    {
+        return self::$session;
     }
 }

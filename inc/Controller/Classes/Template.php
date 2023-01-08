@@ -51,6 +51,18 @@ class Template
             ['name' => 'Quotes', 'icon' => 'mdi-text-box-multiple', 'url' => $options['quotes'], 'tab_index' => 0],
             ['name' => 'New Quote', 'icon' => 'mdi-text-box', 'url' => $options['quote_form'], 'tab_index' => 1],
             ['name' => 'Settings', 'icon' => 'mdi-cog', 'url' => $options['user_settings'], 'tab_index' => 2],
+            [
+                'name' => 'Reports',
+                'icon' => 'mdi-chart-areaspline-variant',
+                'tab_index' => 3,
+                'items' => [
+                    [
+                        'name' => 'Renewals & News quotes',
+                        'url' => $options['reports_renewals_and_new_quotes'],
+                        'tab_index' => 5
+                    ]
+                ]
+            ],
         ],
         ];
         return $tabs;
@@ -70,11 +82,23 @@ class Template
             ['name' => 'Inbox', 'icon' => 'mdi-inbox', 'url' => $options['inbox'], 'tab_index' => 4],
             ['name' => 'Quotes', 'icon' => 'mdi-text-box-multiple', 'url' => $options['quotes'], 'tab_index' => 0],
             ['name' => 'Settings', 'icon' => 'mdi-cog', 'url' => $options['user_settings'], 'tab_index' => 2],
+            [
+                'name' => 'Reports',
+                'icon' => 'mdi-chart-areaspline-variant',
+                'tab_index' => 3,
+                'items' => [
+                    [
+                        'name' => 'Renewals & News quotes',
+                        'url' => $options['reports_renewals_and_new_quotes'],
+                        'tab_index' => 5
+                    ]
+                ]
+            ],
         ],
         ];
         $current_user = User::get_current_user();
         if ($current_user['roles'][0] == 'administrator') {
-            $tabs['tabs'][] = ['name' => 'Manage Users', 'icon' => 'mdi-account-group', 'url' => $options['user_manager'], 'tab_index' => 3];
+            $tabs['tabs'][] = ['name' => 'Manage Users', 'icon' => 'mdi-account-group', 'url' => $options['user_manager'], 'tab_index' => 6];
         }
         return $tabs;
     }
@@ -87,7 +111,19 @@ class Template
             ['name' => 'Quotes', 'icon' => 'mdi-text-box-multiple', 'url' => $options['quotes'], 'tab_index' => 0],
             ['name' => 'New Quote', 'icon' => 'mdi-text-box', 'url' => $options['quote_form'], 'tab_index' => 1],
             ['name' => 'Settings', 'icon' => 'mdi-cog', 'url' => $options['user_settings'], 'tab_index' => 2],
-            ['name' => 'Manage Users', 'icon' => 'mdi-account-group', 'url' => $options['user_manager'], 'tab_index' => 3],
+            [
+                'name' => 'Reports',
+                'icon' => 'mdi-chart-areaspline-variant',
+                'tab_index' => 3,
+                'items' => [
+                    [
+                        'name' => 'Renewals & News quotes',
+                        'url' => $options['reports_renewals_and_new_quotes'],
+                        'tab_index' => 5
+                    ]
+                ]
+            ],
+            ['name' => 'Manage Users', 'icon' => 'mdi-account-group', 'url' => $options['user_manager'], 'tab_index' => 6],
         ],
         ];
         return $tabs;
@@ -107,5 +143,40 @@ class Template
         }
         return $f;
     }
+
+    
+    public static function render_sidebar_view(array $user): Void
+    {
+        $user = empty($user) ? User::get_session() : $user;
+
+        $tabs = [];
+
+        switch ($user['roles'][0]) {
+
+            case 'elite_usa_superuser':
+                $tabs = self::dashboard_superuser_tabs();
+                break;
+
+            case 'elite_usa_quote_manager' || 'administrator':
+                $tabs = self::dashboard_manager_tabs();
+                break;
+
+            case 'elite_usa_insurance_agent':
+                $tabs = self::dashboard_tabs();
+                break;
+            
+            default:
+
+                break;
+
+        }
+        
+        if (!empty($tabs)) {
+
+            echo self::show_template('interface/parts/sidebar', $tabs);
+
+        }
+    }
+
 
 }
