@@ -189,6 +189,26 @@ class Dashboard
         self::render();
     }
 
+    public static function reports_renewals_and_new_quotes(): void
+    {
+        if (!is_user_logged_in()) {
+
+            self::$js_assets[] = 'login.min';
+            self::$view = 'login';
+
+        } else {
+            $js_assets = [
+                'lib/chartJS.min',
+                'vue-complements/vue-charts.min',
+                'dashboard/reports/renewals_and_new_quotes.min',
+            ];
+            self::$js_assets = array_merge(self::$js_assets, $js_assets);
+            self::$view = 'interface/reports/renewals_and_new_quotes';
+        }
+
+        self::render();
+    }
+
     public static function ra_elite_usa_insurance_enqueue_ss(): void
     {
         $v = (WP_DEBUG) ? time() : RA_ELITE_USA_INSURANCE_DB_VERSION;
