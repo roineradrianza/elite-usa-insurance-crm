@@ -6,6 +6,22 @@
 			    	</v-sheet>
 			      <v-list-item-group v-model="selectedItem" color="primary">
 			      	<?php foreach ($tabs as $tab): ?>
+						<?php if(!empty($tab['items'])): ?>
+							<v-list-group prepend-icon='<?php echo $tab['icon'] ?>'>
+								<template #activator>
+									<v-list-item-content>
+										<v-list-item-title><?php echo $tab['name'] ?></v-list-item-title>
+									</v-list-item-content>
+								</template>
+								<?php foreach ($tab['items'] as $item): ?>
+									<v-list-item href="<?php echo site_url() . '/'. $item['url'] ?>" :value="<?php echo $item['tab_index'] ?>" link>
+										<v-list-item-content>
+											<v-list-item-title><?php echo $item['name'] ?></v-list-item-title>
+										</v-list-item-content>
+									</v-list-item>
+								<?php endforeach ?>
+							</v-list-group>
+						<?php else: ?>
 				        <v-list-item href="<?php echo site_url() . '/'. $tab['url'] ?>" :value="<?php echo $tab['tab_index'] ?>" link>
 				          <v-list-item-icon>
 				            <v-icon><?php echo $tab['icon'] ?></v-icon>
@@ -14,6 +30,7 @@
 				            <v-list-item-title><?php echo $tab['name'] ?></v-list-item-title>
 				          </v-list-item-content>
 				        </v-list-item>
+						<?php endif ?>
 			      	<?php endforeach ?>
 				        <v-list-item @click="logout" :value="99" link>
 				          <v-list-item-icon>
